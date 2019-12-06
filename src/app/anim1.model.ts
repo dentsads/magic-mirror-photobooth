@@ -1,3 +1,3 @@
-export class Anim1 {    
-    assetPath: string; 
+export class Anim1 {
+    assetPath: string;
 }
