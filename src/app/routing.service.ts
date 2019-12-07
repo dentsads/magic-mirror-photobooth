@@ -47,11 +47,13 @@ export class RoutingService {
       edges = currentTheme.outEdges('/' + currentRoute + '/' + id);
     }
 
-    // edges.forEach(function(edge){
-    //  edge.w
-    // })
+    let resultEdge = edges.find(function (edge) {
+      return edge.name === eventId
+    })
 
-    return edges[0].w;
+    if (resultEdge !== undefined) resultEdge = resultEdge.w
+
+    return resultEdge || edges[0].w;
 
   }
 
@@ -77,7 +79,7 @@ export class RoutingService {
   }
 
   createGraphs() {
-    const g = new Graph();
+    const g = new Graph({ multigraph: true });
 
     g.setNode('/intro', this.ANIM1_MAP[1]);
     g.setNode('/anim1/2', this.ANIM1_MAP[2]);
@@ -91,10 +93,11 @@ export class RoutingService {
     g.setNode('/drawing', {});
     g.setNode('/accept-photo', { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'});
 
-    g.setEdge('/intro', '/accept-photo');
-    g.setEdge('/accept-photo', '/anim1/3');
+    g.setEdge('/intro', '/anim1/3');    
     g.setEdge('/anim1/3', '/anim1/5');
-    g.setEdge('/anim1/5', '/anim1/6');
+    g.setEdge('/anim1/5', '/accept-photo');
+    g.setEdge( { v: '/accept-photo', w: '/anim1/6', name: 'event.accept-photo.01' }); // photo ok
+    g.setEdge( { v: '/accept-photo', w: '/anim1/5', name: 'event.accept-photo.02' }); // photo not ok
     g.setEdge('/anim1/6', '/anim1/8');
     g.setEdge('/anim1/8', '/intro');
 

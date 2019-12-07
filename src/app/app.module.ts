@@ -19,7 +19,7 @@ import { TakePhotoComponent } from './take-photo/take-photo.component';
     TakePhotoComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule
   ],
   providers: [],
