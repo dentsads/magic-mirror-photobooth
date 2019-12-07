@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import {Buffer} from 'buffer';
+import { Buffer } from 'buffer';
 import axios from 'axios';
 import { RoutingService } from '../routing.service';
 import { Anim1 } from '../anim1.model';

@@ -87,8 +87,12 @@ export class RoutingService {
     g.setNode('/anim1/6', this.ANIM1_MAP[6]);
     g.setNode('/anim1/7', this.ANIM1_MAP[7]);
     g.setNode('/anim1/8', { assetPath: 'assets/test01.gif' });
+    g.setNode('/anim1/2', this.ANIM1_MAP[2]);
+    g.setNode('/drawing', {});
+    g.setNode('/accept-photo', { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'});
 
-    g.setEdge('/intro', '/anim1/3');
+    g.setEdge('/intro', '/accept-photo');
+    g.setEdge('/accept-photo', '/anim1/3');
     g.setEdge('/anim1/3', '/anim1/5');
     g.setEdge('/anim1/5', '/anim1/6');
     g.setEdge('/anim1/6', '/anim1/8');
