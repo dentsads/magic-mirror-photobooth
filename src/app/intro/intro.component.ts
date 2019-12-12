@@ -10,7 +10,7 @@ import { Anim1 } from '../anim1.model';
 })
 export class IntroComponent implements OnInit {
 
-  componentData: Anim1;
+  componentData: Anim1;  
 
   constructor(
     public router: Router,
@@ -24,7 +24,7 @@ export class IntroComponent implements OnInit {
     // this.activatedRoute.paramMap.subscribe(params => {
     //  //this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
     //  this.componentData = this.routingService.getComponentData(this.activatedRoute)
-    // });
+    // });    
   }
 
   handleRedirect(eventId: string) {

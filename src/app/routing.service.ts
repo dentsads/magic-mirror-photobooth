@@ -14,11 +14,11 @@ export class RoutingService {
   THEME_MAP: Record<string, Graph> = {};
 
   constructor() {
-    this.createGraphs();
+    this.createThemes();
   }
 
   ANIM1_MAP: Record<string, Anim1> = {
-    1: { assetPath: 'assets/start.gif' },
+    1: { assetPath: 'assets/intro.gif' },
     2: { assetPath: 'assets/are_you_ready.gif' },
     3: { assetPath: 'assets/countdown.gif' },
     4: { assetPath: 'assets/say_cheese.gif' },
@@ -78,7 +78,7 @@ export class RoutingService {
 
   }
 
-  createGraphs() {
+  createThemes() {
     const g = new Graph({ multigraph: true });
 
     g.setNode('/intro', this.ANIM1_MAP[1]);
@@ -97,7 +97,7 @@ export class RoutingService {
     g.setEdge('/anim1/3', '/anim1/5');
     g.setEdge('/anim1/5', '/accept-photo');
     g.setEdge( { v: '/accept-photo', w: '/anim1/6', name: 'event.accept-photo.01' }); // photo ok
-    g.setEdge( { v: '/accept-photo', w: '/anim1/5', name: 'event.accept-photo.02' }); // photo not ok
+    g.setEdge( { v: '/accept-photo', w: '/anim1/3', name: 'event.accept-photo.02' }); // photo not ok
     g.setEdge('/anim1/6', '/anim1/8');
     g.setEdge('/anim1/8', '/intro');
 

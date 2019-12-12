@@ -1,0 +1,15 @@
+.row{
+    display:table;
+}
+.row > div{
+    display:table-row;
+}
+.column > div{
+    display:table-cell;    
+}
+.column img{
+    width:20%;
+}
+.column{
+    display:table;
+}

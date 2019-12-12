@@ -25,3 +25,27 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+
+# Disable ModemManager in Linux otherwise it intereres with the Arduino IO
+```
+systemctl status ModemManager.service
+systemctl disable ModemManager.service
+```
+
+# Installation instructions
+```
+npm install
+
+# patch the node-pixel library with branch
+git clone https://github.com/ajfisher/node-pixel.git
+git checkout j5-firmata-upg
+rm -rf node_modules/node-pixel
+cp -r ../node-pixel/ node_modules/
+
+# somehow the bindins.node is expected elsewhere
+mkdir -p ./lib/binding/node-v67-linux-x64/
+ln -s ./node_modules/@serialport/bindings/build/Release/bindings.node ./lib/binding/node-v67-linux-x64/bindings.node
+
+npm run build:ssr && sudo npm run serve:ssr
+```
