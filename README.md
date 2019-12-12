@@ -27,7 +27,7 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 
-# Disable ModemManager in Linux otherwise it intereres with the Arduino IO
+# For using Arduino IDE disable ModemManager in Linux otherwise it intereres with the Arduino IO
 ```
 systemctl status ModemManager.service
 systemctl disable ModemManager.service
@@ -49,3 +49,8 @@ ln -s ./node_modules/@serialport/bindings/build/Release/bindings.node ./lib/bind
 
 npm run build:ssr && sudo npm run serve:ssr
 ```
+
+# add express web server
+mdkir server
+cd server
+sudo npm install ts-node ts-node-dev tslint typescript express @types/express concurrently -g

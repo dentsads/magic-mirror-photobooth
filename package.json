@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "serve": "concurrently \"ng serve --proxy-config proxy.conf.json\" \"ts-node-dev server/server.ts\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -20,9 +21,15 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@dagrejs/graphlib": "^2.1.4",
+    "@types/express": "^4.17.2",
     "axios": "^0.19.0",
+    "concurrently": "^5.0.1",
+    "express": "^4.17.1",
     "gphoto2": "^0.3.0",
+    "johnny-five": "^1.3.1",
+    "node-pixel": "^0.10.2",
     "rxjs": "~6.4.0",
+    "ts-node-dev": "^1.0.0-pre.44",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
@@ -43,8 +50,8 @@
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
     "protractor": "~5.4.0",
-    "ts-node": "~7.0.0",
-    "tslint": "~5.15.0",
-    "typescript": "~3.5.3"
+    "ts-node": "^7.0.1",
+    "tslint": "^5.15.0",
+    "typescript": "^3.5.3"
   }
 }
