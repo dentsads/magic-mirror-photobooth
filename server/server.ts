@@ -1,15 +1,13 @@
 const express = require( "express" );
-const five = require('johnny-five');
-const pixel = require('node-pixel');
-//import {Board, Led} from 'johnny-five';
-//import {Strip, FORWARD} from 'node-pixel';
+import { Board } from 'johnny-five';
+import { Strip } from 'node-pixel';
 
 const app = express();
-const board = new five.Board();
+const board = new Board();
 var strip;
 
 board.on("ready", function() {
-    strip = new pixel.Strip({
+    strip = new Strip({
         board: board,
         controller: "FIRMATA",
         strips: [ {pin: 6, length: 24}, ],
@@ -18,7 +16,6 @@ board.on("ready", function() {
 
     strip.on("error", function () {
         console.log("error")
-        //return res.sendStatus(500);
     }) 
 });
 
@@ -26,15 +23,9 @@ app.get('/', (req, res) => {
     res.send({});
 })
 
-app.get('/api/led', (req, res) => {
-    console.log("strip reaaadyyy")            
+app.get('/api/led', (req, res) => {       
     strip.clear()
-    // Set the entire strip to pink.
-    //strip.color('#903');
-
-    //var color = Color.rgb(0, 50, 0)
-    //color.lighten(0.5)
-    
+   
     var pos = 0;
     var loopCounter = 0
     var abortAfterLoops = 3

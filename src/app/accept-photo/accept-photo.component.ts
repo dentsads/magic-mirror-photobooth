@@ -29,9 +29,7 @@ export class AcceptPhotoComponent implements OnInit {
     //this.photoService.getCameraModel()
   }
 
-  handleRedirect(eventId: string) {
-    this.triggerLed(eventId)
-
+  handleRedirect(eventId: string) {    
     const nextRoute = this.routingService.getNextRoute(this.activatedRoute, eventId);
     this.router.navigate([nextRoute]);
   }
@@ -52,6 +50,7 @@ export class AcceptPhotoComponent implements OnInit {
   }
 
   async handleEvent(eventId: string) {
+    this.triggerLed(eventId)
     this.handleRedirect(eventId);
   }
 }

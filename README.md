@@ -51,6 +51,9 @@ npm run build:ssr && sudo npm run serve:ssr
 ```
 
 # add express web server
+npm install express -s
+npm install @types/express -s
+
 mdkir server
 cd server
 sudo npm install ts-node ts-node-dev tslint typescript express @types/express concurrently -g

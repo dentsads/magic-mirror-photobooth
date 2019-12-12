@@ -1,15 +1,31 @@
 {
   "name": "photobooth",
   "version": "0.0.0",
+  "description": "Software for an interactive magic mirror photobooth",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
-    "serve": "concurrently \"ng serve --proxy-config proxy.conf.json\" \"ts-node server/server.ts\"",
-    "build": "ng build",
+    "serve": "concurrently \"ng serve --proxy-config proxy.conf.json\" \"node built/server.js\"",
+    "build:server": "tsc --build tsconfig.server.json",
+    "build:client": "ng build",
+    "build": "ng build && tsc --build tsconfig.server.json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/d.dentsas/magic-mirror-photobooth"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/d.dentsas/magic-mirror-photobooth/issues"
+  },
+  "keywords": [
+    "magic-mirror",
+    "photobooth",
+    "photobox"
+  ],
+  "author": "Dimitrios Dentsas",
   "private": true,
   "dependencies": {
     "@angular/animations": "~8.2.14",

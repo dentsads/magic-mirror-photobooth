@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+      "outDir": "./built",
+      "esModuleInterop": true,
+      "moduleResolution": "node",
+      "traceResolution": false,
+      "resolveJsonModule": true,
+      "allowJs": true,
+      "target": "es5"
+  },
+  "include": [
+      "./server/**/*"
+  ],
+  "exclude": [
+      "node_modules",
+      "scripts"
+  ]
+}
