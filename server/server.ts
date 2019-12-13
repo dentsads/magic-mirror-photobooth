@@ -8,8 +8,18 @@ app.get('/', (req, res) => {
     res.send({});
 })
 
-app.get('/api/led', (req, res) => {      
-    led.leftSpin();
+app.get('/api/led/spin', (req, res) => {      
+    led.leftBallSpin();
+    res.sendStatus(200)
+})
+
+app.get('/api/led/barrel', (req, res) => {      
+    led.rightBarrelSpin();
+    res.sendStatus(200)
+})
+
+app.get('/api/led/clear', (req, res) => {      
+    led.clear();
     res.sendStatus(200)
 })
 
