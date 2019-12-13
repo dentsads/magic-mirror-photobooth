@@ -1,5 +1,5 @@
 import { Board } from 'johnny-five';
-import { Strip, FORWARD } from 'node-pixel';
+import { Strip, FORWARD, BACKWARD } from 'node-pixel';
 
 function sleep(ms): Promise<any> {
   return new Promise((resolve): any => setTimeout(resolve, ms))
@@ -70,10 +70,17 @@ class Led {
 
     this.strip.clear()
    
-    var pos = 0;
-    var shiftAmount = 0
-    var loopCounter = 0
-    var abortAfterLoops = Math.trunc( options.duration / options.shiftDelay )
+    let pos = 0;
+    let shiftAmount = 0
+    let loopCounter = 0
+    let shiftDirection = FORWARD
+    let abortAfterLoops = Math.trunc( options.duration / options.shiftDelay )
+
+    if (options.direction == Direction.LEFT) 
+      shiftDirection = BACKWARD
+
+    if (options.direction == Direction.RIGHT)
+      shiftDirection = FORWARD
 
     if (this.strip.length % 3 == 0) {
       shiftAmount = 3
@@ -91,7 +98,7 @@ class Led {
     while (loopCounter < abortAfterLoops ) {
       loopCounter++;
 
-      this.strip.shift(1, FORWARD, true);
+      this.strip.shift(1, shiftDirection, true);
       this.strip.show();
 
       await wait( options.shiftDelay )
@@ -107,9 +114,9 @@ class Led {
     this.strip.clear()
    
     let calculatedPos: number
-    var pos = 0;
-    var loopCounter = 0
-    var abortAfterLoops = options.loops
+    let pos = 0;
+    let loopCounter = 0
+    let abortAfterLoops = options.loops
 
     if (options.direction == Direction.LEFT)
       calculatedPos = this.strip.length -1

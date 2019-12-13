@@ -4,18 +4,21 @@ import { Led } from './led'
 const app = express();
 const led = new Led();
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true })) 
+
 app.get('/', (req, res) => {
     res.send({});
 })
 
-app.get('/api/led/spin', (req, res) => {      
-    led.leftBallSpin();
-    res.sendStatus(200)
+app.post('/api/led/ball', (req, res) => {  
+    led.ballSpin(req.body);
+    res.json(req.body)
 })
 
-app.get('/api/led/barrel', (req, res) => {      
-    led.rightBarrelSpin();
-    res.sendStatus(200)
+app.post('/api/led/barrel', (req, res) => {       
+    led.barrelSpin(req.body);
+    res.json(req.body)
 })
 
 app.get('/api/led/clear', (req, res) => {      

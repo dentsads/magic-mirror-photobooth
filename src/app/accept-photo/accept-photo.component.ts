@@ -35,7 +35,12 @@ export class AcceptPhotoComponent implements OnInit {
   }
 
   async triggerLed(eventId: string) {
-    await axios('/api/led/spin')
+    await axios.post('/api/led/ball', {
+      direction: "RIGHT",
+      color: "rgb(0, 0, 50)",
+      duration: 2000,
+      loops: 4
+    })
     .then(function (response) {
       // handle success
       console.log(response);
