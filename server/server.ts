@@ -7,10 +7,6 @@ const led = new Led();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true })) 
 
-app.get('/', (req, res) => {
-    res.send({});
-})
-
 app.post('/api/led/ball', (req, res) => {
     var jsonObj = req.body
     try {
@@ -34,10 +30,6 @@ app.post('/api/led/barrel', (req, res) => {
 app.get('/api/led/clear', (req, res) => {      
     led.clear();
     res.sendStatus(200)
-})
-
-app.get('/api/led/crash', (req, res) => {      
-    process.exit(1);
 })
 
 app.listen(4201, '127.0.0.1', function() {
