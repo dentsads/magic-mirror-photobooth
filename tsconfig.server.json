@@ -5,6 +5,7 @@
       "moduleResolution": "node",
       "traceResolution": false,
       "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
       "allowJs": true,
       "target": "es5"
   },

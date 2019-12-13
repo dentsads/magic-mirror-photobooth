@@ -9,6 +9,7 @@
     "build:server": "tsc --build tsconfig.server.json",
     "build:client": "ng build",
     "build": "ng build && tsc --build tsconfig.server.json",
+    "clean": "rm -rf ./built && rm -rf ./dist",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
