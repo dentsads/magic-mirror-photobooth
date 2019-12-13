@@ -50,10 +50,67 @@ ln -s ./node_modules/@serialport/bindings/build/Release/bindings.node ./lib/bind
 npm run build:ssr && sudo npm run serve:ssr
 ```
 
+# increase inotify watches
+
+There might be processes holding too many file handes. You can increase the number of watches like this
+```
+sudo echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
+```
+
 # add express web server
+
+```
 npm install express -s
 npm install @types/express -s
+sudo npm install pm2@latest -g
 
 mdkir server
 cd server
 sudo npm install ts-node ts-node-dev tslint typescript express @types/express concurrently -g
+```
+
+# PM2 process management
+
+## Install pm2 startup script for systemd
+
+```
+# https://pm2.keymetrics.io/docs/usage/startup/
+sudo pm2 startup
+
+sudo pm2 start npm --name "magic-mirror-server" -- run start:server
+sudo pm2 start npm --name "magic-mirror-client" -- run start:client
+
+sudo pm2 save
+```
+
+then when executing
+
+```
+sudo systemctl status pm2-root.service 
+```
+
+this might return status=failed. A fresh reboot of the OS mitigates this. See here: https://www.freedesktop.org/software/systemd/man/systemd.service.html#Restart=
+for a list of when the systemd service will be restarte (default = on-failure)
+
+Now the service starts everytim you reboot or some system failure happens.
+
+You can disable the service with 
+
+```
+sudo systemctl stop pm2-root.service
+sudo systemctl disable pm2-root.service 
+```
+
+
+## Using PM2
+
+```
+# list processes
+sudo pm2 list
+
+# process details for process 0
+sudo pm2 describe 0
+
+# show monitoring info (logs, system info)
+sudo pm2 monit
+```
