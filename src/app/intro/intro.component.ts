@@ -19,7 +19,7 @@ export class IntroComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.componentData = this.routingService.getComponentData(this.activatedRoute);
+    this.componentData = this.routingService.getComponentData2(this.activatedRoute);
     console.log(this.componentData);
     // this.activatedRoute.paramMap.subscribe(params => {
     //  //this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
@@ -33,7 +33,8 @@ export class IntroComponent implements OnInit {
   }
 
   async handleEvent(eventId: string) {
-    this.handleRedirect(eventId);
+    this.routingService.transtionState(eventId);  
+    //this.handleRedirect(eventId);
   }
 
 }

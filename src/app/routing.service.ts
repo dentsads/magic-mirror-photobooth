@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Anim1 } from './anim1.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Machine, interpret, assign, Interpreter, AnyEventObject } from 'xstate';
 import { Graph } from '@dagrejs/graphlib';
 import { Theme } from './theme.model';
 
@@ -10,11 +11,17 @@ import { Theme } from './theme.model';
 })
 export class RoutingService {
 
-  currentThemeId = 'WEDDING';
   THEME_MAP: Record<string, Graph> = {};
+  THEME_MAP2: Record<string, any> = {};
+  currentThemeId = 'WEDDING';
+  currentTheme;
 
-  constructor() {
+  constructor(
+    public router: Router
+  ) {
     this.createThemes();
+    this.createThemes2();
+    this.currentTheme = this.THEME_MAP2[this.currentThemeId];
   }
 
   ANIM1_MAP: Record<string, Anim1> = {
@@ -57,6 +64,11 @@ export class RoutingService {
 
   }
 
+  transtionState(eventId: string): void {
+    console.log("trans...")
+    this.currentTheme.send(eventId)
+  }
+
   getComponentData(activatedRoute: ActivatedRoute) {
     let currentRoute: string;
     let id: string;
@@ -76,6 +88,21 @@ export class RoutingService {
       return currentTheme.node('/' + currentRoute + '/' + id);
     }
 
+  }
+
+  getComponentData2(activatedRoute: ActivatedRoute) {
+    console.log("getComponentData2...")
+    let currentRoute: string;
+    let id: string;
+
+    activatedRoute.url.subscribe(params => {
+      currentRoute = params[0].path;
+    });
+    activatedRoute.paramMap.subscribe(params => {
+      id = params.get('id');
+    });
+    
+    return Object.values<any>(this.currentTheme.state.meta).shift()
   }
 
   createThemes() {
@@ -102,5 +129,53 @@ export class RoutingService {
     g.setEdge('/anim1/8', '/intro');
 
     this.THEME_MAP.WEDDING = g;
+  }
+
+  createThemes2() {
+    let stateMachine = Machine(
+      {
+        initial: '/intro',
+        context: {
+          count: 0
+        },
+        states: {
+          "/intro": {
+            entry: ['transition'],
+            meta: this.ANIM1_MAP[1],
+            on: {
+              "event.intro.01": { 
+                target: "./anim1/2,"          
+              }
+            }
+          },
+          "/anim1/2": {
+            entry: ['transition'],
+            on: {        
+              "event.anim1.02": {      
+                target: "/intro"
+              }
+            }
+          }
+        }
+      });        
+
+      const stateMachine2 = stateMachine.withConfig(
+        {
+          actions: {
+            // action implementations
+            transition: (context, event, meta) => {
+              console.log('transitioning to: ' + meta.state.value);
+              this.router.navigate([meta.state.value]);            
+            }
+          }
+        });
+
+      const stateService = interpret(stateMachine2)
+        //.onTransition(state => console.log(state.context.count))
+        .start();
+
+
+      this.THEME_MAP2.WEDDING = stateService;
+      //stateService.send('event.intro.01');
   }
 }
