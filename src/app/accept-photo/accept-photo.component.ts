@@ -22,16 +22,11 @@ export class AcceptPhotoComponent implements OnInit {
 
   async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(params => {
-      this.componentData = this.routingService.getComponentData(this.activatedRoute);
+      this.componentData = this.routingService.getComponentData();
     });   
 
     //this.componentData.takenPicture = this.photoService.
     //this.photoService.getCameraModel()
-  }
-
-  handleRedirect(eventId: string) {    
-    const nextRoute = this.routingService.getNextRoute(this.activatedRoute, eventId);
-    this.router.navigate([nextRoute]);
   }
 
   async triggerLed(eventId: string) {
@@ -55,7 +50,7 @@ export class AcceptPhotoComponent implements OnInit {
   }
 
   async handleEvent(eventId: string) {
-    //this.triggerLed(eventId)
+    this.triggerLed(eventId)
     this.routingService.transtionState(eventId);
   }
 }

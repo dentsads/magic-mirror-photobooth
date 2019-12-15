@@ -22,8 +22,7 @@ export class Anim1Component implements OnInit {
 
   async ngOnInit() {    
     this.activatedRoute.paramMap.subscribe(params => {
-      // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
-      this.componentData = this.routingService.getComponentData2(this.activatedRoute);
+      this.componentData = this.routingService.getComponentData();
       console.log(this.componentData);
     });
   }
@@ -31,22 +30,8 @@ export class Anim1Component implements OnInit {
   async handleEvent(eventId: string) {        
     const duration: number = await this.getDuration(this.componentData.assetPath);
     console.log('gif duration is ' + duration * 10 + ' milliseconds');
-    /*
-    this.redirectAfterMilliSeconds(duration * 10, eventId);
-    */
-    
+
     this.routingService.transtionState(eventId, { delay: duration * 10 });
-  }
-
-  redirectAfterMilliSeconds(milliseconds: number, eventId: string) {
-    const router = this.router;
-    const routingService = this.routingService;
-    const activatedRoute = this.activatedRoute;
-
-    window.setTimeout(function() {
-      const nextRoute = routingService.getNextRoute(activatedRoute, eventId);
-      router.navigate([nextRoute]);
-    }, milliseconds);
   }
 
   async getDuration(url): Promise<number> {
