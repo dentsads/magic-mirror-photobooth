@@ -21,10 +21,12 @@ export class Anim1Component implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
-      this.componentData = this.routingService.getComponentData(this.activatedRoute);
-    });
+    this.componentData = this.routingService.getComponentData2(this.activatedRoute);
+    console.log(this.componentData);
+    //this.activatedRoute.paramMap.subscribe(params => {
+    //  // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
+    //  this.componentData = this.routingService.getComponentData(this.activatedRoute);
+    //});
   }
 
   async handleEvent(eventId: string) {

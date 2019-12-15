@@ -144,17 +144,13 @@ export class RoutingService {
             meta: this.ANIM1_MAP[1],
             on: {
               "event.intro.01": { 
-                target: "./anim1/2,"          
+                target: "/anim1/2"          
               }
             }
           },
-          "/anim1/2": {
+          "/anim1/2":  {
             entry: ['transition'],
-            on: {        
-              "event.anim1.02": {      
-                target: "/intro"
-              }
-            }
+            meta: this.ANIM1_MAP[2]
           }
         }
       });        
