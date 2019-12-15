@@ -37,7 +37,8 @@ systemctl disable ModemManager.service
 ```
 npm install
 
-# patch the node-pixel library with branch
+# patch the node-pixel library with branch, other wise you will get
+# NoWritablePortError: Node Pixel FIRMATA controller requires IO that can write out
 git clone https://github.com/ajfisher/node-pixel.git
 git checkout j5-firmata-upg
 rm -rf node_modules/node-pixel

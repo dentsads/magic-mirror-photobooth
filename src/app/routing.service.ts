@@ -64,9 +64,10 @@ export class RoutingService {
 
   }
 
-  transtionState(eventId: string): void {
-    console.log("trans...")
-    this.currentTheme.send(eventId)
+  transtionState(eventId: string, options?: any): void {
+    console.log("triggered event: " + eventId)
+    console.log("options: " + JSON.stringify(options))
+    this.currentTheme.send(eventId, options)
   }
 
   getComponentData(activatedRoute: ActivatedRoute) {
@@ -144,14 +145,27 @@ export class RoutingService {
             meta: this.ANIM1_MAP[1],
             on: {
               "event.intro.01": { 
-                target: "/anim1/2"          
+                target: "/anim1/3"          
               }
             }
           },
-          "/anim1/2":  {
+          "/anim1/3":  {
             entry: ['transition'],
-            meta: this.ANIM1_MAP[2]
-          }
+            meta: this.ANIM1_MAP[3],
+            on: {
+              "event.anim1.01": { 
+                target: "/anim1/5"          
+              }
+            },
+            after: {
+              1000: { target: '/anim1/5' }
+            }
+          },
+          "/anim1/5":  {
+            entry: ['transition'],
+            meta: this.ANIM1_MAP[5],
+            type: "final"
+          }          
         }
       });        
 

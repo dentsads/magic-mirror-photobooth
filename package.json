@@ -4,8 +4,8 @@
   "description": "Software for an interactive magic mirror photobooth",
   "scripts": {
     "ng": "ng",
-    "start:server": "ng serve --proxy-config proxy.conf.json",
-    "start:client": "node built/server.js",
+    "start:client": "ng serve --proxy-config proxy.conf.json",
+    "start:server": "node built/server.js",
     "serve:dev": "concurrently \"npm run start:client\" \"npm run start:server\"",
     "serve:prod": "npm run start:client && npm run start:server",
     "build:server": "tsc --build tsconfig.server.json",

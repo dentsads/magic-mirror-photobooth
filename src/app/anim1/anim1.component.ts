@@ -20,20 +20,22 @@ export class Anim1Component implements OnInit {
     private routingService: RoutingService
   ) { }
 
-  async ngOnInit() {
-    this.componentData = this.routingService.getComponentData2(this.activatedRoute);
-    console.log(this.componentData);
-    //this.activatedRoute.paramMap.subscribe(params => {
-    //  // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
-    //  this.componentData = this.routingService.getComponentData(this.activatedRoute);
-    //});
+  async ngOnInit() {    
+    this.activatedRoute.paramMap.subscribe(params => {
+      // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
+      this.componentData = this.routingService.getComponentData2(this.activatedRoute);
+      console.log(this.componentData);
+    });
   }
 
-  async handleEvent(eventId: string) {
+  async handleEvent(eventId: string) {        
     const duration: number = await this.getDuration(this.componentData.assetPath);
     console.log('gif duration is ' + duration * 10 + ' milliseconds');
-
+    /*
     this.redirectAfterMilliSeconds(duration * 10, eventId);
+    */
+    
+    this.routingService.transtionState(eventId, { delay: duration * 10 });
   }
 
   redirectAfterMilliSeconds(milliseconds: number, eventId: string) {
