@@ -92,7 +92,6 @@ export class RoutingService {
   }
 
   getComponentData2(activatedRoute: ActivatedRoute) {
-    console.log("getComponentData2...")
     let currentRoute: string;
     let id: string;
 
@@ -103,7 +102,8 @@ export class RoutingService {
       id = params.get('id');
     });
     
-    return Object.values<any>(this.currentTheme.state.meta).shift()
+    let metadata:any = Object.values(this.currentTheme.state.meta).shift()
+    return metadata.assets
   }
 
   createThemes() {
@@ -135,6 +135,7 @@ export class RoutingService {
   createThemes2() {
     let stateMachine = Machine(
       {
+        id: 'root',
         initial: '/intro',
         context: {
           count: 0
@@ -142,30 +143,72 @@ export class RoutingService {
         states: {
           "/intro": {
             entry: ['transition'],
-            meta: this.ANIM1_MAP[1],
+            meta: { path: "/intro", assets: this.ANIM1_MAP[1] },
             on: {
               "event.intro.01": { 
                 target: "/anim1/3"          
               }
             }
           },
-          "/anim1/3":  {
+          "/anim1/3": {
             entry: ['transition'],
-            meta: this.ANIM1_MAP[3],
-            on: {
-              "event.anim1.01": { 
-                target: "/anim1/5"          
+            meta: { path: "/anim1/3", assets: this.ANIM1_MAP[3] },
+            initial: 'anim_loaded',
+            states: {
+              anim_loaded: {
+                on: {
+                  "event.anim1.01": 'anim_running'
+                }
+              },
+              anim_running: {              
+                after: {
+                  FINISH_ANIM: '#root./anim1/5'
+                } 
               }
-            },
-            after: {
-              1000: { target: '/anim1/5' }
+            }      
+          },
+          "/anim1/5": {
+            entry: ['transition'],
+            meta: { path: "/anim1/5", assets: this.ANIM1_MAP[5] },
+            initial: 'anim_loaded',
+            states: {
+              anim_loaded: {
+                on: {
+                  "event.anim1.01": 'anim_running'
+                }
+              },
+              anim_running: {              
+                after: {
+                  FINISH_ANIM: '#root./accept-photo'
+                } 
+              }
+            }      
+          },
+          "/accept-photo":  {
+            entry: ['transition'],
+            meta: { path: "/accept-photo", assets: { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'} },
+            on: {
+              "event.accept-photo.01": '/anim1/6', // photo ok
+              "event.accept-photo.02": '/anim1/3'  // photo not ok
             }
           },
-          "/anim1/5":  {
+          "/anim1/6": {
             entry: ['transition'],
-            meta: this.ANIM1_MAP[5],
-            type: "final"
-          }          
+            meta: { path: "/anim1/6", assets: this.ANIM1_MAP[6] },
+            initial: 'anim_loaded',
+            states: {
+              anim_loaded: {
+                on: {
+                  "event.anim1.01": 'anim_running'
+                }
+              },
+              anim_running: {              
+                after: {
+                  FINISH_ANIM: '#root./intro'
+                } 
+              }
+            }      
+          }
         }
       });        
 
@@ -174,8 +217,17 @@ export class RoutingService {
           actions: {
             // action implementations
             transition: (context, event, meta) => {
-              console.log('transitioning to: ' + meta.state.value);
-              this.router.navigate([meta.state.value]);            
+              console.log('transitioning to: ' + JSON.stringify(meta.state.value));
+              let metadata:any = Object.values(meta.state.meta).shift()
+              console.log(JSON.stringify(metadata))
+              this.router.navigate([metadata.path]);            
+            }
+          },
+          delays: {
+            FINISH_ANIM: (context, event: AnyEventObject) => {
+              console.log("delay is " + JSON.stringify(event))
+              console.log("event delay is " + event.delay)
+              return event.delay || 0;
             }
           }
         });
