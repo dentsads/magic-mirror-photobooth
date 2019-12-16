@@ -36,7 +36,9 @@ export class RoutingService {
   }
 
   getComponentData() {
-    return <any> Object.values(this.currentTheme.state.meta).shift()
+    //return <any> Object.values(this.currentTheme.state.meta).shift()
+    let metadata:any = Object.values(this.currentTheme.state.meta).shift()
+    return metadata.assets
   }
 
   createThemes() {
@@ -122,7 +124,6 @@ export class RoutingService {
       const extendedStateMachine = stateMachine.withConfig(
         {
           actions: {
-            // action implementations
             transition: (context, event, meta) => {
               console.log('transitioning to: ' + JSON.stringify(meta.state.value));
               let metadata:any = Object.values(meta.state.meta).shift()
