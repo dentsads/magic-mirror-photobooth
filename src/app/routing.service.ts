@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Anim1 } from './anim1.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Machine, interpret, assign, Interpreter, AnyEventObject } from 'xstate';
+import axios from 'axios';
 import { Theme } from './theme.model';
 
 
@@ -36,7 +37,6 @@ export class RoutingService {
   }
 
   getComponentData() {
-    //return <any> Object.values(this.currentTheme.state.meta).shift()
     let metadata:any = Object.values(this.currentTheme.state.meta).shift()
     return metadata.assets
   }
@@ -45,38 +45,52 @@ export class RoutingService {
     let stateMachine = Machine(
       {
         id: 'root',
-        initial: '/intro',
+        initial: 'intro',
         context: {
           count: 0
         },
         states: {
-          "/intro": {
+          intro: {
             entry: ['transition'],
             meta: { path: "/intro", assets: this.ANIM1_MAP[1] },
             on: {
               "event.intro.01": { 
-                target: "/anim1/3"          
+                target: "countdown"          
               }
             }
           },
-          "/anim1/3": {
+          countdown: {
             entry: ['transition'],
             meta: { path: "/anim1/3", assets: this.ANIM1_MAP[3] },
-            initial: 'anim_loaded',
+            initial: 'trigger_led',
             states: {
+              trigger_led: {                
+                on: {
+                  "": {
+                    target: 'anim_loaded',
+                    actions: (context, event) => { this.triggerLed({
+                      direction: "RIGHT",
+                      color: "rgb(0, 0, 50)",
+                      duration: 2760,
+                      loops: 1
+                    }) 
+                  }
+                  }
+                }
+              },
               anim_loaded: {
                 on: {
                   "event.anim1.01": 'anim_running'
                 }
-              },
+              },              
               anim_running: {              
                 after: {
-                  FINISH_ANIM: '#root./anim1/5'
+                  FINISH_ANIM: '#root.take-photo'
                 } 
               }
             }      
           },
-          "/anim1/5": {
+          "take-photo": {
             entry: ['transition'],
             meta: { path: "/anim1/5", assets: this.ANIM1_MAP[5] },
             initial: 'anim_loaded',
@@ -88,20 +102,20 @@ export class RoutingService {
               },
               anim_running: {              
                 after: {
-                  FINISH_ANIM: '#root./accept-photo'
+                  FINISH_ANIM: '#root.accept-photo'
                 } 
               }
             }      
           },
-          "/accept-photo":  {
+          "accept-photo":  {
             entry: ['transition'],
             meta: { path: "/accept-photo", assets: { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'} },
             on: {
-              "event.accept-photo.01": '/anim1/6', // photo ok
-              "event.accept-photo.02": '/anim1/3'  // photo not ok
+              "event.accept-photo.01": 'goodjob', // photo ok
+              "event.accept-photo.02": 'countdown'  // photo not ok
             }
           },
-          "/anim1/6": {
+          goodjob: {
             entry: ['transition'],
             meta: { path: "/anim1/6", assets: this.ANIM1_MAP[6] },
             initial: 'anim_loaded',
@@ -113,7 +127,7 @@ export class RoutingService {
               },
               anim_running: {              
                 after: {
-                  FINISH_ANIM: '#root./intro'
+                  FINISH_ANIM: '#root.intro'
                 } 
               }
             }      
@@ -143,5 +157,20 @@ export class RoutingService {
       const stateService = interpret(extendedStateMachine).start();
 
       this.THEME_MAP.WEDDING = stateService;
+  }
+
+  async triggerLed(options: any) {
+    await axios.post('/api/led/ball', options)
+    .then(function (response) {
+      // handle success
+      console.log(response);
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .finally(function () {
+      // always executed
+    });
   }
 }
