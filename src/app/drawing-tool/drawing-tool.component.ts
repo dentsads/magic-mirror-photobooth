@@ -21,7 +21,7 @@ export class DrawingToolComponent implements OnInit {
     this.activatedRoute.paramMap.subscribe(params => {
       // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
       this.componentData = this.routingService.getComponentData();
-    });   
+    });
   }
 
 

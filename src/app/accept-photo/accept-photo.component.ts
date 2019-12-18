@@ -22,7 +22,7 @@ export class AcceptPhotoComponent implements OnInit {
   async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(params => {
       this.componentData = this.routingService.getComponentData();
-    });   
+    });
   }
 
   async handleEvent(eventId: string) {

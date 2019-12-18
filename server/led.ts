@@ -82,6 +82,14 @@ class Led {
     if (options.direction == Direction.RIGHT)
       shiftDirection = FORWARD
 
+    /*
+      If the number of pixels on the LED strip is divisible by 3,
+      then only light every 3rd pixel (looks cooler and more spaced out).
+      Otherwise assume there is an even number of pixels and light only 
+      every 2nd pixel.
+
+      God help you, if the number is uneven.
+    */
     if (this.strip.length % 3 == 0) {
       shiftAmount = 3
     } else {

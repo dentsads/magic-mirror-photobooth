@@ -33,16 +33,16 @@ export class RoutingService {
   };
 
   transtionState(eventId: string, options?: any): void {
-    this.currentTheme.send(eventId, options)
+    this.currentTheme.send(eventId, options);
   }
 
   getComponentData() {
-    let metadata:any = Object.values(this.currentTheme.state.meta).shift()
-    return metadata.assets
+    const metadata: any = Object.values(this.currentTheme.state.meta).shift();
+    return metadata.assets;
   }
 
   createThemes() {
-    let stateMachine = Machine(
+    const stateMachine = Machine(
       {
         id: 'root',
         initial: 'intro',
@@ -52,124 +52,124 @@ export class RoutingService {
         states: {
           intro: {
             entry: ['transition'],
-            meta: { path: "/intro", assets: this.ANIM1_MAP[1] },
+            meta: { path: '/intro', assets: this.ANIM1_MAP[1] },
             on: {
-              "event.intro.01": { 
-                target: "countdown"          
+              'event.intro.01': {
+                target: 'countdown'
               }
             }
           },
           countdown: {
             entry: ['transition'],
-            meta: { path: "/anim1/3", assets: this.ANIM1_MAP[3] },
+            meta: { path: '/anim1/3', assets: this.ANIM1_MAP[3] },
             initial: 'trigger_led',
             states: {
-              trigger_led: {                
+              trigger_led: {
                 on: {
-                  "": {
+                  '': {
                     target: 'anim_loaded',
                     actions: (context, event) => { this.triggerLed({
-                      direction: "RIGHT",
-                      color: "rgb(0, 0, 50)",
+                      direction: 'RIGHT',
+                      color: 'rgb(0, 0, 50)',
                       duration: 2760,
                       loops: 1
-                    }) 
+                    });
                   }
                   }
                 }
               },
               anim_loaded: {
                 on: {
-                  "event.anim1.01": 'anim_running'
+                  'event.anim1.01': 'anim_running'
                 }
-              },              
-              anim_running: {              
+              },
+              anim_running: {
                 after: {
                   FINISH_ANIM: '#root.take-photo'
-                } 
+                }
               }
-            }      
+            }
           },
-          "take-photo": {
+          'take-photo': {
             entry: ['transition'],
-            meta: { path: "/anim1/5", assets: this.ANIM1_MAP[5] },
+            meta: { path: '/anim1/5', assets: this.ANIM1_MAP[5] },
             initial: 'anim_loaded',
             states: {
               anim_loaded: {
                 on: {
-                  "event.anim1.01": 'anim_running'
+                  'event.anim1.01': 'anim_running'
                 }
               },
-              anim_running: {              
+              anim_running: {
                 after: {
                   FINISH_ANIM: '#root.accept-photo'
-                } 
+                }
               }
-            }      
+            }
           },
-          "accept-photo":  {
+          'accept-photo':  {
             entry: ['transition'],
-            meta: { path: "/accept-photo", assets: { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'} },
+            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'} },
             on: {
-              "event.accept-photo.01": 'goodjob', // photo ok
-              "event.accept-photo.02": 'countdown'  // photo not ok
+              'event.accept-photo.01': 'goodjob', // photo ok
+              'event.accept-photo.02': 'countdown'  // photo not ok
             }
           },
           goodjob: {
             entry: ['transition'],
-            meta: { path: "/anim1/6", assets: this.ANIM1_MAP[6] },
+            meta: { path: '/anim1/6', assets: this.ANIM1_MAP[6] },
             initial: 'anim_loaded',
             states: {
               anim_loaded: {
                 on: {
-                  "event.anim1.01": 'anim_running'
+                  'event.anim1.01': 'anim_running'
                 }
               },
-              anim_running: {              
+              anim_running: {
                 after: {
                   FINISH_ANIM: '#root.intro'
-                } 
+                }
               }
-            }      
+            }
           }
         }
-      });        
+      });
 
-      const extendedStateMachine = stateMachine.withConfig(
+    const extendedStateMachine = stateMachine.withConfig(
         {
           actions: {
             transition: (context, event, meta) => {
               console.log('transitioning to: ' + JSON.stringify(meta.state.value));
-              let metadata:any = Object.values(meta.state.meta).shift()
-              console.log(JSON.stringify(metadata))
-              this.router.navigate([metadata.path]);            
+              const metadata: any = Object.values(meta.state.meta).shift();
+              console.log(JSON.stringify(metadata));
+              this.router.navigate([metadata.path]);
             }
           },
           delays: {
             FINISH_ANIM: (context, event: AnyEventObject) => {
-              console.log("delay is " + JSON.stringify(event))
-              console.log("event delay is " + event.delay)
+              console.log('delay is ' + JSON.stringify(event));
+              console.log('event delay is ' + event.delay);
               return event.delay || 0;
             }
           }
         });
 
-      const stateService = interpret(extendedStateMachine).start();
+    const stateService = interpret(extendedStateMachine).start();
 
-      this.THEME_MAP.WEDDING = stateService;
+    this.THEME_MAP.WEDDING = stateService;
   }
 
   async triggerLed(options: any) {
     await axios.post('/api/led/ball', options)
-    .then(function (response) {
+    .then(function(response) {
       // handle success
       console.log(response);
     })
-    .catch(function (error) {
+    .catch(function(error) {
       // handle error
       console.log(error);
     })
-    .finally(function () {
+    .finally(function() {
       // always executed
     });
   }

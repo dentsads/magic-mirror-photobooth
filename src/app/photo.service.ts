@@ -6,8 +6,8 @@ import { Injectable } from '@angular/core';
 export class PhotoService {
 
   componentData: any;
-  //gphoto2 = require('gphoto2');
-  //GPhoto = new this.gphoto2.GPhoto2();  
+  // gphoto2 = require('gphoto2');
+  // GPhoto = new this.gphoto2.GPhoto2();
 
   constructor() { }
 
