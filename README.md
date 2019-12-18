@@ -27,54 +27,85 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 
-# For using Arduino IDE disable ModemManager in Linux otherwise it intereres with the Arduino IO
-```
+# LED ring setup
+
+The microcontroller used for controlling the LED ring is
+
+`ARDUINO MICRO, Code: A000053, ATmega32U4 microcontroller`
+
+Where to order:
+* https://www.amazon.com/-/de/gp/product/B00AFY2S56/ref=ppx_yo_dt_b_asin_image_o00_s00?ie=UTF8&psc=1
+* https://store.arduino.cc/arduino-micro
+
+## Flashing the Arduino
+
+### Install the Arduino IDE
+
+Install the IDE from [here](https://www.arduino.cc/en/main/software). For using Arduino IDE disable ModemManager in Linux otherwise it inteferes with the Arduino I/O
+
+``` bash
 systemctl status ModemManager.service
 systemctl disable ModemManager.service
 ```
 
+### Flash `FIRMATA` on Arduino
+
+You need to flash the `FIRMATA` library on the Arduino. You can find the source files [here](https://github.com/ajfisher/node-pixel/tree/v0.10.2/firmware/build/node_pixel_firmata)
+
 # Installation instructions
+
+## Install global dependencies
+
+The following global npm dependencies are needed
+
+``` bash
+# install `node` using Ubuntu
+# see here: https://github.com/nodesource/distributions#debinstall
+curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# install other dependencies
+sudo npm install @angular/cli -g
+sudo npm install typescript -g 
+sudo npm install pm2@latest -g 
+sudo npm install ts-node -g
+sudo npm install ts-node-dev -g
+sudo npm install tslint -g
+sudo npm install express -g
+sudo npm install @types/express -g
+sudo npm install concurrently -g
 ```
+
+
+## Install and run application
+
+
+``` bash
 npm install
 
-# patch the node-pixel library with branch, other wise you will get
+# patch the node-pixel library with `j5-firmata-upg` branch, otherwise you will get
 # NoWritablePortError: Node Pixel FIRMATA controller requires IO that can write out
-git clone https://github.com/ajfisher/node-pixel.git
+git clone https://github.com/ajfisher/node-pixel.git ../
 git checkout j5-firmata-upg
 rm -rf node_modules/node-pixel
 cp -r ../node-pixel/ node_modules/
 
-# somehow the bindins.node is expected elsewhere
-mkdir -p ./lib/binding/node-v67-linux-x64/
-ln -s ./node_modules/@serialport/bindings/build/Release/bindings.node ./lib/binding/node-v67-linux-x64/bindings.node
-
-npm run build:ssr && sudo npm run serve:ssr
+# build and serve app
+npm run build && sudo npm run serve:dev
 ```
 
-# increase inotify watches
+# Increase inotify watches
 
 There might be processes holding too many file handes. You can increase the number of watches like this
-```
+``` bash
 sudo echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
-```
-
-# add express web server
-
-```
-npm install express -s
-npm install @types/express -s
-sudo npm install pm2@latest -g
-
-mdkir server
-cd server
-sudo npm install ts-node ts-node-dev tslint typescript express @types/express concurrently -g
 ```
 
 # PM2 process management
 
 ## Install pm2 startup script for systemd
 
-```
+``` bash
 # https://pm2.keymetrics.io/docs/usage/startup/
 sudo pm2 startup
 
@@ -97,7 +128,7 @@ Now the service starts everytim you reboot or some system failure happens.
 
 You can disable the service with 
 
-```
+``` bash
 sudo systemctl stop pm2-root.service
 sudo systemctl disable pm2-root.service 
 ```
@@ -105,7 +136,7 @@ sudo systemctl disable pm2-root.service
 
 ## Using PM2
 
-```
+``` bash
 # list processes
 sudo pm2 list
 
