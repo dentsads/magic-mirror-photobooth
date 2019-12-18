@@ -59,6 +59,10 @@ You need to flash the `FIRMATA` library on the Arduino. You can find the source 
 The following global npm dependencies are needed
 
 ``` bash
+# install imagemagick for image compositing of printer templates
+# see here: https://imagemagick.org/index.php
+sudo apt-get install imagemagick -y
+
 # install `node` using Ubuntu
 # see here: https://github.com/nodesource/distributions#debinstall
 curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -

@@ -1,8 +1,10 @@
 import express from 'express';
 import { Led } from './led'
+import { ImageCompositor } from './imagecompositor' 
 
 const app = express();
 const led = new Led();
+const compositor = new ImageCompositor();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true })) 
@@ -31,6 +33,16 @@ app.get('/api/led/clear', (req, res) => {
     led.clear();
     res.sendStatus(200)
 })
+
+app.get('/api/compositor/composite', (req, res) => {      
+  try {    
+    compositor.composite();
+    res.sendStatus(200)
+  } catch (e) {
+    res.status(500).send("There was an error: " + e)
+  }      
+})
+
 
 app.listen(4201, '127.0.0.1', function() {
     console.log('Server now listenting on 4201');
