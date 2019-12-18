@@ -65,6 +65,7 @@ curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # install other dependencies
+sudo npm install license-checker -g
 sudo npm install @angular/cli -g
 sudo npm install typescript -g 
 sudo npm install pm2@latest -g 
@@ -89,9 +90,18 @@ git clone https://github.com/ajfisher/node-pixel.git ../
 git checkout j5-firmata-upg
 rm -rf node_modules/node-pixel
 cp -r ../node-pixel/ node_modules/
+rm -rf node_modules/node-pixel/.git
 
 # build and serve app
 npm run build && sudo npm run serve:dev
+```
+
+# Check Licenses
+
+You can use the `license-checker` module to check the included node module licenses
+
+```bash
+license-checker | grep licenses | sort | uniq
 ```
 
 # Increase inotify watches
@@ -132,7 +142,6 @@ You can disable the service with
 sudo systemctl stop pm2-root.service
 sudo systemctl disable pm2-root.service 
 ```
-
 
 ## Using PM2
 
