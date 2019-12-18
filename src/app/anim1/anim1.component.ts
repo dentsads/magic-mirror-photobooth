@@ -31,7 +31,7 @@ export class Anim1Component implements OnInit {
     const duration: number = await this.getDuration(this.componentData.assetPath);
     console.log('gif duration is ' + duration * 10 + ' milliseconds');
 
-    this.routingService.transtionState(eventId, { delay: duration * 10 });
+    this.routingService.handleEvent(eventId, { delay: duration * 10 });
   }
 
   async getDuration(url): Promise<number> {

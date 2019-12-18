@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Anim1 } from './anim1.model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Machine, interpret, assign, Interpreter, AnyEventObject } from 'xstate';
+import { Router } from '@angular/router';
+import { Machine, interpret, AnyEventObject } from 'xstate';
 import axios from 'axios';
-import { Theme } from './theme.model';
-
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +30,7 @@ export class RoutingService {
     7: { assetPath: 'assets/photos_are_ready.gif' }
   };
 
-  transtionState(eventId: string, options?: any): void {
+  handleEvent(eventId: string, options?: any): void {
     this.currentTheme.send(eventId, options);
   }
 

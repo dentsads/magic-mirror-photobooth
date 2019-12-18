@@ -26,7 +26,7 @@ export class DrawingToolComponent implements OnInit {
 
 
   async handleEvent(eventId: string) {
-    this.routingService.transtionState(eventId);
+    this.routingService.handleEvent(eventId);
   }
 
 }

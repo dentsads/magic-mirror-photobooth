@@ -26,6 +26,6 @@ export class AcceptPhotoComponent implements OnInit {
   }
 
   async handleEvent(eventId: string) {
-    this.routingService.transtionState(eventId);
+    this.routingService.handleEvent(eventId);
   }
 }
