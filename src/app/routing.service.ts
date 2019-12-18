@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Anim1 } from './anim1.model';
 import { Router } from '@angular/router';
 import { Machine, interpret, AnyEventObject } from 'xstate';
-import axios from 'axios';
+import { LedService } from './led.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,8 @@ export class RoutingService {
   currentTheme;
 
   constructor(
-    public router: Router
+    public router: Router,
+    private ledService: LedService
   ) {
     this.createThemes();
     this.currentTheme = this.THEME_MAP[this.currentThemeId];
@@ -66,7 +67,7 @@ export class RoutingService {
                 on: {
                   '': {
                     target: 'anim_loaded',
-                    actions: (context, event) => { this.triggerLed({
+                    actions: (context, event) => { this.ledService.triggerLed({
                       direction: 'RIGHT',
                       color: 'rgb(0, 0, 50)',
                       duration: 2760,
@@ -146,7 +147,6 @@ export class RoutingService {
           delays: {
             FINISH_ANIM: (context, event: AnyEventObject) => {
               console.log('delay is ' + JSON.stringify(event));
-              console.log('event delay is ' + event.delay);
               return event.delay || 0;
             }
           }
@@ -155,20 +155,5 @@ export class RoutingService {
     const stateService = interpret(extendedStateMachine).start();
 
     this.THEME_MAP.WEDDING = stateService;
-  }
-
-  async triggerLed(options: any) {
-    await axios.post('/api/led/ball', options)
-    .then(function(response) {
-      // handle success
-      console.log(response);
-    })
-    .catch(function(error) {
-      // handle error
-      console.log(error);
-    })
-    .finally(function() {
-      // always executed
-    });
-  }
+  }  
 }
