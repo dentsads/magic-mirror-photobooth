@@ -1,9 +1,17 @@
+import { ErrorHandler, Error } from './errorhandler'
+
 var exec = require('child_process').exec
 
 enum TemplateLayout {
   TWO_UNIFORM = "TWO_UNIFORM",
   THREE_UNIFORM = "THREE_UNIFORM",
   THREE_NON_UNIFORM = "THREE_NON_UNIFORM"
+}
+
+interface CompositorOptions {
+  templateLayout: TemplateLayout;
+  imgSrcList: string[];
+  overlayImg: string;
 }
 
 const templateOffsets: Record<string,string[]> = {
@@ -21,65 +29,42 @@ class ImageCompositor {
 
   }
 
-  public execute(imgSrcList: string[] = [], templateLayout: TemplateLayout, overlayImg: string = ''): void {
-    if (imgSrcList.length == 0)
-      throw new Error("There are no images to composite into print template.")
-    if (overlayImg == '')
-      throw new Error("No path for overlay image to be composed was specified.")
+  public composite(options: CompositorOptions, cb: (e?: Error) => void): void {
+    if (options.imgSrcList.length == 0)
+      return cb(ErrorHandler.createError("1","There are no images to composite into print template."));
+    if (options.overlayImg == '')
+      return cb(ErrorHandler.createError("0","No path for overlay image to be composed was specified."));
 
     let compositeArgs = [
     '-size', `${this.IMAGE_HEIGHT}x${this.IMAGE_WIDTH}`,
     'xc:none'
     ]
 
-    imgSrcList.forEach( (img, imgIndex)  => {
+    options.imgSrcList.forEach( (img, imgIndex)  => {
       compositeArgs.push('\\(')
       compositeArgs.push(img)
 
       if (false) compositeArgs.push(`-resize ${null}`)
       
-      compositeArgs.push(`-repage ${templateOffsets[templateLayout][imgIndex]}`)            
+      compositeArgs.push(`-repage ${templateOffsets[options.templateLayout][imgIndex]}`)            
       compositeArgs.push('\\)')
     });
 
     compositeArgs.push('-layers', 'flatten')
     compositeArgs.push(this.TMP_FILE)
 
-    /*
-    var command = [
-      'convert',
-      '-size', '1795x1205',
-      'xc:none',
-      '\\(','built/01.jpg', '-resize 100', '-repage', '+50+245', '\\)',
-      '\\(','built/02.jpg','-repage', '+623+245', '\\)',
-      '\\(','built/03.jpg','-repage', '+1218+245', '\\)',
-      '-layers', 'flatten',
-      'built/photos.png'  // output
-      ];
-    */
-    console.log('convert ' + compositeArgs.join(' '))
-
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
-      if (err) throw err
-      this.compose(this.TMP_FILE, overlayImg)
+      if (err) return cb(ErrorHandler.createError("1",err))
+      this.compose(this.TMP_FILE, options.overlayImg, cb)
     });
 
-    return;
   }
 
-  public compose(img: string = '', overlayImg: string = ''): void {
-    if (img == '')
-      throw new Error("No path for image to be composed was specified.")
-    if (overlayImg == '')
-      throw new Error("No path for overlay image to be composed was specified.")
-
-    //convert built/photos.png built/christmas_01_overlay_base_03.png -compose over -composite ./built/result.png
-
+  public compose(img: string = '', overlayImg: string = '', cb: (e?: Error) => void): void {
     let compositeArgs = `${img} ${overlayImg} -compose over -composite ${this.OUTPUT_DIR}/result.png`
-    console.log('convert ' + compositeArgs)
 
-    exec('convert ' + compositeArgs, function(err, stdout, stderr) { 
-      if (err) throw err
+    exec('convert ' + compositeArgs, (err, stdout, stderr) => { 
+      if (err) return cb(ErrorHandler.createError("1",err))
     });
 
     return;
@@ -88,6 +73,6 @@ class ImageCompositor {
 }
 
 //const compositor = new ImageCompositor()
-//compositor.execute(['built/01.jpg', 'built/02.jpg', 'built/03.jpg'], TemplateLayout.THREE_UNIFORM, 'built/christmas_01_overlay_base_03.png')
+//compositor.composite({ ['built/01.jpg', 'built/02.jpg', 'built/03.jpg'], TemplateLayout.THREE_UNIFORM, 'built/christmas_01_overlay_base_03.png' })
 
 export { ImageCompositor, TemplateLayout }

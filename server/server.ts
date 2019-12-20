@@ -34,13 +34,16 @@ app.get('/api/led/clear', (req, res) => {
     res.sendStatus(200)
 })
 
-app.get('/api/compositor/composite', (req, res) => {      
-  try {    
-    compositor.composite();
-    res.sendStatus(200)
-  } catch (e) {
-    res.status(500).send("There was an error: " + e)
-  }      
+app.post('/api/compositor/composite', (req, res, next) => {
+  var jsonObj = req.body
+
+  compositor.composite(jsonObj, (err) => {
+    if (err) {
+      res.status(500).send(err).end()
+    } else {
+      next()
+    }          
+  })    
 })
 
 
