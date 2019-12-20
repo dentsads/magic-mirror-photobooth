@@ -9,19 +9,19 @@ async function wait(ms): Promise<any> {
   await sleep(ms)
 }
 
-export enum Direction {
+enum Direction {
   LEFT = "LEFT",
   RIGHT = "RIGHT"
 }
 
-export interface BallSpinOptions {
+interface BallSpinOptions {
   direction: Direction;
   color: string, // https://github.com/Qix-/color-string
   duration: number, // number of millis for one loop
   loops: number
 }
 
-export interface BarrelSpinOptions {
+interface BarrelSpinOptions {
   direction: Direction;
   color: string, // https://github.com/Qix-/color-string
   duration: number, // number of millis for how long the pixels are lit
@@ -166,4 +166,4 @@ class Led {
 
 }
 
-export { Led }
+export { Led, Direction, BallSpinOptions, BarrelSpinOptions }
