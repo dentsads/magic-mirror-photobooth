@@ -24,13 +24,13 @@ export class RoutingService {
   }
 
   ANIM1_MAP: Record<string, Anim1> = {
-    1: { assetPath: 'assets/intro.gif' },
-    2: { assetPath: 'assets/are_you_ready.gif' },
-    3: { assetPath: 'assets/countdown.gif' },
-    4: { assetPath: 'assets/say_cheese.gif' },
-    5: { assetPath: 'assets/take_photo.gif' },
-    6: { assetPath: 'assets/great_job.gif' },
-    7: { assetPath: 'assets/photos_are_ready.gif' }
+    1: { assetPath: 'assets/compositions/intro.gif' },
+    2: { assetPath: 'assets/compositions/are_you_ready.gif' },
+    3: { assetPath: 'assets/compositions/countdown.gif' },
+    4: { assetPath: 'assets/compositions/say_cheese.gif' },
+    5: { assetPath: 'assets/compositions/take_photo.gif' },
+    6: { assetPath: 'assets/compositions/great_job.gif' },
+    7: { assetPath: 'assets/compositions/photos_are_ready.gif' }
   };
 
   handleEvent(eventId: string, options?: any): void {
@@ -147,7 +147,7 @@ export class RoutingService {
           },
           acceptPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
-            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'} },
+            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'assets/compositions/icons8-nok-480.png'} },
             on: {
               'event.accept-photo.01': 'goodjob', // photo ok
               'event.accept-photo.02': 'countdown'  // photo not ok
