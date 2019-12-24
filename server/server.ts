@@ -37,11 +37,11 @@ app.get('/api/led/clear', (req, res) => {
 app.post('/api/compositor/composite', (req, res, next) => {
   var jsonObj = req.body
 
-  compositor.composite(jsonObj, (err) => {
+  compositor.composite(jsonObj, (out, err) => {
     if (err) {
       res.status(500).send(err).end()
     } else {
-      next()
+      res.status(200).send(out).end()
     }          
   })    
 })

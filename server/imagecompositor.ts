@@ -29,11 +29,11 @@ class ImageCompositor {
 
   }
 
-  public composite(options: CompositorOptions, cb: (e?: Error) => void): void {
-    if (options.imgSrcList.length == 0)
-      return cb(ErrorHandler.createError("1","There are no images to composite into print template."));
-    if (options.overlayImg == '')
-      return cb(ErrorHandler.createError("0","No path for overlay image to be composed was specified."));
+  public composite(options: CompositorOptions, cb: (stdout?: object, e?: Error) => void): void {
+    if (options.imgSrcList.length == undefined)
+      return cb(null, ErrorHandler.createError("1","There are no images to composite into print template."));
+    if (options.overlayImg === '')
+      return cb(null, ErrorHandler.createError("0","No path for overlay image to be composed was specified."));
 
     let compositeArgs = [
     '-size', `${this.IMAGE_HEIGHT}x${this.IMAGE_WIDTH}`,
@@ -54,20 +54,22 @@ class ImageCompositor {
     compositeArgs.push(this.TMP_FILE)
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
-      if (err) return cb(ErrorHandler.createError("1",err))
+      if (err) return cb(null, ErrorHandler.createError("1",err))
       this.compose(this.TMP_FILE, options.overlayImg, cb)
     });
 
   }
 
-  public compose(img: string = '', overlayImg: string = '', cb: (e?: Error) => void): void {
+  public compose(img: string = '', overlayImg: string = '', cb: (stdout?: object, e?: Error) => void): void {
     let compositeArgs = `${img} ${overlayImg} -compose over -composite ${this.OUTPUT_DIR}/result.png`
 
     exec('convert ' + compositeArgs, (err, stdout, stderr) => { 
-      if (err) return cb(ErrorHandler.createError("1",err))
-    });
-
-    return;
+      if (err) {
+        return cb(null, ErrorHandler.createError("1",err))
+      } else {
+        return cb({ "result" : this.OUTPUT_DIR + "/result.png" });
+      }      
+    });    
   }
 
 }
