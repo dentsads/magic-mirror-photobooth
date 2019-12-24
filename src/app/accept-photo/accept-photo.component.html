@@ -1,5 +1,5 @@
 <div>
-    <img style="width:110%" src="assets/stockphoto.jpg" />
+    <img style="width:110%" src="{{componentData.context.capturedPhotoPath}}" />
     <div (click)="handleEvent('event.accept-photo.01')" id="overlay-left"><img src="{{componentData.assetButtonOkPath}}"></div>
     <div (click)="handleEvent('event.accept-photo.02')" id="overlay-right"><img src="{{componentData.assetButtonNokPath}}"></div>
 </div>

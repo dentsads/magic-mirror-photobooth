@@ -3,6 +3,7 @@ import { Anim1 } from './anim1.model';
 import { Router } from '@angular/router';
 import { Machine, interpret, AnyEventObject } from 'xstate';
 import { LedService } from './led.service';
+import { PhotoService } from './photo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class RoutingService {
 
   constructor(
     public router: Router,
-    private ledService: LedService
+    private ledService: LedService,
+    private photoService: PhotoService
   ) {
     this.createThemes();
     this.currentTheme = this.THEME_MAP[this.currentThemeId];
@@ -46,7 +48,8 @@ export class RoutingService {
         id: 'root',
         initial: 'intro',
         context: {
-          count: 0
+          capturedPhotoPaths: [],
+          capturedPhotoPath: ""
         },
         states: {
           intro: {
@@ -67,13 +70,25 @@ export class RoutingService {
                 on: {
                   '': {
                     target: 'anim_loaded',
-                    actions: (context, event) => { this.ledService.triggerLed({
-                      direction: 'RIGHT',
-                      color: 'rgb(0, 0, 50)',
-                      duration: 2760,
-                      loops: 1
-                    });
-                  }
+                    actions: (context, event) => { 
+                      this.ledService.triggerLed({
+                        direction: 'RIGHT',
+                        color: 'rgb(0, 0, 50)',
+                        duration: 2760,
+                        loops: 1
+                      })
+                      .then(function(response) {
+                        // handle success
+                        console.log(response);
+                      })
+                      .catch(function(error) {
+                        // handle error
+                        console.log(error);
+                      })
+                      .finally(function() {
+                        // always executed
+                      });
+                    }
                   }
                 }
               },
@@ -84,16 +99,40 @@ export class RoutingService {
               },
               anim_running: {
                 after: {
-                  FINISH_ANIM: '#root.take-photo'
+                  FINISH_ANIM: '#root.capturePhoto'
                 }
               }
             }
           },
-          'take-photo': {
+          capturePhoto: {
             entry: ['transition'],
             meta: { path: '/anim1/5', assets: this.ANIM1_MAP[5] },
-            initial: 'anim_loaded',
+            initial: 'capture_photo',
             states: {
+              capture_photo: {
+                on: {
+                  '': {
+                    target: 'anim_loaded',
+                    actions: (context, event) => { 
+                      this.photoService.capturePhoto()
+                      .then(function(response) {
+                        // handle success
+                        let capturedPhotoPath = response.data.result
+                        context.capturedPhotoPath = capturedPhotoPath
+                        context.capturedPhotoPaths.push(capturedPhotoPath)
+                        console.log(response);
+                      })
+                      .catch(function(error) {
+                        // handle error
+                        console.log(error);
+                      })
+                      .finally(function() {
+                        // always executed
+                      });
+                  }
+                  }
+                }
+              },
               anim_loaded: {
                 on: {
                   'event.anim1.01': 'anim_running'
@@ -101,13 +140,13 @@ export class RoutingService {
               },
               anim_running: {
                 after: {
-                  FINISH_ANIM: '#root.accept-photo'
+                  FINISH_ANIM: '#root.acceptPhoto'
                 }
               }
             }
           },
-          'accept-photo':  {
-            entry: ['transition'],
+          acceptPhoto:  {
+            entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'assets/icons8-ok-480.png', assetButtonNokPath: 'assets/icons8-nok-480.png'} },
             on: {
               'event.accept-photo.01': 'goodjob', // photo ok
@@ -142,6 +181,9 @@ export class RoutingService {
               const metadata: any = Object.values(meta.state.meta).shift();
               console.log(JSON.stringify(metadata));
               this.router.navigate([metadata.path]);
+            },
+            updateMetaAssetsWithContext: (context, event, meta) => {                            
+              meta.state.meta[Object.keys(meta.state.meta).shift()].assets.context = context;
             }
           },
           delays: {

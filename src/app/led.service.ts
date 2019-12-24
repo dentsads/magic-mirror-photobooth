@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +8,9 @@ export class LedService {
 
   constructor() { }
 
-  async triggerLed(options: any) {
+  async triggerLed(options: any): Promise<AxiosResponse<any>> {
+    return axios.post('/api/led/ball', options)
+    /*
     await axios.post('/api/led/ball', options)
     .then(function(response) {
       // handle success
@@ -21,5 +23,6 @@ export class LedService {
     .finally(function() {
       // always executed
     });
+    */
   }
 }

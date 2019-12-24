@@ -21,7 +21,8 @@
             "aot": false,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              { "glob": "**/*", "input": "./built", "ignore": ["**/*.js"], "output": "/photos/" }
             ],
             "styles": [
               "src/styles.css"

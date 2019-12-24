@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import axios, { AxiosResponse } from 'axios';
 
 @Injectable({
   providedIn: 'root'
@@ -6,18 +7,11 @@ import { Injectable } from '@angular/core';
 export class PhotoService {
 
   componentData: any;
-  // gphoto2 = require('gphoto2');
-  // GPhoto = new this.gphoto2.GPhoto2();
 
   constructor() { }
 
-  /*
-  getCameraModel() {
-    this.GPhoto.list(function (list) {
-      if (list.length === 0) return;
-      var camera = list[0];
-      console.log('Found', camera.model);
-    })
+  async capturePhoto(options?: any): Promise<AxiosResponse<any>> {
+    return axios.post('/api/dslr/capture', options)
   }
-  */
+
 }

@@ -1,10 +1,12 @@
 import express from 'express';
 import { Led } from './led'
 import { ImageCompositor } from './imagecompositor' 
+import { Photo } from './photo';
 
 const app = express();
 const led = new Led();
 const compositor = new ImageCompositor();
+const photo = new Photo();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true })) 
@@ -39,6 +41,18 @@ app.post('/api/compositor/composite', (req, res, next) => {
   var jsonObj = req.body
 
   compositor.composite(jsonObj, (out, err) => {
+    if (err) {
+      res.status(500).send(err).end()
+    } else {
+      res.status(200).send(out).end()
+    }          
+  })    
+})
+
+app.post('/api/dslr/capture', (req, res, next) => {
+  var jsonObj = req.body
+
+  photo.caputurePhoto(jsonObj, (out, err) => {
     if (err) {
       res.status(500).send(err).end()
     } else {
