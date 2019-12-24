@@ -14,7 +14,7 @@ interface PhotoOptions {
 
 class Photo {
   private GPhoto
-  private readonly OUTPUT_DIR:string = "photos"
+  private readonly OUTPUT_DIR:string = "api/photos/"
 
   public constructor() {
     this.GPhoto = new gphoto2.GPhoto2();
@@ -30,7 +30,7 @@ class Photo {
 
   public caputurePhoto(options: PhotoOptions, cb: (stdout?: object, e?: Error) => void): void {
     // return something more meaningful here after getting DSLR ready
-    return cb({ "result" : this.OUTPUT_DIR + "/01.jpg" })
+    return cb({ "result" : "01.jpg" })
   }
 
 }

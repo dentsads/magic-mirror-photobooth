@@ -24,13 +24,13 @@ export class RoutingService {
   }
 
   ANIM1_MAP: Record<string, Anim1> = {
-    1: { assetPath: 'assets/compositions/intro.gif' },
-    2: { assetPath: 'assets/compositions/are_you_ready.gif' },
-    3: { assetPath: 'assets/compositions/countdown.gif' },
-    4: { assetPath: 'assets/compositions/say_cheese.gif' },
-    5: { assetPath: 'assets/compositions/take_photo.gif' },
-    6: { assetPath: 'assets/compositions/great_job.gif' },
-    7: { assetPath: 'assets/compositions/photos_are_ready.gif' }
+    1: { assetPath: 'api/assets/compositions/intro.gif' },
+    2: { assetPath: 'api/assets/compositions/are_you_ready.gif' },
+    3: { assetPath: 'api/assets/compositions/countdown.gif' },
+    4: { assetPath: 'api/assets/compositions/say_cheese.gif' },
+    5: { assetPath: 'api/assets/compositions/take_photo.gif' },
+    6: { assetPath: 'api/assets/compositions/great_job.gif' },
+    7: { assetPath: 'api/assets/compositions/photos_are_ready.gif' }
   };
 
   handleEvent(eventId: string, options?: any): void {
@@ -49,7 +49,9 @@ export class RoutingService {
         initial: 'intro',
         context: {
           capturedPhotoPaths: [],
-          capturedPhotoPath: ""
+          photoPath: "",
+          maxNumberOfPhotos: 3,
+          currentPhotoCounter: 0
         },
         states: {
           intro: {
@@ -118,7 +120,7 @@ export class RoutingService {
                       .then(function(response) {
                         // handle success
                         let capturedPhotoPath = response.data.result
-                        context.capturedPhotoPath = capturedPhotoPath
+                        context.photoPath = 'api/photos/' + capturedPhotoPath
                         context.capturedPhotoPaths.push(capturedPhotoPath)
                         console.log(response);
                       })
@@ -129,7 +131,7 @@ export class RoutingService {
                       .finally(function() {
                         // always executed
                       });
-                  }
+                    }
                   }
                 }
               },
@@ -165,9 +167,50 @@ export class RoutingService {
               },
               anim_running: {
                 after: {
-                  FINISH_ANIM: '#root.intro'
+                  FINISH_ANIM: '#root.compositePhoto'
                 }
               }
+            }
+          },
+          compositePhoto: {
+            initial: 'composite_photo',
+            states: {
+              composite_photo: {
+                on: {
+                  '': {
+                    target: '#root.acceptCompositedPhoto',
+                    actions: (context, event) => {
+                      this.photoService.compositePhoto({
+                        templateLayout: 'THREE_UNIFORM',
+                        imgSrcList: context.capturedPhotoPaths,
+                        overlayImg: 'print-templates/christmas_01_overlay_base_03.png'
+                      })
+                      .then(function(response) {
+                        // handle success
+                        let capturedPhotoPath = response.data.result
+                        context.photoPath = capturedPhotoPath
+                        context.capturedPhotoPaths = []
+                        console.log(response);
+                      })
+                      .catch(function(error) {
+                        // handle error
+                        console.log(error);
+                      })
+                      .finally(function() {
+                        // always executed
+                      });
+                    }
+                  }
+                }
+              }
+            }
+          },
+          acceptCompositedPhoto:  {
+            entry: ['transition', 'updateMetaAssetsWithContext'],
+            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'assets/compositions/icons8-nok-480.png'} },
+            on: {
+              'event.accept-photo.01': 'intro', // photo ok
+              'event.accept-photo.02': 'countdown'  // photo not ok
             }
           }
         }
@@ -190,6 +233,12 @@ export class RoutingService {
             FINISH_ANIM: (context, event: AnyEventObject) => {
               console.log('delay is ' + JSON.stringify(event));
               return event.delay || 0;
+            }
+          },
+          guards: {
+            transitionToAcceptanceValid: (context, event) => {
+              //return context.canSearch && event.query && event.query.length > 0;
+              return true
             }
           }
         });

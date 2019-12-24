@@ -8,6 +8,7 @@
     "downlevelIteration": true,
     "skipLibCheck": true, // bug with xstate
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "node",

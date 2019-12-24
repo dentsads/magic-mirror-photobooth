@@ -23,7 +23,8 @@
               "src/favicon.ico",
               "src/assets",
               { "glob": "**/*", "input": "../magic-mirror-photobooth-assets", "ignore": ["**/*.js"], "output": "/assets/" },
-              { "glob": "**/*", "input": "../magic-mirror-photobooth-photos", "ignore": ["**/*.js"], "output": "/photos/" }
+              { "glob": "**/*", "input": "../magic-mirror-photobooth-photos", "ignore": ["**/*.js"], "output": "/photos/" },
+              { "glob": "**/*", "input": "dist/photobooth/photos/", "output": "/photos/" }
             ],
             "styles": [
               "src/styles.css"

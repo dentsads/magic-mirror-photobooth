@@ -9,7 +9,9 @@ const compositor = new ImageCompositor();
 const photo = new Photo();
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: true })) 
+app.use(express.urlencoded({ extended: true }))
+app.use('/api/photos', express.static('../magic-mirror-photobooth-photos'));
+app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
 
 app.post('/api/led/ball', (req, res) => {
     var jsonObj = req.body

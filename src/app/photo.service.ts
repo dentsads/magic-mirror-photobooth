@@ -14,4 +14,8 @@ export class PhotoService {
     return axios.post('/api/dslr/capture', options)
   }
 
+  async compositePhoto(options?: any): Promise<AxiosResponse<any>> {
+    return axios.post('/api/compositor/composite', options)
+  }
+
 }
