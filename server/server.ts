@@ -1,7 +1,8 @@
 import express from 'express';
-import { Led } from './led'
-import { ImageCompositor } from './imagecompositor' 
+import { Led } from './led';
+import { ImageCompositor } from './imagecompositor' ;
 import { Photo } from './photo';
+import { logger } from './logger';
 
 const app = express();
 const led = new Led();
@@ -12,6 +13,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/photos', express.static('../magic-mirror-photobooth-photos'));
 app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
+
+logger.info('Hello there, info')
+logger.error('Hello there, error')
 
 app.post('/api/led/ball', (req, res) => {
     var jsonObj = req.body

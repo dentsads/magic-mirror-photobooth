@@ -41,7 +41,7 @@ Where to order:
 
 ### Install the Arduino IDE
 
-Install the IDE from [here](https://www.arduino.cc/en/main/software). For using Arduino IDE disable ModemManager in Linux otherwise it inteferes with the Arduino I/O
+Install the IDE from [here](https://www.arduino.cc/en/main/software). For using Arduino IDE disable ModemManager in Linux otherwise it interferes with the Arduino I/O
 
 ``` bash
 systemctl status ModemManager.service
@@ -152,8 +152,8 @@ then when executing
 sudo systemctl status pm2-root.service 
 ```
 
-this might return status=failed. A fresh reboot of the OS mitigates this. See here: https://www.freedesktop.org/software/systemd/man/systemd.service.html#Restart=
-for a list of when the systemd service will be restarte (default = on-failure)
+this might return `status=failed`. A fresh reboot of the OS mitigates this. See here: https://www.freedesktop.org/software/systemd/man/systemd.service.html#Restart=
+for a list of when the systemd service will be restarted (default = on-failure)
 
 Now the service starts everytim you reboot or some system failure happens.
 

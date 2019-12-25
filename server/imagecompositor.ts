@@ -39,8 +39,8 @@ class ImageCompositor {
       return cb(null, ErrorHandler.createError("0","No path for overlay image to be composed was specified."));
 
     let compositeArgs = [
-    '-size', `${this.IMAGE_HEIGHT}x${this.IMAGE_WIDTH}`,
-    'xc:none'
+      '-size', `${this.IMAGE_HEIGHT}x${this.IMAGE_WIDTH}`,
+      'xc:none'
     ]
 
     options.imgSrcList.forEach( (img, imgIndex)  => {
@@ -76,8 +76,5 @@ class ImageCompositor {
   }
 
 }
-
-//const compositor = new ImageCompositor()
-//compositor.composite({ ['built/01.jpg', 'built/02.jpg', 'built/03.jpg'], TemplateLayout.THREE_UNIFORM, 'built/christmas_01_overlay_base_03.png' })
 
 export { ImageCompositor, TemplateLayout }

@@ -86,9 +86,6 @@ export class RoutingService {
                       .catch(function(error) {
                         // handle error
                         console.log(error);
-                      })
-                      .finally(function() {
-                        // always executed
                       });
                     }
                   }
@@ -127,9 +124,6 @@ export class RoutingService {
                       .catch(function(error) {
                         // handle error
                         console.log(error);
-                      })
-                      .finally(function() {
-                        // always executed
                       });
                     }
                   }
@@ -178,9 +172,6 @@ export class RoutingService {
                       .catch(function(error) {
                         // handle error
                         console.log(error);
-                      })
-                      .finally(function() {
-                        // always executed
                       });
                     }
                   }
