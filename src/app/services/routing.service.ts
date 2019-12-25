@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'intro',
+        initial: 'drawing',
         context: {
           capturedPhotoPaths: [],
           photoPath: "",
@@ -101,11 +101,11 @@ export class RoutingService {
             })
             .then(function(response) {
               // handle success
-              console.log(response);
+              //console.log(response);
             })
             .catch(function(error) {
               // handle error
-              console.log(error);
+              //console.log(error);
             });
           }),
           capturePhoto: this.animationState(this.ANIM1_MAP[5], '/anim1/5', '#root.acceptPhoto', (context, event) => { 
@@ -115,11 +115,11 @@ export class RoutingService {
               let capturedPhotoPath = response.data.result
               context.photoPath = 'api/photos/' + capturedPhotoPath
               context.capturedPhotoPaths.push(capturedPhotoPath)
-              console.log(response);
+              //console.log(response);
             })
             .catch(function(error) {
               // handle error
-              console.log(error);
+              //console.log(error);
             });
           }),
           acceptPhoto:  {
@@ -157,11 +157,11 @@ export class RoutingService {
                         let capturedPhotoPath = response.data.result
                         context.photoPath = capturedPhotoPath
                         context.capturedPhotoPaths = []
-                        console.log(response);
+                        //console.log(response);
                       })
                       .catch(function(error) {
                         // handle error
-                        console.log(error);
+                        //console.log(error);
                       });
                     }
                   }
@@ -184,6 +184,13 @@ export class RoutingService {
             on: {
               'event.select-print-photos.01': 'intro' // photos will be printed
             }
+          },
+          drawing:  {
+            entry: ['transition'],
+            meta: { path: '/drawing', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
+            on: {
+              'event.select-print-photos.01': 'intro' // photos will be printed
+            }
           }
         }
       });
@@ -192,9 +199,9 @@ export class RoutingService {
     {
       actions: {
         transition: (context, event, meta) => {
-          console.log('transitioning to: ' + JSON.stringify(meta.state.value));
+          //console.log('transitioning to: ' + JSON.stringify(meta.state.value));
           const metadata: any = Object.values(meta.state.meta).shift();
-          console.log(JSON.stringify(metadata));
+          //console.log(JSON.stringify(metadata));
           this.router.navigate([metadata.path]);
         },
         updateMetaAssetsWithContext: (context, event, meta) => {                            
@@ -203,7 +210,7 @@ export class RoutingService {
       },
       delays: {
         FINISH_ANIM: (context, event: AnyEventObject) => {
-          console.log('delay is ' + JSON.stringify(event));
+          //console.log('delay is ' + JSON.stringify(event));
           return event.delay || 0;
         }
       },

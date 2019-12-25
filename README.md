@@ -61,7 +61,11 @@ The following global npm dependencies are needed
 ``` bash
 # install imagemagick for image compositing of printer templates
 # see here: https://imagemagick.org/index.php
-sudo apt-get install imagemagick -y
+sudo apt-get install -y imagemagick
+
+# libcairo for usage with https://www.npmjs.com/package/fabric
+# see here: https://www.cairographics.org/download/
+sudo apt-get install -y libcairo2-dev
 
 # install `node` using Ubuntu
 # see here: https://github.com/nodesource/distributions#debinstall
@@ -79,6 +83,7 @@ sudo npm install tslint -g
 sudo npm install express -g
 sudo npm install @types/express -g
 sudo npm install concurrently -g
+sudo npm install canvas -g --unsafe-perm=true --allow-root
 ```
 
 

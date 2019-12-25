@@ -23,13 +23,12 @@ export class Anim1Component implements OnInit {
   async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(params => {
       this.componentData = this.routingService.getComponentData();
-      console.log(this.componentData);
     });
   }
 
   async handleEvent(eventId: string) {
     const duration: number = await this.getDuration(this.componentData.assetPath);
-    console.log('gif duration is ' + duration * 10 + ' milliseconds');
+    //console.log('gif duration is ' + duration * 10 + ' milliseconds');
 
     this.routingService.handleEvent(eventId, { delay: duration * 10 });
   }

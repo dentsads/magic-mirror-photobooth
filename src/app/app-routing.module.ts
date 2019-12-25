@@ -8,6 +8,7 @@ import { SelectPrintPhotosComponent } from './components/select-print-photos/sel
 
 
 const routes: Routes = [
+  { path: '', redirectTo: '/drawing', pathMatch: 'full' },
   { path: 'intro', component: IntroComponent },
   { path: 'anim1/:id', component: Anim1Component },
   { path: 'drawing', component: DrawingToolComponent },
