@@ -123,7 +123,7 @@ export class RoutingService {
             });
           }),
           acceptPhoto:  {
-            entry: ['transition', 'updateMetaAssetsWithContext'],
+            entry: ['updateMetaAssetsWithContext', 'transition'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
             on: {
               'event.accept-photo.01': [
@@ -174,7 +174,7 @@ export class RoutingService {
             entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
             on: {
-              'event.accept-photo.01': 'intro', // photo ok
+              'event.accept-photo.01': 'selectPrintPhotos', // photo ok
               'event.accept-photo.02': 'countdown'  // photo not ok
             }
           },
@@ -182,8 +182,7 @@ export class RoutingService {
             entry: ['transition'],
             meta: { path: '/select-print-photos', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
             on: {
-              'event.select-print-photos.01': 'intro', // photo ok
-              'event.select-print-photos.02': 'countdown'  // photo not ok
+              'event.select-print-photos.01': 'intro' // photos will be printed
             }
           }
         }

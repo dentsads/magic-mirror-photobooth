@@ -19,11 +19,9 @@ export class DrawingToolComponent implements OnInit {
 
   async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(params => {
-      // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
       this.componentData = this.routingService.getComponentData();
     });
   }
-
 
   async handleEvent(eventId: string) {
     this.routingService.handleEvent(eventId);
