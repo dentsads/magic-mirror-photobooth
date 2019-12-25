@@ -93,84 +93,36 @@ export class RoutingService {
               }
             }
           },
-          countdown: {
-            entry: ['transition'],
-            meta: { path: '/anim1/3', assets: this.ANIM1_MAP[3] },
-            initial: 'trigger_led',
-            states: {
-              trigger_led: {
-                on: {
-                  '': {
-                    target: 'anim_loaded',
-                    actions: (context, event) => { 
-                      this.ledService.triggerLed({
-                        direction: 'RIGHT',
-                        color: 'rgb(0, 0, 50)',
-                        duration: 2760,
-                        loops: 1
-                      })
-                      .then(function(response) {
-                        // handle success
-                        console.log(response);
-                      })
-                      .catch(function(error) {
-                        // handle error
-                        console.log(error);
-                      });
-                    }
-                  }
-                }
-              },
-              anim_loaded: {
-                on: {
-                  'event.anim1.01': 'anim_running'
-                }
-              },
-              anim_running: {
-                after: {
-                  FINISH_ANIM: '#root.capturePhoto'
-                }
-              }
-            }
-          },
-          capturePhoto: {
-            entry: ['transition'],
-            meta: { path: '/anim1/5', assets: this.ANIM1_MAP[5] },
-            initial: 'capture_photo',
-            states: {
-              capture_photo: {
-                on: {
-                  '': {
-                    target: 'anim_loaded',
-                    actions: (context, event) => { 
-                      this.photoService.capturePhoto()
-                      .then(function(response) {
-                        // handle success
-                        let capturedPhotoPath = response.data.result
-                        context.photoPath = 'api/photos/' + capturedPhotoPath
-                        context.capturedPhotoPaths.push(capturedPhotoPath)
-                        console.log(response);
-                      })
-                      .catch(function(error) {
-                        // handle error
-                        console.log(error);
-                      });
-                    }
-                  }
-                }
-              },
-              anim_loaded: {
-                on: {
-                  'event.anim1.01': 'anim_running'
-                }
-              },
-              anim_running: {
-                after: {
-                  FINISH_ANIM: '#root.acceptPhoto'
-                }
-              }
-            }
-          },
+          countdown: this.statAnim(this.ANIM1_MAP[3], '/anim1/3', '#root.capturePhoto', (context, event) => { 
+            this.ledService.triggerLed({
+              direction: 'RIGHT',
+              color: 'rgb(0, 0, 50)',
+              duration: 2760,
+              loops: 1
+            })
+            .then(function(response) {
+              // handle success
+              console.log(response);
+            })
+            .catch(function(error) {
+              // handle error
+              console.log(error);
+            });
+          }),
+          capturePhoto: this.statAnim(this.ANIM1_MAP[5], '/anim1/5', '#root.acceptPhoto', (context, event) => { 
+            this.photoService.capturePhoto()
+            .then(function(response) {
+              // handle success
+              let capturedPhotoPath = response.data.result
+              context.photoPath = 'api/photos/' + capturedPhotoPath
+              context.capturedPhotoPaths.push(capturedPhotoPath)
+              console.log(response);
+            })
+            .catch(function(error) {
+              // handle error
+              console.log(error);
+            });
+          }),
           acceptPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
@@ -209,25 +161,6 @@ export class RoutingService {
               }
             }
           },
-          /*
-          goodjob: {
-            entry: ['transition'],
-            meta: { path: '/anim1/6', assets: this.ANIM1_MAP[6] },
-            initial: 'anim_loaded',
-            states: {
-              anim_loaded: {
-                on: {
-                  'event.anim1.01': 'anim_running'
-                }
-              },
-              anim_running: {
-                after: {
-                  FINISH_ANIM: '#root.acceptCompositedPhoto'
-                }
-              }
-            }
-          },
-          */
           goodjob: this.statAnim(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),        
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
