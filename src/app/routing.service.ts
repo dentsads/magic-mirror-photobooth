@@ -149,27 +149,10 @@ export class RoutingService {
           },
           acceptPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
-            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'assets/compositions/icons8-nok-480.png'} },
+            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
             on: {
-              'event.accept-photo.01': 'goodjob', // photo ok
+              'event.accept-photo.01': 'compositePhoto', // photo ok
               'event.accept-photo.02': 'countdown'  // photo not ok
-            }
-          },
-          goodjob: {
-            entry: ['transition'],
-            meta: { path: '/anim1/6', assets: this.ANIM1_MAP[6] },
-            initial: 'anim_loaded',
-            states: {
-              anim_loaded: {
-                on: {
-                  'event.anim1.01': 'anim_running'
-                }
-              },
-              anim_running: {
-                after: {
-                  FINISH_ANIM: '#root.compositePhoto'
-                }
-              }
             }
           },
           compositePhoto: {
@@ -178,7 +161,7 @@ export class RoutingService {
               composite_photo: {
                 on: {
                   '': {
-                    target: '#root.acceptCompositedPhoto',
+                    target: '#root.goodjob',
                     actions: (context, event) => {
                       this.photoService.compositePhoto({
                         templateLayout: 'THREE_UNIFORM',
@@ -205,9 +188,26 @@ export class RoutingService {
               }
             }
           },
+          goodjob: {
+            entry: ['transition'],
+            meta: { path: '/anim1/6', assets: this.ANIM1_MAP[6] },
+            initial: 'anim_loaded',
+            states: {
+              anim_loaded: {
+                on: {
+                  'event.anim1.01': 'anim_running'
+                }
+              },
+              anim_running: {
+                after: {
+                  FINISH_ANIM: '#root.acceptCompositedPhoto'
+                }
+              }
+            }
+          },          
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
-            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'assets/compositions/icons8-nok-480.png'} },
+            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
             on: {
               'event.accept-photo.01': 'intro', // photo ok
               'event.accept-photo.02': 'countdown'  // photo not ok
