@@ -42,7 +42,7 @@ export class RoutingService {
     return metadata.assets;
   }
 
-  private statAnim(assets: object, path: string, targetState: string, action?:(context: any, event: any) => void): object {
+  private animationState(assets: object, path: string, targetState: string, action?:(context: any, event: any) => void): object {
     return {
       entry: ['transition'],
       meta: { path: path, assets: assets },
@@ -80,8 +80,7 @@ export class RoutingService {
         context: {
           capturedPhotoPaths: [],
           photoPath: "",
-          maxNumberOfPhotos: 3,
-          currentPhotoCounter: 0
+          maxNumberOfPhotos: 3
         },
         states: {
           intro: {
@@ -93,7 +92,7 @@ export class RoutingService {
               }
             }
           },
-          countdown: this.statAnim(this.ANIM1_MAP[3], '/anim1/3', '#root.capturePhoto', (context, event) => { 
+          countdown: this.animationState(this.ANIM1_MAP[3], '/anim1/3', '#root.capturePhoto', (context, event) => { 
             this.ledService.triggerLed({
               direction: 'RIGHT',
               color: 'rgb(0, 0, 50)',
@@ -109,7 +108,7 @@ export class RoutingService {
               console.log(error);
             });
           }),
-          capturePhoto: this.statAnim(this.ANIM1_MAP[5], '/anim1/5', '#root.acceptPhoto', (context, event) => { 
+          capturePhoto: this.animationState(this.ANIM1_MAP[5], '/anim1/5', '#root.acceptPhoto', (context, event) => { 
             this.photoService.capturePhoto()
             .then(function(response) {
               // handle success
@@ -127,8 +126,17 @@ export class RoutingService {
             entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
             on: {
-              'event.accept-photo.01': 'compositePhoto', // photo ok
-              'event.accept-photo.02': 'countdown'  // photo not ok
+              'event.accept-photo.01': [
+                // If number of required photos not reached, then repeat photo capture
+                { target: 'compositePhoto', cond: 'targetNumberOfPhotosReached' },
+                { target: 'countdown'}
+              ], // photo ok
+              'event.accept-photo.02': {
+                target: 'countdown',
+                actions: (context, event) => { 
+                  context.capturedPhotoPaths.pop()
+                }
+              } // photo not ok
             }
           },
           compositePhoto: {
@@ -161,7 +169,7 @@ export class RoutingService {
               }
             }
           },
-          goodjob: this.statAnim(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),        
+          goodjob: this.animationState(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),        
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
@@ -201,9 +209,8 @@ export class RoutingService {
         }
       },
       guards: {
-        transitionToAcceptanceValid: (context, event) => {
-          //return context.canSearch && event.query && event.query.length > 0;
-          return true
+        targetNumberOfPhotosReached: (context, event) => {
+          return context.capturedPhotoPaths.length >= context.maxNumberOfPhotos;          
         }
       }
     });
