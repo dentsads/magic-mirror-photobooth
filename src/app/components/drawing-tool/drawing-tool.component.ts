@@ -13,6 +13,12 @@ export class DrawingToolComponent implements OnInit {
   componentData: any;
   canvas: any;
 
+  drawingLineWidth: number = 0;
+  drawingColor: string = '#005E7A';
+  drawingShadowColor: string = '#005E7A';
+  drawingShadowWidth: number = 0;
+  drawingShadowOffset: number = 0;
+
   constructor(
     public router: Router,
     private activatedRoute: ActivatedRoute,
@@ -34,14 +40,47 @@ export class DrawingToolComponent implements OnInit {
         fill : 'red'
     });
 
-    console.log(rect)
-    console.log(this.canvas)
-    this.canvas.add(rect);
+    //this.canvas.add(rect);
+
+    this.canvas.freeDrawingBrush =  new fabric.PencilBrush(this.canvas);
+    this.canvas.freeDrawingBrush.color = this.drawingColor;
+    this.canvas.freeDrawingBrush.shadow =  new fabric.Shadow();
+
     this.canvas.renderAll();
   }
 
   async handleEvent(eventId: string) {
     this.routingService.handleEvent(eventId);
+  }
+
+  handleClearCanvas() {
+    this.canvas.clear();
+  }
+
+  handleDrawingLineWidthElChange(event) {
+    this.drawingLineWidth = parseInt(event.target.value, 10) || 1;
+    this.canvas.freeDrawingBrush.width = this.drawingLineWidth;
+  }
+
+  handleDrawingColorElChange(event) {
+    this.drawingColor = event.target.value;
+    this.canvas.freeDrawingBrush.color = this.drawingColor;
+  }
+
+  handleDrawingShadowColorElChange(event) {
+    this.drawingShadowColor = event.target.value;
+    this.canvas.freeDrawingBrush.shadow.color = this.drawingShadowColor;
+  }
+
+  handleDrawingShadowWidthElChange(event) {
+    this.drawingShadowWidth = parseInt(event.target.value, 10) || 0;
+    this.canvas.freeDrawingBrush.shadow.blur = this.drawingShadowWidth;
+  }
+
+  handleDrawingShadowOffsetElChange(event) {
+    this.drawingShadowOffset = parseInt(event.target.value, 10) || 0;
+    this.canvas.freeDrawingBrush.shadow.offsetX = this.drawingShadowOffset;
+    this.canvas.freeDrawingBrush.shadow.offsetY = this.drawingShadowOffset;
   }
 
 }
