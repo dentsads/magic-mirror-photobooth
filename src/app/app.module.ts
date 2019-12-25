@@ -3,11 +3,10 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { Anim1Component } from './anim1/anim1.component';
-import { IntroComponent } from './intro/intro.component';
-import { DrawingToolComponent } from './drawing-tool/drawing-tool.component';
-import { AcceptPhotoComponent } from './accept-photo/accept-photo.component';
-import { TakePhotoComponent } from './take-photo/take-photo.component';
+import { Anim1Component } from './components/anim1/anim1.component';
+import { IntroComponent } from './components/intro/intro.component';
+import { DrawingToolComponent } from './components/drawing-tool/drawing-tool.component';
+import { AcceptPhotoComponent } from './components/accept-photo/accept-photo.component';
 
 @NgModule({
   declarations: [
@@ -15,8 +14,7 @@ import { TakePhotoComponent } from './take-photo/take-photo.component';
     Anim1Component,
     IntroComponent,
     DrawingToolComponent,
-    AcceptPhotoComponent,
-    TakePhotoComponent
+    AcceptPhotoComponent
   ],
   imports: [
     BrowserModule,

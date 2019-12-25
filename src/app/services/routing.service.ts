@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Anim1 } from './anim1.model';
+import { Anim1 } from '../models/anim1.model';
 import { Router } from '@angular/router';
 import { Machine, interpret, AnyEventObject } from 'xstate';
 import { LedService } from './led.service';
@@ -217,31 +217,31 @@ export class RoutingService {
       });
 
     const extendedStateMachine = stateMachine.withConfig(
-        {
-          actions: {
-            transition: (context, event, meta) => {
-              console.log('transitioning to: ' + JSON.stringify(meta.state.value));
-              const metadata: any = Object.values(meta.state.meta).shift();
-              console.log(JSON.stringify(metadata));
-              this.router.navigate([metadata.path]);
-            },
-            updateMetaAssetsWithContext: (context, event, meta) => {                            
-              meta.state.meta[Object.keys(meta.state.meta).shift()].assets.context = context;
-            }
-          },
-          delays: {
-            FINISH_ANIM: (context, event: AnyEventObject) => {
-              console.log('delay is ' + JSON.stringify(event));
-              return event.delay || 0;
-            }
-          },
-          guards: {
-            transitionToAcceptanceValid: (context, event) => {
-              //return context.canSearch && event.query && event.query.length > 0;
-              return true
-            }
-          }
-        });
+    {
+      actions: {
+        transition: (context, event, meta) => {
+          console.log('transitioning to: ' + JSON.stringify(meta.state.value));
+          const metadata: any = Object.values(meta.state.meta).shift();
+          console.log(JSON.stringify(metadata));
+          this.router.navigate([metadata.path]);
+        },
+        updateMetaAssetsWithContext: (context, event, meta) => {                            
+          meta.state.meta[Object.keys(meta.state.meta).shift()].assets.context = context;
+        }
+      },
+      delays: {
+        FINISH_ANIM: (context, event: AnyEventObject) => {
+          console.log('delay is ' + JSON.stringify(event));
+          return event.delay || 0;
+        }
+      },
+      guards: {
+        transitionToAcceptanceValid: (context, event) => {
+          //return context.canSearch && event.query && event.query.length > 0;
+          return true
+        }
+      }
+    });
 
     const stateService = interpret(extendedStateMachine).start();
 

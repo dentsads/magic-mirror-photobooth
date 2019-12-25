@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RoutingService } from '../routing.service';
+import { RoutingService } from '../../services/routing.service';
 
 @Component({
-  selector: 'app-accept-photo',
-  templateUrl: './accept-photo.component.html',
-  styleUrls: ['./accept-photo.component.css']
+  selector: 'app-drawing-tool',
+  templateUrl: './drawing-tool.component.html',
+  styleUrls: ['./drawing-tool.component.css']
 })
-export class AcceptPhotoComponent implements OnInit {
+export class DrawingToolComponent implements OnInit {
 
   componentData: any;
 
@@ -19,11 +19,14 @@ export class AcceptPhotoComponent implements OnInit {
 
   async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(params => {
+      // this.componentData = this.routingService.ANIM1_MAP[params.get('id')];
       this.componentData = this.routingService.getComponentData();
     });
   }
 
+
   async handleEvent(eventId: string) {
     this.routingService.handleEvent(eventId);
   }
+
 }

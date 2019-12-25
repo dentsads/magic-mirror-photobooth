@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RoutingService } from '../routing.service';
-import { Anim1 } from '../anim1.model';
+import { RoutingService } from '../../services/routing.service';
+import { Anim1 } from '../../models/anim1.model';
 
 @Component({
   selector: 'app-intro',
