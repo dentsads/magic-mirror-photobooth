@@ -1,29 +1,23 @@
-//import winston from 'winston';
 const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, json } = format;
+const { combine, timestamp, json, splat } = format;
 require('winston-daily-rotate-file');
 
 const level = process.env.LOG_LEVEL || 'debug';
 
 const logger = createLogger({
-    level: 'info',
-    format: combine(       
+    level: level,
+    format: combine(
+        splat(),     
         timestamp(),
         json()      
     ),
     exitOnError: false,
-    //defaultMeta: { service: 'user-service' },
+
+    // https://github.com/winstonjs/winston-daily-rotate-file/blob/v4.4.0/README.md
     transports: [
-        //
-        // - Write all logs with level `error` and below to `error.log`
-        // - Write all logs with level `info` and below to `combined.log`
-        //
-        new transports.File({ filename: 'logs/application.stderr.log', level: 'error' }),
-        new transports.File({ filename: 'logs/application.stdout.log' }),
-        
         new (transports.DailyRotateFile)({
             level: 'error',
-            filename: 'application-%DATE%.stderr.log',
+            filename: 'server-%DATE%.stderr.log',
             datePattern: 'YYYY-MM-DD-HH',
             dirname: 'logs',
             zippedArchive: false,
@@ -31,8 +25,8 @@ const logger = createLogger({
             maxFiles: '10'
         }),
         new (transports.DailyRotateFile)({
-            level: 'info',
-            filename: 'application-%DATE%.stdout.log',
+            level: level,
+            filename: 'server-%DATE%.stdout.log',
             datePattern: 'YYYY-MM-DD-HH',
             dirname: 'logs',
             zippedArchive: false,

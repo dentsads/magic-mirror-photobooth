@@ -7,6 +7,7 @@ import { Anim1Component } from './components/anim1/anim1.component';
 import { IntroComponent } from './components/intro/intro.component';
 import { DrawingToolComponent } from './components/drawing-tool/drawing-tool.component';
 import { AcceptPhotoComponent } from './components/accept-photo/accept-photo.component';
+import { SelectPrintPhotosComponent } from './components/select-print-photos/select-print-photos.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { AcceptPhotoComponent } from './components/accept-photo/accept-photo.com
     Anim1Component,
     IntroComponent,
     DrawingToolComponent,
-    AcceptPhotoComponent
+    AcceptPhotoComponent,
+    SelectPrintPhotosComponent
   ],
   imports: [
     BrowserModule,

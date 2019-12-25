@@ -14,16 +14,12 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api/photos', express.static('../magic-mirror-photobooth-photos'));
 app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
 
-logger.info('Hello there, info')
-logger.error('Hello there, error')
-
 app.post('/api/led/ball', (req, res) => {
     var jsonObj = req.body
     led.ballSpin(jsonObj)
     .then(() => res.status(200).send(jsonObj).end())
     .catch((err) => {
-      console.log("error is: " )
-      console.log(err)
+      logger.error(err)
       res.status(500).send(err).end()
     });
 })
@@ -33,8 +29,9 @@ app.post('/api/led/barrel', (req, res) => {
     try {    
       led.barrelSpin(jsonObj)
       res.json(jsonObj)
-    } catch (e) {
-      res.status(500).send("There was an error: " + e)
+    } catch (err) {
+      logger.error(err)
+      res.status(500).send("There was an error: " + err)
     }        
 })
 

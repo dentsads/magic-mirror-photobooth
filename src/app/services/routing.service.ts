@@ -42,6 +42,36 @@ export class RoutingService {
     return metadata.assets;
   }
 
+  private statAnim(assets: object, path: string, targetState: string, action?:(context: any, event: any) => void): object {
+    return {
+      entry: ['transition'],
+      meta: { path: path, assets: assets },
+      initial: 'execute_action',
+      states: {
+        execute_action: {
+          on: {
+            '': {
+              target: 'anim_loaded',
+              actions: (context, event) => { 
+                if (action) action(context, event)
+              }
+            }
+          }
+        },
+        anim_loaded: {
+          on: {
+            'event.anim1.01': 'anim_running'
+          }
+        },
+        anim_running: {
+          after: {
+            FINISH_ANIM: targetState
+          }
+        }
+      }
+    }
+  }
+
   createThemes() {
     const stateMachine = Machine(
       {
@@ -179,6 +209,7 @@ export class RoutingService {
               }
             }
           },
+          /*
           goodjob: {
             entry: ['transition'],
             meta: { path: '/anim1/6', assets: this.ANIM1_MAP[6] },
@@ -195,13 +226,23 @@ export class RoutingService {
                 }
               }
             }
-          },          
+          },
+          */
+          goodjob: this.statAnim(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),        
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
             on: {
               'event.accept-photo.01': 'intro', // photo ok
               'event.accept-photo.02': 'countdown'  // photo not ok
+            }
+          },
+          selectPrintPhotos:  {
+            entry: ['transition'],
+            meta: { path: '/select-print-photos', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
+            on: {
+              'event.select-print-photos.01': 'intro', // photo ok
+              'event.select-print-photos.02': 'countdown'  // photo not ok
             }
           }
         }

@@ -10,19 +10,5 @@ export class LedService {
 
   async triggerLed(options: any): Promise<AxiosResponse<any>> {
     return axios.post('/api/led/ball', options)
-    /*
-    await axios.post('/api/led/ball', options)
-    .then(function(response) {
-      // handle success
-      console.log(response);
-    })
-    .catch(function(error) {
-      // handle error
-      console.log(error);
-    })
-    .finally(function() {
-      // always executed
-    });
-    */
   }
 }
