@@ -14,9 +14,9 @@ export class DrawingToolComponent implements OnInit {
   canvas: any;
 
   drawingLineWidth: number = 5;
-  drawingColor: string = '#7db2e2';
-  drawingShadowColor: string = '#cae6ee';
-  drawingShadowWidth: number = 6;
+  drawingColor: string = '#ffffff';
+  drawingShadowColor: string = '#004aff';
+  drawingShadowWidth: number = 12;
   drawingShadowOffset: number = 0;
 
   constructor(
