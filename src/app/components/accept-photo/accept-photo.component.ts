@@ -1,15 +1,17 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common'; 
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../services/routing.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-accept-photo',
   templateUrl: './accept-photo.component.html',
   styleUrls: ['./accept-photo.component.css']
 })
-export class AcceptPhotoComponent implements OnInit {
+export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
+  private subscription: Subscription;
   componentData: any;
   document;
 
@@ -24,8 +26,13 @@ export class AcceptPhotoComponent implements OnInit {
 
   }
 
+  async ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+  }
+
   async ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.subscription = this.activatedRoute.paramMap.subscribe(params => {
       this.componentData = this.routingService.getComponentData();
     });    
   }

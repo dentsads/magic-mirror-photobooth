@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Buffer } from 'buffer';
 import axios from 'axios';
 import { RoutingService } from '../../services/routing.service';
 import { Anim1 } from '../../models/anim1.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-anim1',
   templateUrl: './anim1.component.html',
   styleUrls: ['./anim1.component.css']
 })
-export class Anim1Component implements OnInit {
+export class Anim1Component implements OnInit, OnDestroy {
 
+  private subscription: Subscription;
   componentData: Anim1;
 
   constructor(
@@ -21,9 +23,14 @@ export class Anim1Component implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.subscription = this.activatedRoute.paramMap.subscribe(params => {
       this.componentData = this.routingService.getComponentData();
     });
+  }
+
+  async ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
   }
 
   async handleEvent(eventId: string) {
