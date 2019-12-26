@@ -124,7 +124,7 @@ export class RoutingService {
           }),
           acceptPhoto:  {
             entry: ['updateMetaAssetsWithContext', 'transition'],
-            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
+            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
             on: {
               'event.accept-photo.01': [
                 // If number of required photos not reached, then repeat photo capture
@@ -172,7 +172,7 @@ export class RoutingService {
           goodjob: this.animationState(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),        
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
-            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
+            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
             on: {
               'event.accept-photo.01': 'selectPrintPhotos', // photo ok
               'event.accept-photo.02': 'countdown'  // photo not ok
@@ -180,14 +180,14 @@ export class RoutingService {
           },
           selectPrintPhotos:  {
             entry: ['transition'],
-            meta: { path: '/select-print-photos', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
+            meta: { path: '/select-print-photos', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
             on: {
               'event.select-print-photos.01': 'intro' // photos will be printed
             }
           },
           drawing:  {
             entry: ['transition'],
-            meta: { path: '/drawing', assets: { assetButtonOkPath: 'api/assets/compositions/icons8-ok-480.png', assetButtonNokPath: 'api/assets/compositions/icons8-nok-480.png'} },
+            meta: { path: '/drawing', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
             on: {
               'event.select-print-photos.01': 'intro' // photos will be printed
             }

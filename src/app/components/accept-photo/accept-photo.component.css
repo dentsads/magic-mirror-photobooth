@@ -1,24 +1,30 @@
-#overlay-left{
-    width:25%;
-    position:absolute; /*You may also use fixed depending on your needs.*/
-    /*left:50px; */
-    top:0; /*If you want it at the bottom you probably want bottom:0 instead*/
-    z-index: 999;
+.overlay-outer {
+    position: relative;
+    padding: 60px;
 }
 
-#overlay-right{
-    width:25%;
-    position:absolute; /*You may also use fixed depending on your needs.*/
-    /*right:0;*/
-    right:0;
-    top:0; /*If you want it at the bottom you probably want bottom:0 instead*/
-    z-index: 999;
+.overlay-left{
+    display: inline;
+    position:absolute;
+    left: 30px;
+    top:0;
 }
 
-#overlay-right > img{
-    width:30%;
+.overlay-right{
+    display: inline;
+    position:absolute;
+    right:30px;
+    top:0;
 }
 
-#overlay-left > img{
-    width:30%;
+.overlay-right > img {
+    width:120px;
+}
+
+.overlay-left > img {
+    width:120px;
+}
+
+.image {
+    max-width: 800px;
 }
