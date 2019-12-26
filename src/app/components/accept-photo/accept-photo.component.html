@@ -1,5 +1,5 @@
-<div class="overlay-outer">
-    <img class="image" src="{{componentData.context.photoPath}}" />
+<div id="overlay-outer">
+    <img (load)="fadeIn()" class="image" src="{{componentData.context.photoPath}}" />
     <div (click)="handleEvent('event.accept-photo.01')" class="overlay-left"><img src="{{componentData.assetButtonOkPath}}"></div>
     <div (click)="handleEvent('event.accept-photo.02')" class="overlay-right"><img src="{{componentData.assetButtonNokPath}}"></div>
 </div>

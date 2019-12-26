@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'drawing',
+        initial: 'capturePhoto',
         context: {
           capturedPhotoPaths: [],
           photoPath: "",
