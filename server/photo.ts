@@ -34,8 +34,9 @@ class Photo {
         this.camera = list[0];
         console.log('Found', this.camera.model);
 
-        resolve()
+        return resolve()
       })
+      resolve()
     })
   }
 
@@ -61,6 +62,9 @@ class Photo {
 
   async downloadImage() {
     return new Promise((resolve, reject) => {
+      if (this.camera == undefined)
+        return reject("")
+
       // Take picture with camera object obtained from list()
       this.camera.takePicture({download: true}, (err, data) => {
         if (err) return reject(err);
@@ -70,8 +74,11 @@ class Photo {
         const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', uuidFileName)
         fs.writeFileSync(path, data);
 
-        resolve(uuidFileName)
+        return resolve(uuidFileName)
       });
+
+      resolve()
+
     })
   }
 
@@ -81,6 +88,7 @@ class Photo {
       return cb({ "result" : imagePath })
     })
     .catch((err) => {
+      // Error when trying to find USB device.
       if (err == -52) {           
         // try initalizing gphoto again, hoping the dslr reconnected
         this.initializeGphoto()
@@ -90,13 +98,15 @@ class Photo {
             return cb({ "result" : imagePath })
           })
           .catch((err) => {
-            return cb(null, ErrorHandler.createError("10", "Tried twice to capture image unsuccessfully. Aborting"))      
+            return cb(null, ErrorHandler.createError("11", "Tried twice to capture image unsuccessfully. Aborting"))      
           }) 
         })
         .catch(() => {
-          return cb(null, ErrorHandler.createError("10", "Tried twice to capture image unsuccessfully. Aborting"))    
+          return cb(null, ErrorHandler.createError("11", "Tried twice to capture image unsuccessfully. Aborting"))    
         })               
-      }  
+      }
+      
+      return cb(null, ErrorHandler.createError("10", err))
     })
   }
 
