@@ -63,6 +63,9 @@ The following global npm dependencies are needed
 # see here: https://imagemagick.org/index.php
 sudo apt-get install -y imagemagick
 
+# see here: http://www.gphoto.org/
+sudo apt-get install gphoto2 
+
 # libcairo for usage with https://www.npmjs.com/package/fabric
 # see here: https://www.cairographics.org/download/
 sudo apt-get install -y libcairo2-dev
@@ -186,6 +189,11 @@ sudo pm2 monit
 
 see issue: https://github.com/gphoto/gphoto2/issues/181 when encountering 
  the `Could not claim the USB device` error.
+
+For a quick fix this helps
+
+`sudo killall gvfs-gphoto2-volume-monitor`
+
 
  ## Nikon D3100
 

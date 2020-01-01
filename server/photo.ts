@@ -1,5 +1,7 @@
+import { ErrorHandler } from './errorhandler';
+
 const gphoto2 = require('gphoto2');
-const Fs = require('fs')  
+const fs = require('fs')  
 const Path = require('path')  
 const Axios = require('axios')
 
@@ -17,25 +19,16 @@ interface PhotoOptions {
 
 class Photo {
   private GPhoto
-  private readonly OUTPUT_DIR:string = "api/photos/"
 
   public constructor() {
     this.GPhoto = new gphoto2.GPhoto2();
   }
 
-  public getCameraModel(): void {
-    this.GPhoto.list(function (list) {
-      if (list.length === 0) return;
-      var camera = list[0];
-      console.log('Found', camera.model);
-    })
-  }
-
-  private async downloadImage () {
+  private async downloadImageTest() {
     const randomString = Math.random().toString(36).substring(2, 8)
     const url = 'https://picsum.photos/533/800'
     const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', randomString + '_random.jpg')
-    const writer = Fs.createWriteStream(path)
+    const writer = fs.createWriteStream(path)
   
     const response = await Axios({
       url,
@@ -51,13 +44,35 @@ class Photo {
     })
   }
 
-  public caputurePhoto(options: PhotoOptions, cb: (stdout?: object, e?: Error) => void): void {
+  async downloadImage() {
+    return new Promise((resolve, reject) => {
+      this.GPhoto.list(function (list) {
+        if (list.length === 0) return reject("No camera model detected");
+        var camera = list[0];
+        console.log('Found', camera.model);
+  
+  
+        // Take picture with camera object obtained from list()
+        camera.takePicture({download: true}, function (err, data) {
+          if (err) reject(err);     
 
+          const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', 'pic.jpg')
+          fs.writeFileSync(path, data);
+
+          resolve(path)
+        });
+      })
+    })
+  }
+
+  public caputurePhoto(options: PhotoOptions, cb: (stdout?: object, e?: Error) => void): void {
     this.downloadImage()
-    .then((result) => {
-      // return something more meaningful here after getting DSLR ready
-      return cb({ "result" : result })
-    })    
+    .then((imagePath) => {
+      return cb({ "result" : imagePath })
+    })
+    .catch((err) => {
+      return cb(null, ErrorHandler.createError("10", err))      
+    })
   }
 
 }
