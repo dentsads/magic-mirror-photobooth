@@ -4,6 +4,7 @@ const gphoto2 = require('gphoto2');
 const fs = require('fs')  
 const Path = require('path')  
 const Axios = require('axios')
+const uuidv4 = require('uuid/v4');
 
 function sleep(ms): Promise<any> {
   return new Promise((resolve): any => setTimeout(resolve, ms))
@@ -19,9 +20,23 @@ interface PhotoOptions {
 
 class Photo {
   private GPhoto
+  private camera
 
-  public constructor() {
-    this.GPhoto = new gphoto2.GPhoto2();
+  public constructor() {    
+    this.initializeGphoto()
+  }
+
+  private initializeGphoto() {    
+    return new Promise((resolve, reject) => {
+      this.GPhoto = new gphoto2.GPhoto2();
+      this.GPhoto.list( (list) => {
+        if (list.length === 0) return reject();
+        this.camera = list[0];
+        console.log('Found', this.camera.model);
+
+        resolve()
+      })
+    })
   }
 
   private async downloadImageTest() {
@@ -46,32 +61,42 @@ class Photo {
 
   async downloadImage() {
     return new Promise((resolve, reject) => {
-      this.GPhoto.list(function (list) {
-        if (list.length === 0) return reject("No camera model detected");
-        var camera = list[0];
-        console.log('Found', camera.model);
-  
-  
-        // Take picture with camera object obtained from list()
-        camera.takePicture({download: true}, function (err, data) {
-          if (err) reject(err);     
+      // Take picture with camera object obtained from list()
+      this.camera.takePicture({download: true}, (err, data) => {
+        if (err) return reject(err);
 
-          const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', 'pic.jpg')
-          fs.writeFileSync(path, data);
+        let uuidFileName = uuidv4() + '.jpg'
 
-          resolve(path)
-        });
-      })
+        const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', uuidFileName)
+        fs.writeFileSync(path, data);
+
+        resolve(uuidFileName)
+      });
     })
   }
 
-  public caputurePhoto(options: PhotoOptions, cb: (stdout?: object, e?: Error) => void): void {
+  public capturePhoto(options: PhotoOptions, cb: (stdout?: object, e?: Error) => void): void {
     this.downloadImage()
     .then((imagePath) => {
       return cb({ "result" : imagePath })
     })
     .catch((err) => {
-      return cb(null, ErrorHandler.createError("10", err))      
+      if (err == -52) {           
+        // try initalizing gphoto again, hoping the dslr reconnected
+        this.initializeGphoto()
+        .then(() => {
+          this.downloadImage()
+          .then((imagePath) => {
+            return cb({ "result" : imagePath })
+          })
+          .catch((err) => {
+            return cb(null, ErrorHandler.createError("10", "Tried twice to capture image unsuccessfully. Aborting"))      
+          }) 
+        })
+        .catch(() => {
+          return cb(null, ErrorHandler.createError("10", "Tried twice to capture image unsuccessfully. Aborting"))    
+        })               
+      }  
     })
   }
 

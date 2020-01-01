@@ -55,7 +55,7 @@ app.post('/api/compositor/composite', (req, res, next) => {
 app.post('/api/dslr/capture', (req, res, next) => {
   var jsonObj = req.body
 
-  photo.caputurePhoto(jsonObj, (out, err) => {
+  photo.capturePhoto(jsonObj, (out, err) => {
     if (err) {
       res.status(500).send(err).end()
     } else {

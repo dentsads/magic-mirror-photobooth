@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'capturePhoto',
+        initial: 'intro',
         context: {
           capturedPhotoPaths: [],
           photoPath: "",
@@ -119,7 +119,7 @@ export class RoutingService {
             })
             .catch(function(error) {
               // handle error
-              //console.log(error);
+              console.log(error);
             });
           }),
           acceptPhoto:  {
