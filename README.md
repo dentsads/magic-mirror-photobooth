@@ -181,3 +181,18 @@ sudo pm2 describe 0
 # show monitoring info (logs, system info)
 sudo pm2 monit
 ```
+
+# Gphoto2
+
+see issue: https://github.com/gphoto/gphoto2/issues/181 when encountering 
+ the `Could not claim the USB device` error.
+
+ ## Nikon D3100
+
+Configuration steps on the camera
+
+* You have to disable the `Ausloesesperre` from the settings menu under `system` for capturing to work
+* You have to set the wheel on exposure mode `P`. See [here](https://imaging.nikon.com/support/digitutor/d5300/functions/shootingmodes_p.html) for detailed explanations
+* Set camera from `Active Focus (AF)` to `Manual Focus (MF)` through the physical button on the lens
+
+For a list of restrictions on the remote control capabilities of your camera see here: http://www.gphoto.org/doc/remote/
