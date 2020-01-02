@@ -1,5 +1,5 @@
 {
-  "name": "photobooth",
+  "name": "magic-mirror-photobooth",
   "version": "0.0.0",
   "description": "Software for an interactive magic mirror photobooth",
   "scripts": {

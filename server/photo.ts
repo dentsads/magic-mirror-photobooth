@@ -1,4 +1,5 @@
 import { ErrorHandler } from './errorhandler';
+import { logger } from './logger';
 var exec = require('child_process').exec
 
 const gphoto2 = require('gphoto2');
@@ -36,9 +37,10 @@ class Photo {
     return new Promise((resolve, reject) => {
       this.GPhoto = new gphoto2.GPhoto2();
       this.GPhoto.list( (list) => {
-        if (list.length === 0) return reject("Camera cannot be detected. Initialization failed.");
+        if (list.length === 0) return reject("Camera cannot be detected. Initialization failed");
         this.camera = list[0];
-        console.log('Found', this.camera.model);
+        logger.log('info', 'Found camera model %s', this.camera.model);
+        //console.log('Found', this.camera.model);
 
         return resolve()
       })
@@ -46,9 +48,9 @@ class Photo {
   }
 
   private killAllRunningGphotoProcesses() {
-    console.log("killing process")
-    exec('pkill -f gphoto2', (err, stdout, stderr) => { 
-      if (err) console.log(err)      
+    console.log("killing all running gphoto2 processeses to avoid")
+    exec('pkill -f gphoto2', (err, stdout, stderr) => {
+      logger.log('error', err);
     }); 
   }
 
@@ -58,9 +60,11 @@ class Photo {
     let value = 1; // Non-rotated is the default
     let maxBytes = data.byteLength
 
-    // Is it a jpeg? If not then don't rotate
-    if (data.readUInt16BE(0).toString(16) !== 'ffd8' && data.readUInt16BE(2).toString(16) !== 'ffe1')
-     return value
+    // Is it a jpeg? If not then don't continue
+    if (data.readUInt16BE(0).toString(16) !== 'ffd8' && data.readUInt16BE(2).toString(16) !== 'ffe1') {
+      logger.log('debug', 'Buffered image is not a JPEG. Don\'t extract EXIF orientation');
+      return value
+    }     
 
     while (idx < maxBytes - 2) {
       let uint16 = data.readUInt16BE(idx).toString(16);

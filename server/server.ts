@@ -17,9 +17,12 @@ app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
 app.post('/api/led/ball', (req, res) => {
     var jsonObj = req.body
     led.ballSpin(jsonObj)
-    .then(() => res.status(200).send(jsonObj).end())
+    .then(() => { 
+      logger.log('info', jsonObj);
+      res.status(200).send(jsonObj).end()     
+    })
     .catch((err) => {
-      logger.error(err)
+      logger.log('error', err);
       res.status(500).send(err).end()
     });
 })
@@ -28,10 +31,11 @@ app.post('/api/led/barrel', (req, res) => {
     var jsonObj = req.body
     try {    
       led.barrelSpin(jsonObj)
+      logger.log('info', jsonObj);
       res.json(jsonObj)
     } catch (err) {
-      logger.error(err)
-      res.status(500).send("There was an error: " + err)
+      logger.log('error', err);
+      res.status(500).send(err).end()
     }        
 })
 
@@ -45,8 +49,10 @@ app.post('/api/compositor/composite', (req, res, next) => {
 
   compositor.composite(jsonObj, (out, err) => {
     if (err) {
+      logger.log('error', err);
       res.status(500).send(err).end()
     } else {
+      logger.log('info', out);
       res.status(200).send(out).end()
     }          
   })    
@@ -57,8 +63,10 @@ app.post('/api/dslr/capture', (req, res, next) => {
 
   photo.capturePhoto(jsonObj, (out, err) => {
     if (err) {
+      logger.log('error', err);
       res.status(500).send(err).end()
     } else {
+      logger.log('info', out);
       res.status(200).send(out).end()
     }          
   })    
