@@ -29,13 +29,15 @@ export class SelectPrintPhotosComponent implements OnInit {
   }
 
   decrement() {
-    if (this.printCounterValue > 0)
+    if (this.printCounterValue > 0) {
       this.printCounterValue--;
+    }
   }
 
   increment() {
-    if (this.printCounterValue < 5)
+    if (this.printCounterValue < 5) {
     this.printCounterValue++;
+    }
   }
 
 }

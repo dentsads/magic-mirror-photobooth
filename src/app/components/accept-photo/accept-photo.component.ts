@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { DOCUMENT } from '@angular/common'; 
+import { DOCUMENT } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../services/routing.service';
 import { Subscription } from 'rxjs';
@@ -28,21 +28,22 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private routingService: RoutingService,
     @Inject(DOCUMENT) document
-  ) { 
+  ) {
 
     this.document = document;
 
   }
 
   async ngOnDestroy() {
-    if (this.subscription)
+    if (this.subscription) {
       this.subscription.unsubscribe();
+    }
   }
 
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(params => {
-      this.componentData = this.routingService.getComponentData();      
-    });    
+      this.componentData = this.routingService.getComponentData();
+    });
   }
 
   async handleEvent(eventId: string) {
@@ -51,11 +52,11 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   handleImage() {
     // fade in image
-    this.document.getElementById("overlay-outer").style["opacity"] = "1";    
-        
+    this.document.getElementById('overlay-outer').style.opacity = '1';
+
     // see: https://www.exif.org/Exif2-2.PDF
-    let exifOrientation = this.componentData.context.exifOrientation;
-    this.document.getElementsByClassName("image")[0].style["transform"] = this.rotation[exifOrientation];
+    const exifOrientation = this.componentData.context.exifOrientation;
+    this.document.getElementsByClassName('image')[0].style.transform = this.rotation[exifOrientation];
   }
 
 }

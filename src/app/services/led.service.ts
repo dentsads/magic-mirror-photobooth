@@ -9,6 +9,6 @@ export class LedService {
   constructor() { }
 
   async triggerLed(options: any): Promise<AxiosResponse<any>> {
-    return axios.post('/api/led/ball', options)
+    return axios.post('/api/led/ball', options);
   }
 }

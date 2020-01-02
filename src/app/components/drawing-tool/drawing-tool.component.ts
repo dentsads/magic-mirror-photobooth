@@ -13,11 +13,11 @@ export class DrawingToolComponent implements OnInit {
   componentData: any;
   canvas: any;
 
-  drawingLineWidth: number = 5;
-  drawingColor: string = '#ffffff';
-  drawingShadowColor: string = '#004aff';
-  drawingShadowWidth: number = 12;
-  drawingShadowOffset: number = 0;
+  drawingLineWidth = 5;
+  drawingColor = '#ffffff';
+  drawingShadowColor = '#004aff';
+  drawingShadowWidth = 12;
+  drawingShadowOffset = 0;
 
   constructor(
     public router: Router,
@@ -31,13 +31,13 @@ export class DrawingToolComponent implements OnInit {
     });
 
     this.canvas = new fabric.Canvas('canvas', { isDrawingMode: true });
-    
+
     this.canvas.freeDrawingBrush =  new fabric.PencilBrush(this.canvas);
     this.canvas.freeDrawingBrush.shadow =  new fabric.Shadow();
     this.canvas.freeDrawingBrush.width = this.drawingLineWidth;
     this.canvas.freeDrawingBrush.color = this.drawingColor;
     this.canvas.freeDrawingBrush.shadow.color = this.drawingShadowColor;
-    this.canvas.freeDrawingBrush.shadow.blur = this.drawingShadowWidth;    
+    this.canvas.freeDrawingBrush.shadow.blur = this.drawingShadowWidth;
 
     this.canvas.renderAll();
   }

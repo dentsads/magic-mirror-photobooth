@@ -29,13 +29,14 @@ export class Anim1Component implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy() {
-    if (this.subscription)
+    if (this.subscription) {
       this.subscription.unsubscribe();
+    }
   }
 
   async handleEvent(eventId: string) {
     const duration: number = await this.getDuration(this.componentData.assetPath);
-    //console.log('gif duration is ' + duration * 10 + ' milliseconds');
+    // console.log('gif duration is ' + duration * 10 + ' milliseconds');
 
     this.routingService.handleEvent(eventId, { delay: duration * 10 });
   }

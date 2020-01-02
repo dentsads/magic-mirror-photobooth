@@ -11,11 +11,11 @@ export class PhotoService {
   constructor() { }
 
   async capturePhoto(options?: any): Promise<AxiosResponse<any>> {
-    return axios.post('/api/dslr/capture', options)
+    return axios.post('/api/dslr/capture', options);
   }
 
   async compositePhoto(options?: any): Promise<AxiosResponse<any>> {
-    return axios.post('/api/compositor/composite', options)
+    return axios.post('/api/compositor/composite', options);
   }
 
 }

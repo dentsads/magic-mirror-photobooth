@@ -42,18 +42,18 @@ export class RoutingService {
     return metadata.assets;
   }
 
-  private animationState(assets: object, path: string, targetState: string, action?:(context: any, event: any) => void): object {
+  private animationState(assets: object, path: string, targetState: string, action?: (context: any, event: any) => void): object {
     return {
       entry: ['transition'],
-      meta: { path: path, assets: assets },
+      meta: { path, assets },
       initial: 'execute_action',
       states: {
         execute_action: {
           on: {
             '': {
               target: 'anim_loaded',
-              actions: (context, event) => { 
-                if (action) action(context, event)
+              actions: (context, event) => {
+                if (action) { action(context, event); }
               }
             }
           }
@@ -69,7 +69,7 @@ export class RoutingService {
           }
         }
       }
-    }
+    };
   }
 
   createThemes() {
@@ -80,7 +80,7 @@ export class RoutingService {
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,
-          photoPath: "",
+          photoPath: '',
           maxNumberOfPhotos: 3
         },
         states: {
@@ -93,7 +93,7 @@ export class RoutingService {
               }
             }
           },
-          countdown: this.animationState(this.ANIM1_MAP[3], '/anim1/3', '#root.capturePhoto', (context, event) => { 
+          countdown: this.animationState(this.ANIM1_MAP[3], '/anim1/3', '#root.capturePhoto', (context, event) => {
             this.ledService.triggerLed({
               direction: 'RIGHT',
               color: 'rgb(0, 0, 50)',
@@ -102,22 +102,22 @@ export class RoutingService {
             })
             .then(function(response) {
               // handle success
-              //console.log(response);
+              // console.log(response);
             })
             .catch(function(error) {
               // handle error
-              //console.log(error);
+              // console.log(error);
             });
           }),
-          capturePhoto: this.animationState(this.ANIM1_MAP[5], '/anim1/5', '#root.acceptPhoto', (context, event) => { 
+          capturePhoto: this.animationState(this.ANIM1_MAP[5], '/anim1/5', '#root.acceptPhoto', (context, event) => {
             this.photoService.capturePhoto()
             .then(function(response) {
               // handle success
-              let capturedPhotoPath = response.data.result.imagePath
-              context.photoPath = 'api/photos/' + capturedPhotoPath
-              context.exifOrientation = response.data.result.exifOrientation
-              context.capturedPhotoPaths.push(capturedPhotoPath)
-              //console.log(response);
+              const capturedPhotoPath = response.data.result.imagePath;
+              context.photoPath = 'api/photos/' + capturedPhotoPath;
+              context.exifOrientation = response.data.result.exifOrientation;
+              context.capturedPhotoPaths.push(capturedPhotoPath);
+              // console.log(response);
             })
             .catch(function(error) {
               // handle error
@@ -135,8 +135,8 @@ export class RoutingService {
               ], // photo ok
               'event.accept-photo.02': {
                 target: 'countdown',
-                actions: (context, event) => { 
-                  context.capturedPhotoPaths.pop()
+                actions: (context, event) => {
+                  context.capturedPhotoPaths.pop();
                 }
               } // photo not ok
             }
@@ -156,15 +156,15 @@ export class RoutingService {
                       })
                       .then(function(response) {
                         // handle success
-                        let capturedPhotoPath = response.data.result
-                        context.photoPath = capturedPhotoPath
-                        context.exifOrientation = 1
-                        context.capturedPhotoPaths = []
-                        //console.log(response);
+                        const capturedPhotoPath = response.data.result;
+                        context.photoPath = capturedPhotoPath;
+                        context.exifOrientation = 1;
+                        context.capturedPhotoPaths = [];
+                        // console.log(response);
                       })
                       .catch(function(error) {
                         // handle error
-                        //console.log(error);
+                        // console.log(error);
                       });
                     }
                   }
@@ -172,7 +172,7 @@ export class RoutingService {
               }
             }
           },
-          goodjob: this.animationState(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),        
+          goodjob: this.animationState(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
@@ -202,24 +202,24 @@ export class RoutingService {
     {
       actions: {
         transition: (context, event, meta) => {
-          //console.log('transitioning to: ' + JSON.stringify(meta.state.value));
+          // console.log('transitioning to: ' + JSON.stringify(meta.state.value));
           const metadata: any = Object.values(meta.state.meta).shift();
-          //console.log(JSON.stringify(metadata));
+          // console.log(JSON.stringify(metadata));
           this.router.navigate([metadata.path]);
         },
-        updateMetaAssetsWithContext: (context, event, meta) => {                            
+        updateMetaAssetsWithContext: (context, event, meta) => {
           meta.state.meta[Object.keys(meta.state.meta).shift()].assets.context = context;
         }
       },
       delays: {
         FINISH_ANIM: (context, event: AnyEventObject) => {
-          //console.log('delay is ' + JSON.stringify(event));
+          // console.log('delay is ' + JSON.stringify(event));
           return event.delay || 0;
         }
       },
       guards: {
         targetNumberOfPhotosReached: (context, event) => {
-          return context.capturedPhotoPaths.length >= context.maxNumberOfPhotos;          
+          return context.capturedPhotoPaths.length >= context.maxNumberOfPhotos;
         }
       }
     });
@@ -227,5 +227,5 @@ export class RoutingService {
     const stateService = interpret(extendedStateMachine).start();
 
     this.THEME_MAP.WEDDING = stateService;
-  }  
+  }
 }
