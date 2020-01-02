@@ -1,4 +1,5 @@
 import { ErrorHandler } from './errorhandler';
+var exec = require('child_process').exec
 
 const gphoto2 = require('gphoto2');
 const fs = require('fs')  
@@ -22,7 +23,8 @@ class Photo {
   private GPhoto
   private camera
 
-  public constructor() {    
+  public constructor() {
+    this.killAllRunningGphotoProcesses()
     this.initializeGphoto()
     .then(() => {
     })
@@ -43,10 +45,17 @@ class Photo {
     })
   }
 
+  private killAllRunningGphotoProcesses() {
+    console.log("killing process")
+    exec('pkill -f gphoto2', (err, stdout, stderr) => { 
+      if (err) console.log(err)      
+    }); 
+  }
+
   private async downloadImageTest() {
     const randomString = Math.random().toString(36).substring(2, 8)
     const url = 'https://picsum.photos/533/800'
-    const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', randomString + '_random.jpg')
+    const path = Path.resolve(__dirname, '../../magic-mirror-photobooth-photos', randomString + '_random.jpg')
     const writer = fs.createWriteStream(path)
   
     const response = await Axios({
@@ -74,7 +83,7 @@ class Photo {
 
         let uuidFileName = uuidv4() + '.jpg'
 
-        const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', uuidFileName)
+        const path = Path.resolve(__dirname, '../../magic-mirror-photobooth-photos', uuidFileName)
         fs.writeFileSync(path, data);
 
         return resolve(uuidFileName)
@@ -104,7 +113,7 @@ class Photo {
         .catch((err) => {
           return cb(null, ErrorHandler.createError("12", err))    
         })    
-                   
+
       }
     })
   }

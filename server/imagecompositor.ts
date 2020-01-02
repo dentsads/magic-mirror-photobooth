@@ -1,6 +1,4 @@
 import { ErrorHandler, Error } from './errorhandler'
-import angular from "../angular.json";
-
 var exec = require('child_process').exec
 
 enum TemplateLayout {
@@ -24,13 +22,11 @@ class ImageCompositor {
   private readonly IMAGE_HEIGHT:number = 1795
   private readonly TMP_DIR:string = "./built"
   private readonly TMP_FILE:string = this.TMP_DIR + "/tmp.png"
-  private readonly PHOTOS_PATH:string = 'api/photos/'  //angular.projects.photobooth.architect.build.options.outputPath
+  private readonly PHOTOS_PATH:string = 'api/photos/'
   private readonly PHOTOS_DIR:string = '../magic-mirror-photobooth-photos/'
   private readonly ASSETS_DIR:string = '../magic-mirror-photobooth-assets/'
 
-  public constructor() {
-
-  }
+  public constructor() {}
 
   public composite(options: CompositorOptions, cb: (stdout?: object, e?: Error) => void): void {
     if (options.imgSrcList.length == undefined)

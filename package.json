@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start:client": "ng serve --proxy-config proxy.conf.json",
-    "start:server": "node built/server/server.js",
+    "start:server": "node built/server.js",
     "serve:dev": "concurrently \"npm run start:client\" \"npm run start:server\"",
     "serve:prod": "npm run start:client && npm run start:server",
     "build:server": "tsc --build tsconfig.server.json",
