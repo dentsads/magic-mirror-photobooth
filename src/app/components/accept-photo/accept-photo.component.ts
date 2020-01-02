@@ -15,6 +15,14 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
   componentData: any;
   document;
 
+  // see: https://www.exif.org/Exif2-2.PDF page 18
+  private readonly rotation = {
+    1: 'rotate(0deg)',
+    3: 'rotate(180deg)',
+    6: 'rotate(90deg)',
+    8: 'rotate(270deg)'
+  };
+
   constructor(
     public router: Router,
     private activatedRoute: ActivatedRoute,
@@ -33,7 +41,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(params => {
-      this.componentData = this.routingService.getComponentData();
+      this.componentData = this.routingService.getComponentData();      
     });    
   }
 
@@ -41,8 +49,13 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     this.routingService.handleEvent(eventId);
   }
 
-  fadeIn() {
-    this.document.getElementById("overlay-outer").style["opacity"] = "1";
+  handleImage() {
+    // fade in image
+    this.document.getElementById("overlay-outer").style["opacity"] = "1";    
+        
+    // see: https://www.exif.org/Exif2-2.PDF
+    let exifOrientation = this.componentData.context.exifOrientation;
+    this.document.getElementsByClassName("image")[0].style["transform"] = this.rotation[exifOrientation];
   }
 
 }

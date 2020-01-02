@@ -35,4 +35,5 @@
 
 .image {
     max-width: 800px;
+    /* mage-orientation: from-image; */ /* only in firefox currently*/
 }

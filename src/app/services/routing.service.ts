@@ -79,6 +79,7 @@ export class RoutingService {
         initial: 'intro',
         context: {
           capturedPhotoPaths: [],
+          exifOrientation: 1,
           photoPath: "",
           maxNumberOfPhotos: 3
         },
@@ -112,8 +113,9 @@ export class RoutingService {
             this.photoService.capturePhoto()
             .then(function(response) {
               // handle success
-              let capturedPhotoPath = response.data.result
+              let capturedPhotoPath = response.data.result.imagePath
               context.photoPath = 'api/photos/' + capturedPhotoPath
+              context.exifOrientation = response.data.result.exifOrientation
               context.capturedPhotoPaths.push(capturedPhotoPath)
               //console.log(response);
             })
@@ -156,6 +158,7 @@ export class RoutingService {
                         // handle success
                         let capturedPhotoPath = response.data.result
                         context.photoPath = capturedPhotoPath
+                        context.exifOrientation = 1
                         context.capturedPhotoPaths = []
                         //console.log(response);
                       })

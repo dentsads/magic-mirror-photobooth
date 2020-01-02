@@ -13,8 +13,12 @@ interface CompositorOptions {
   overlayImg: string;
 }
 
-const templateOffsets: Record<string,string[]> = {
+const templateImageOffsets: Record<string,string[]> = {
   'THREE_UNIFORM': [ '+50+245', '+623+245', '+1218+245' ]
+}
+
+const templateImageSizes: Record<string,string[]> = {
+  'THREE_UNIFORM': [ '533x800', '533x800', '533x800' ]
 }
 
 class ImageCompositor {
@@ -42,10 +46,9 @@ class ImageCompositor {
     options.imgSrcList.forEach( (img, imgIndex)  => {
       compositeArgs.push('\\(')
       compositeArgs.push(this.PHOTOS_DIR + img)
-
-      if (false) compositeArgs.push(`-resize ${null}`)
-      
-      compositeArgs.push(`-repage ${templateOffsets[options.templateLayout][imgIndex]}`)            
+      compositeArgs.push('-auto-orient')
+      compositeArgs.push(`-resize ${templateImageSizes[options.templateLayout][imgIndex]}`)    
+      compositeArgs.push(`-repage ${templateImageOffsets[options.templateLayout][imgIndex]}`)            
       compositeArgs.push('\\)')
     });
 

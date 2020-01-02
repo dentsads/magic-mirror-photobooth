@@ -52,6 +52,39 @@ class Photo {
     }); 
   }
 
+  // see: https://www.exif.org/Exif2-2.PDF
+  private getJpegOrientation(data: Buffer): number {  
+    let idx= 0;
+    let value = 1; // Non-rotated is the default
+    let maxBytes = data.byteLength
+
+    // Is it a jpeg? If not then don't rotate
+    if (data.readUInt16BE(0).toString(16) !== 'ffd8' && data.readUInt16BE(2).toString(16) !== 'ffe1')
+     return value
+
+    while (idx < maxBytes - 2) {
+      let uint16 = data.readUInt16BE(idx).toString(16);
+
+      idx += 2;      
+      switch (uint16) {
+        case 'ffe1': // Start of EXIF
+          let exifLength = data.readUInt16BE(idx);
+          maxBytes = exifLength - idx;
+          idx += 2;
+          break;
+        case '112': // Orientation tag
+          // Read the value, its 6 bytes further out
+          // see: https://www.exif.org/Exif2-2.PDF
+          value = data.readUInt16BE(idx + 6);
+          maxBytes = 0; // Stop scanning
+          break;
+      }
+    }
+
+    return value;
+
+  }
+
   private async downloadImageTest() {
     const randomString = Math.random().toString(36).substring(2, 8)
     const url = 'https://picsum.photos/533/800'
@@ -78,23 +111,27 @@ class Photo {
         return reject("Camera cannot be detected. Initialization failed.")
 
       // Take picture with camera object obtained from list()
-      this.camera.takePicture({download: true}, (err, data) => {
-        if (err) return reject(err);
+      this.camera.takePicture({download: true}, (err, data: Buffer) => {
+        if (err) return reject(err);             
+
+        console.log("Jpeg orientation")
+        console.log(this.getJpegOrientation(data))
+
 
         let uuidFileName = uuidv4() + '.jpg'
 
         const path = Path.resolve(__dirname, '../../magic-mirror-photobooth-photos', uuidFileName)
         fs.writeFileSync(path, data);
 
-        return resolve(uuidFileName)
+        return resolve({ imagePath: uuidFileName, exifOrientation: this.getJpegOrientation(data) } )
       });
     })
   }
 
   public capturePhoto(options: PhotoOptions, cb: (stdout?: object, e?: object) => void): void {
     this.downloadImage()
-    .then((imagePath) => {
-      return cb({ "result" : imagePath })
+    .then((result) => {
+      return cb({ "result" : result })
     })
     .catch((err) => {
       // Error when trying to find USB device.
@@ -103,8 +140,8 @@ class Photo {
         this.initializeGphoto()
         .then(() => {
           this.downloadImage()
-          .then((imagePath) => {
-            return cb({ "result" : imagePath })
+          .then((result) => {
+            return cb({ "result" : result })
           })
           .catch((err) => {
             return cb(null, ErrorHandler.createError("11", "Tried twice to capture image unsuccessfully. Aborting"))      
