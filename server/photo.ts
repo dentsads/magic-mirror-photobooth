@@ -24,19 +24,22 @@ class Photo {
 
   public constructor() {    
     this.initializeGphoto()
+    .then(() => {
+    })
+    .catch((err) => {  
+    })
   }
 
   private initializeGphoto() {    
     return new Promise((resolve, reject) => {
       this.GPhoto = new gphoto2.GPhoto2();
       this.GPhoto.list( (list) => {
-        if (list.length === 0) return reject();
+        if (list.length === 0) return reject("Camera cannot be detected. Initialization failed.");
         this.camera = list[0];
         console.log('Found', this.camera.model);
 
         return resolve()
       })
-      resolve()
     })
   }
 
@@ -63,7 +66,7 @@ class Photo {
   async downloadImage() {
     return new Promise((resolve, reject) => {
       if (this.camera == undefined)
-        return reject("")
+        return reject("Camera cannot be detected. Initialization failed.")
 
       // Take picture with camera object obtained from list()
       this.camera.takePicture({download: true}, (err, data) => {
@@ -76,20 +79,17 @@ class Photo {
 
         return resolve(uuidFileName)
       });
-
-      resolve()
-
     })
   }
 
-  public capturePhoto(options: PhotoOptions, cb: (stdout?: object, e?: Error) => void): void {
+  public capturePhoto(options: PhotoOptions, cb: (stdout?: object, e?: object) => void): void {
     this.downloadImage()
     .then((imagePath) => {
       return cb({ "result" : imagePath })
     })
     .catch((err) => {
       // Error when trying to find USB device.
-      if (err == -52) {           
+      if (err) {
         // try initalizing gphoto again, hoping the dslr reconnected
         this.initializeGphoto()
         .then(() => {
@@ -101,12 +101,11 @@ class Photo {
             return cb(null, ErrorHandler.createError("11", "Tried twice to capture image unsuccessfully. Aborting"))      
           }) 
         })
-        .catch(() => {
-          return cb(null, ErrorHandler.createError("11", "Tried twice to capture image unsuccessfully. Aborting"))    
-        })               
+        .catch((err) => {
+          return cb(null, ErrorHandler.createError("12", err))    
+        })    
+                   
       }
-      
-      return cb(null, ErrorHandler.createError("10", err))
     })
   }
 

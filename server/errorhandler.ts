@@ -7,10 +7,10 @@ class ErrorHandler {
     private constructor() {}
 
     public static createError(code: string, message: any): any {
-        return {'errors': [{
+        return {'error': {
             'message': message,
             'code': code
-        }]};
+        }};
     };
 
     public static createErrors(errorArray: Error[] = []): any {
