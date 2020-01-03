@@ -48,6 +48,10 @@ systemctl status ModemManager.service
 systemctl disable ModemManager.service
 ```
 
+## Install the Arduino CLI
+
+Alternatively you can use the [Arduino CLI](https://github.com/arduino/arduino-cli) to flash sketches on your Arduino.
+
 ### Flash `FIRMATA` on Arduino
 
 You need to flash the `FIRMATA` library on the Arduino. You can find the source files [here](https://github.com/ajfisher/node-pixel/tree/v0.10.2/firmware/build/node_pixel_firmata)
