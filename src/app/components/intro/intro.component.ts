@@ -15,7 +15,7 @@ export class IntroComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private routingService: RoutingService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.componentData = this.routingService.getComponentData();
@@ -24,5 +24,5 @@ export class IntroComponent implements OnInit {
   async handleEvent(eventId: string) {
     this.routingService.handleEvent(eventId);
   }
-
+  
 }

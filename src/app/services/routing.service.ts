@@ -24,12 +24,12 @@ export class RoutingService {
   }
 
   ANIM1_MAP: Record<string, Anim1> = {
-    1: { assetPath: 'api/assets/compositions/intro.gif' },
+    1: { assetPath: 'api/assets/compositions/wedding_01_touchtostart_02.mp4'},
     2: { assetPath: 'api/assets/compositions/are_you_ready.gif' },
-    3: { assetPath: 'api/assets/compositions/countdown.gif' },
+    3: { assetPath: 'api/assets/compositions/general_01_countdown_03.mp4' },
     4: { assetPath: 'api/assets/compositions/say_cheese.gif' },
-    5: { assetPath: 'api/assets/compositions/take_photo.gif' },
-    6: { assetPath: 'api/assets/compositions/great_job.gif' },
+    5: { assetPath: 'api/assets/compositions/general_01_lookatcamera_01.mp4' },
+    6: { assetPath: 'api/assets/compositions/wedding_01_loveinair_01.mp4' },
     7: { assetPath: 'api/assets/compositions/photos_are_ready.gif' }
   };
 
@@ -97,7 +97,7 @@ export class RoutingService {
             this.ledService.triggerLed({
               direction: 'RIGHT',
               color: 'rgb(0, 0, 50)',
-              duration: 2760,
+              duration: 5034,
               loops: 1
             })
             .then(function(response) {
@@ -109,21 +109,26 @@ export class RoutingService {
               // console.log(error);
             });
           }),
-          capturePhoto: this.animationState(this.ANIM1_MAP[5], '/anim1/5', '#root.acceptPhoto', (context, event) => {
-            this.photoService.capturePhoto()
-            .then(function(response) {
-              // handle success
-              const capturedPhotoPath = response.data.result.imagePath;
-              context.photoPath = 'api/photos/' + capturedPhotoPath;
-              context.exifOrientation = response.data.result.exifOrientation;
-              context.capturedPhotoPaths.push(capturedPhotoPath);
-              // console.log(response);
-            })
-            .catch(function(error) {
-              // handle error
-              console.error(error.response.data);
-            });
-          }),
+          capturePhoto: {
+            invoke: {
+              id: 'capture',
+              src: (context, event) => this.photoService.capturePhoto().then(function(response) {
+                // handle success
+                const capturedPhotoPath = response.data.result.imagePath;
+                context.photoPath = 'api/photos/' + capturedPhotoPath;
+                context.exifOrientation = response.data.result.exifOrientation;
+                context.capturedPhotoPaths.push(capturedPhotoPath);
+                // console.log(response);              
+              })
+              .catch(function(error) {
+                // handle error
+                console.error(error.response.data);
+              }),
+              onDone: {
+                target: 'acceptPhoto'
+              }
+            }
+          },
           acceptPhoto:  {
             entry: ['updateMetaAssetsWithContext', 'transition'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
@@ -142,37 +147,32 @@ export class RoutingService {
             }
           },
           compositePhoto: {
-            initial: 'composite_photo',
-            states: {
-              composite_photo: {
-                on: {
-                  '': {
-                    target: '#root.goodjob',
-                    actions: (context, event) => {
-                      this.photoService.compositePhoto({
-                        templateLayout: 'THREE_UNIFORM',
-                        imgSrcList: context.capturedPhotoPaths,
-                        overlayImg: 'print-templates/christmas_01_overlay_base_03.png'
-                      })
-                      .then(function(response) {
-                        // handle success
-                        const capturedPhotoPath = response.data.result;
-                        context.photoPath = capturedPhotoPath;
-                        context.exifOrientation = 1;
-                        context.capturedPhotoPaths = [];
-                        // console.log(response);
-                      })
-                      .catch(function(error) {
-                        // handle error
-                        // console.log(error);
-                      });
-                    }
-                  }
-                }
+            entry: ['transition'],
+            meta: { "path": '/anim1/6', "assets": this.ANIM1_MAP[6] },
+            invoke: {
+              id: 'composite',
+              src: (context, event) => this.photoService.compositePhoto({
+                templateLayout: 'THREE_UNIFORM',
+                imgSrcList: context.capturedPhotoPaths,
+                overlayImg: 'print-templates/christmas_01_overlay_base_03.png'
+              })
+              .then(function(response) {
+                // handle success
+                const capturedPhotoPath = response.data.result;
+                context.photoPath = capturedPhotoPath;
+                context.exifOrientation = 1;
+                context.capturedPhotoPaths = [];
+                // console.log(response);
+              })
+              .catch(function(error) {
+                // handle error
+                // console.log(error);
+              }),
+              onDone: {
+                target: 'acceptCompositedPhoto'
               }
             }
           },
-          goodjob: this.animationState(this.ANIM1_MAP[6], '/anim1/6', '#root.acceptCompositedPhoto'),
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
             meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
@@ -202,7 +202,7 @@ export class RoutingService {
     {
       actions: {
         transition: (context, event, meta) => {
-          // console.log('transitioning to: ' + JSON.stringify(meta.state.value));
+          console.log('transitioning to: ' + JSON.stringify(meta.state.value));
           const metadata: any = Object.values(meta.state.meta).shift();
           // console.log(JSON.stringify(metadata));
           this.router.navigate([metadata.path]);
@@ -213,7 +213,7 @@ export class RoutingService {
       },
       delays: {
         FINISH_ANIM: (context, event: AnyEventObject) => {
-          // console.log('delay is ' + JSON.stringify(event));
+          console.log('delay is ' + JSON.stringify(event));
           return event.delay || 0;
         }
       },

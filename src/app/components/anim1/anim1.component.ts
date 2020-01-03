@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Buffer } from 'buffer';
 import axios from 'axios';
 import { RoutingService } from '../../services/routing.service';
 import { Anim1 } from '../../models/anim1.model';
 import { Subscription } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-anim1',
@@ -15,12 +16,18 @@ export class Anim1Component implements OnInit, OnDestroy {
 
   private subscription: Subscription;
   componentData: Anim1;
+  document;
 
   constructor(
     public router: Router,
     private activatedRoute: ActivatedRoute,
-    private routingService: RoutingService
-  ) { }
+    private routingService: RoutingService,
+    @Inject(DOCUMENT) document
+  ) { 
+
+    this.document = document;
+
+  }
 
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(params => {
@@ -34,38 +41,13 @@ export class Anim1Component implements OnInit, OnDestroy {
     }
   }
 
-  async handleEvent(eventId: string) {
-    const duration: number = await this.getDuration(this.componentData.assetPath);
-    // console.log('gif duration is ' + duration * 10 + ' milliseconds');
-
-    this.routingService.handleEvent(eventId, { delay: duration * 10 });
+  async handleStartEvent(eventId: string) {
+    const duration:number =  this.document.getElementById('animVideo').duration
+    this.routingService.handleEvent(eventId, { delay: duration * 1000 });    
   }
 
-  async getDuration(url): Promise<number> {
-    const { data: b64 } = await axios(url, { responseType: 'arraybuffer' });
-    const dataInBinary = Buffer.from(b64, 'base64');
-
-    const d = new Uint8Array(dataInBinary);
-    // Thanks to http://justinsomnia.org/2006/10/gif-animation-duration-calculation/
-    // And http://www.w3.org/Graphics/GIF/spec-gif89a.txt
-    let duration = 0;
-    for (let i = 0; i < d.length; i++) {
-
-      // Find a Graphic Control Extension hex(21F904__ ____ __00)
-      if (d[i] == 0x21
-        && d[i + 1] == 0xF9
-        && d[i + 2] == 0x04
-        && d[i + 7] == 0x00) {
-        // Swap 5th and 6th bytes to get the delay per frame
-        const delay = (d[i + 5] << 8) | (d[i + 4] & 0xFF);
-
-        // Should be aware browsers have a minimum frame delay
-        // e.g. 6ms for IE, 2ms modern browsers (50fps)
-        duration += delay < 2 ? 10 : delay;
-      }
-    }
-
-    return duration;
-  }
+  async handleEndEvent(eventId: string) {
+  
+  }  
 
 }
