@@ -109,7 +109,7 @@ cp -r ../node-pixel/ node_modules/
 rm -rf node_modules/node-pixel/.git
 
 # build and serve app
-npm run build && sudo npm run serve:dev
+npm run build && sudo -E npm run serve:dev
 ```
 
 # Check Licenses
@@ -208,3 +208,11 @@ Configuration steps on the camera
 * Set camera from `Active Focus (AF)` to `Manual Focus (MF)` through the physical button on the lens
 
 For a list of restrictions on the remote control capabilities of your camera see here: http://www.gphoto.org/doc/remote/
+
+## Mocking the DSLR
+
+If you want to test without using a DSLR you can enable DSLR mocking mode with
+
+```
+export PHOTOBOOTH_CAMERA_MOCK=1
+```

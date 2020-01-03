@@ -40,22 +40,21 @@ class Photo {
         if (list.length === 0) return reject("Camera cannot be detected. Initialization failed");
         this.camera = list[0];
         logger.log('info', 'Found camera model %s', this.camera.model);
-        //console.log('Found', this.camera.model);
 
         return resolve()
       })
     })
   }
 
-  private killAllRunningGphotoProcesses() {
-    console.log("killing all running gphoto2 processeses to avoid")
+  private killAllRunningGphotoProcesses() {    
+    logger.log('info', 'killing all running gphoto2 processeses');
     exec('pkill -f gphoto2', (err, stdout, stderr) => {
       logger.log('error', err);
     }); 
   }
 
   // see: https://www.exif.org/Exif2-2.PDF
-  private getJpegOrientation(data: Buffer): number {  
+  private getJpegExifOrientation(data: Buffer): number {  
     let idx= 0;
     let value = 1; // Non-rotated is the default
     let maxBytes = data.byteLength
@@ -104,7 +103,7 @@ class Photo {
     response.data.pipe(writer)
   
     return new Promise((resolve, reject) => {
-      writer.on('finish', resolve(randomString + '_random.jpg'))
+      writer.on('finish', resolve({ imagePath: randomString + '_random.jpg', exifOrientation: 1 } ))
       writer.on('error', reject)
     })
   }
@@ -118,28 +117,37 @@ class Photo {
       this.camera.takePicture({download: true}, (err, data: Buffer) => {
         if (err) return reject(err);             
 
-        console.log("Jpeg orientation")
-        console.log(this.getJpegOrientation(data))
 
+        let jpegExifOrientation = this.getJpegExifOrientation(data);
+        logger.log('info', 'Jpeg orientation is %d', jpegExifOrientation);
 
         let uuidFileName = uuidv4() + '.jpg'
 
         const path = Path.resolve(__dirname, '../../magic-mirror-photobooth-photos', uuidFileName)
         fs.writeFileSync(path, data);
 
-        return resolve({ imagePath: uuidFileName, exifOrientation: this.getJpegOrientation(data) } )
+        return resolve({ imagePath: uuidFileName, exifOrientation: jpegExifOrientation } )
       });
     })
   }
 
   public capturePhoto(options: PhotoOptions, cb: (stdout?: object, e?: object) => void): void {
-    this.downloadImage()
+    let captureFunction = this.downloadImage
+
+    // if no DSLR is available then mock the camera by fetching pics from this.downloadImageTest
+    if (process.env.PHOTOBOOTH_CAMERA_MOCK) {
+      logger.log('info', 'DSLR camera mocking is enabled through env PHOTOBOOTH_CAMERA_MOCK=1');      
+      captureFunction = this.downloadImageTest
+    }      
+
+    captureFunction()
     .then((result) => {
       return cb({ "result" : result })
     })
     .catch((err) => {
       // Error when trying to find USB device.
-      if (err) {
+      if (err && !process.env.PHOTOBOOTH_CAMERA_MOCK) {
+        
         // try initalizing gphoto again, hoping the dslr reconnected
         this.initializeGphoto()
         .then(() => {
