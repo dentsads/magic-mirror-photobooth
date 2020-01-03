@@ -23,6 +23,7 @@ interface PhotoOptions {
 class Photo {
   private GPhoto
   private camera
+  private captureFunction = this.downloadImage
 
   public constructor() {
     this.killAllRunningGphotoProcesses()
@@ -132,19 +133,18 @@ class Photo {
   }
 
   public capturePhoto(options: PhotoOptions, cb: (stdout?: object, e?: object) => void): void {
-    let captureFunction = this.downloadImage
-
     // if no DSLR is available then mock the camera by fetching pics from this.downloadImageTest
     if (process.env.PHOTOBOOTH_CAMERA_MOCK) {
       logger.log('info', 'DSLR camera mocking is enabled through env PHOTOBOOTH_CAMERA_MOCK=1');      
-      captureFunction = this.downloadImageTest
+      this.captureFunction = this.downloadImageTest
     }      
 
-    captureFunction()
+    this.captureFunction()
     .then((result) => {
       return cb({ "result" : result })
     })
     .catch((err) => {
+
       // Error when trying to find USB device.
       if (err && !process.env.PHOTOBOOTH_CAMERA_MOCK) {
         
@@ -156,7 +156,7 @@ class Photo {
             return cb({ "result" : result })
           })
           .catch((err) => {
-            return cb(null, ErrorHandler.createError("11", "Tried twice to capture image unsuccessfully. Aborting"))      
+            return cb(null, ErrorHandler.createError("11", err))      
           }) 
         })
         .catch((err) => {

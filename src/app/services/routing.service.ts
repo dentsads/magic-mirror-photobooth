@@ -45,7 +45,7 @@ export class RoutingService {
   private animationState(assets: object, path: string, targetState: string, action?: (context: any, event: any) => void): object {
     return {
       entry: ['transition'],
-      meta: { path, assets },
+      meta: { "path": path, "assets": assets },
       initial: 'execute_action',
       states: {
         execute_action: {

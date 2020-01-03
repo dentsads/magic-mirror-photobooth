@@ -211,8 +211,10 @@ For a list of restrictions on the remote control capabilities of your camera see
 
 ## Mocking the DSLR
 
-If you want to test without using a DSLR you can enable DSLR mocking mode with
+If you want to start testing without using a DSLR you can enable DSLR mocking mode with
 
 ```
 export PHOTOBOOTH_CAMERA_MOCK=1
 ```
+
+Please note: You need internet connectivity for this to work since the mocked photos will now be fetched at https://picsum.photos
