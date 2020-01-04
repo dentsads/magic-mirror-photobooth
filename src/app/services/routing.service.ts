@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'intro',
+        initial: 'selectPrintPhotos',
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,
@@ -173,7 +173,13 @@ export class RoutingService {
           },
           acceptCompositedPhoto:  {
             entry: ['transition', 'updateMetaAssetsWithContext'],
-            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
+            meta: { 
+              path: '/accept-photo', 
+              assets: { 
+                assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', 
+                assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'                
+              } 
+            },
             on: {
               'event.accept-photo.01': 'selectPrintPhotos', // photo ok
               'event.accept-photo.02': 'countdown'  // photo not ok
@@ -181,7 +187,14 @@ export class RoutingService {
           },
           selectPrintPhotos:  {
             entry: ['transition'],
-            meta: { path: '/select-print-photos', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
+            meta: { 
+              path: '/select-print-photos', 
+              assets: { 
+                assetButtonPlus: 'api/assets/compositions/plus-circle-regular-240.png', 
+                assetButtonMinus: 'api/assets/compositions/minus-circle-regular-240.png',
+                assetButtonPrinter: 'api/assets/compositions/printer-regular-240.png',
+              } 
+            },
             on: {
               'event.select-print-photos.01': 'intro' // photos will be printed
             }

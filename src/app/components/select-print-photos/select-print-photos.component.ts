@@ -10,7 +10,7 @@ import { RoutingService } from '../../services/routing.service';
 export class SelectPrintPhotosComponent implements OnInit {
 
   componentData: any;
-  printCounterValue = 0;
+  printCounterValue:number = 1;
 
   constructor(
     public router: Router,
@@ -36,7 +36,7 @@ export class SelectPrintPhotosComponent implements OnInit {
 
   increment() {
     if (this.printCounterValue < 5) {
-    this.printCounterValue++;
+      this.printCounterValue++;
     }
   }
 

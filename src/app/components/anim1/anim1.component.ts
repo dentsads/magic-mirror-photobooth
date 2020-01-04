@@ -47,7 +47,7 @@ export class Anim1Component implements OnInit, OnDestroy {
   }
 
   async handleEndEvent(eventId: string) {
-  
+    // todo
   }  
 
 }

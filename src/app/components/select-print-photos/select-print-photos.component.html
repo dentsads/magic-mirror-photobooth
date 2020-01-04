@@ -1,7 +1,10 @@
-<p>counterValue = {{printCounterValue}}</p>
+<div class="counter"><p>{{printCounterValue}}</p></div>
 
-<button (click)="increment()">+</button>
+<div class="incdecButtons">
+    <div (click)="increment()" id="button-increment"><img src="{{componentData.assetButtonPlus}}"></div>
+    <div (click)="decrement()" id="button-decrement"><img src="{{componentData.assetButtonMinus}}"></div>
+</div>
 
-<button (click)="decrement()">-</button>
-
-<button (click)="handleEvent('event.select-print-photos.01')">PRINT</button>
+<div class="printButton">
+    <div (click)="handleEvent('event.select-print-photos.01')" id="button-printer"><img src="{{componentData.assetButtonPrinter}}"></div>
+</div>

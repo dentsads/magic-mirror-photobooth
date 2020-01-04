@@ -1,0 +1,42 @@
+p {
+    font-family: "FreeSans";
+    font-weight: bold;
+    font-size: 172px;
+
+    display: flex;
+    justify-content:center;
+    margin:0;
+}
+
+#button-increment img {
+    filter: 
+    sepia(100%) 
+    saturate(2000%) 
+    hue-rotate(40deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
+}
+
+#button-decrement img {
+    filter: 
+    sepia(100%) 
+    saturate(2000%) 
+    hue-rotate(270deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
+}
+
+#button-printer img {
+    filter: 
+    sepia(100%) 
+    saturate(2000%) 
+    hue-rotate(120deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
+}
+
+#button-increment {
+    display: inline-block;
+}
+#button-decrement {
+    display: inline-block;
+}
+
+#button-printer {
+    display: flex;
+    justify-content:center;
+}
