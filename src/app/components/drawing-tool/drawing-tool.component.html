@@ -1,36 +1,9 @@
-<div id="drawing-mode-options">
-
-    <label for="clear">Clear canvas:</label>
-    <button (click)="handleClearCanvas()">clear canvas</button><br> 
-
-    <label for="drawing-mode-selector">Mode:</label>
-    <select id="drawing-mode-selector">
-      <option>Pencil</option>
-      <option>Circle</option>
-      <option>Spray</option>
-      <option>Pattern</option>
-
-      <option>hline</option>
-      <option>vline</option>
-      <option>square</option>
-      <option>diamond</option>
-      <option>texture</option>
-    </select><br>    
-
-    <label for="drawing-line-width">Line width:</label>
-    <span class="info">{{drawingLineWidth}}</span><input type="range" value="30" min="0" max="150" id="drawing-line-width" (change)="handleDrawingLineWidthElChange($event)" ><br>
-
-    <label for="drawing-color">Line color:</label>
-    <input type="color" value="{{drawingColor}}" id="drawing-color" (change)="handleDrawingColorElChange($event)"><br>
-
-    <label for="drawing-shadow-color">Shadow color:</label>
-    <input type="color" value="{{drawingShadowColor}}" id="drawing-shadow-color" (change)="handleDrawingShadowColorElChange($event)"><br>
-
-    <label for="drawing-shadow-width">Shadow width:</label>
-    <span class="info">{{drawingShadowWidth}}</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width" (change)="handleDrawingShadowWidthElChange($event)"><br>
-
-    <label for="drawing-shadow-offset">Shadow offset:</label>
-    <span class="info">{{drawingShadowOffset}}</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset" (change)="handleDrawingShadowOffsetElChange($event)"><br>
+<div>
+  <div class="inner">
+    <div (click)="handleClearCanvas()" id="button-clear"><img src="{{componentData.assetButtonClear}}"></div>
+    <div  id="button-color"><input type="color" value="{{drawingShadowColor}}" id="drawing-shadow-color" (change)="handleDrawingShadowColorElChange($event)"></div>
+    <div (click)="handleEvent('event.drawing-tool.01')" id="button-ok"><img src="{{componentData.assetButtonOk}}"></div>
+  </div>
 </div>
 
 <canvas id="canvas" width="800" height="800"></canvas>

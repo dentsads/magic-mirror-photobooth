@@ -1,32 +1,47 @@
 #canvas {
     border: 1px solid rgb(170, 170, 170);
 }
-#drawing-mode {
-    margin-bottom: 10px;
-    vertical-align: top;
+
+.inner {
+    display: flex;
+    justify-content:center;
 }
-#drawing-mode-options {
+
+#button-clear {
     display: inline-block;
-    vertical-align: top;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    background: #f5f2f0;
-    padding: 10px;
+    margin-left: 5%;
+
+    filter: 
+    sepia(100%) 
+    saturate(2000%) 
+    hue-rotate(270deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
 }
-label {
-    display: inline-block; width: 130px;
-}
-.info {
+
+#button-color {
     display: inline-block;
-    width: 25px;
-    background: #ffc;
+    margin-left: 5%;
 }
+
+#button-ok {
+    display: inline-block;
+    margin-left: 5%;
+
+    filter: 
+    sepia(100%) 
+    saturate(2000%) 
+    hue-rotate(40deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
+}
+
+img {
+    width:120px;
+}
+
 
 input[type="color"] {
 	-webkit-appearance: none;
 	border: none;
-	width: 32px;
-	height: 32px;
+	width: 100px;
+	height: 100px;
 }
 input[type="color"]::-webkit-color-swatch-wrapper {
 	padding: 0;

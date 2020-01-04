@@ -43,37 +43,18 @@ export class DrawingToolComponent implements OnInit {
   }
 
   async handleEvent(eventId: string) {
-    this.routingService.handleEvent(eventId);
+    var dataURL = this.canvas.toDataURL();
+    console.log(dataURL)
+    this.routingService.handleEvent(eventId, { imageDataURL: dataURL });
   }
 
   handleClearCanvas() {
     this.canvas.clear();
   }
 
-  handleDrawingLineWidthElChange(event) {
-    this.drawingLineWidth = parseInt(event.target.value, 10) || 1;
-    this.canvas.freeDrawingBrush.width = this.drawingLineWidth;
-  }
-
-  handleDrawingColorElChange(event) {
-    this.drawingColor = event.target.value;
-    this.canvas.freeDrawingBrush.color = this.drawingColor;
-  }
-
   handleDrawingShadowColorElChange(event) {
     this.drawingShadowColor = event.target.value;
     this.canvas.freeDrawingBrush.shadow.color = this.drawingShadowColor;
-  }
-
-  handleDrawingShadowWidthElChange(event) {
-    this.drawingShadowWidth = parseInt(event.target.value, 10) || 0;
-    this.canvas.freeDrawingBrush.shadow.blur = this.drawingShadowWidth;
-  }
-
-  handleDrawingShadowOffsetElChange(event) {
-    this.drawingShadowOffset = parseInt(event.target.value, 10) || 0;
-    this.canvas.freeDrawingBrush.shadow.offsetX = this.drawingShadowOffset;
-    this.canvas.freeDrawingBrush.shadow.offsetY = this.drawingShadowOffset;
   }
 
 }

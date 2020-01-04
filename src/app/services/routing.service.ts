@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'intro',
+        initial: 'drawing',
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,
@@ -135,7 +135,7 @@ export class RoutingService {
             on: {
               'event.accept-photo.01': [
                 // If number of required photos not reached, then repeat photo capture
-                { target: 'compositePhoto', cond: 'targetNumberOfPhotosReached' },
+                { target: 'drawing', cond: 'targetNumberOfPhotosReached' },
                 { target: 'countdown'}
               ], // photo ok
               'event.accept-photo.02': {
@@ -144,6 +144,20 @@ export class RoutingService {
                   context.capturedPhotoPaths.pop();
                 }
               } // photo not ok
+            }
+          },
+          drawing:  {
+            entry: ['transition'],
+            meta: { 
+              path: '/drawing', 
+              assets: { 
+                assetButtonClear: 'api/assets/compositions/undo-regular-240.png', 
+                assetButtonOk: 'api/assets/compositions/check-circle-regular-240.png',
+                assetButtonColor: 'api/assets/compositions/color-fill-solid-240.png'
+              } 
+            },
+            on: {
+              'event.drawing-tool.01': 'compositePhoto' // photos will be printed
             }
           },
           compositePhoto: {
@@ -198,14 +212,7 @@ export class RoutingService {
             on: {
               'event.select-print-photos.01': 'intro' // photos will be printed
             }
-          },
-          drawing:  {
-            entry: ['transition'],
-            meta: { path: '/drawing', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
-            on: {
-              'event.select-print-photos.01': 'intro' // photos will be printed
-            }
-          }
+          }          
         }
       });
 
