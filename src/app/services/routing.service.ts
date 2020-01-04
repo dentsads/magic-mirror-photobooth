@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'selectPrintPhotos',
+        initial: 'intro',
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,

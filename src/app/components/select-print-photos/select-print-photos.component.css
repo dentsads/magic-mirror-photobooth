@@ -1,11 +1,18 @@
-p {
-    font-family: "FreeSans";
-    font-weight: bold;
-    font-size: 172px;
-
+p { 
     display: flex;
     justify-content:center;
     margin:0;
+}
+
+#counter {
+    font-family: "FreeSans";
+    font-weight: bold;
+    font-size: 172px;
+}
+
+#copies {
+    font-size: 80px;
+    margin: 4%;
 }
 
 #button-increment img {
@@ -32,6 +39,7 @@ p {
 #button-increment {
     display: inline-block;
 }
+
 #button-decrement {
     display: inline-block;
 }
