@@ -35,5 +35,6 @@
 
 .image {
     max-width: 800px;
+    position: relative;
     /* mage-orientation: from-image; */ /* only in firefox currently*/
 }

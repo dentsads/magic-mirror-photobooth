@@ -78,6 +78,7 @@ sudo apt-get install -y libcairo2-dev
 # see here: https://github.com/nodesource/distributions#debinstall
 curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
 sudo apt-get install -y nodejs
+sudo apt-get install -y build-essential
 
 # install other dependencies
 sudo npm install license-checker -g

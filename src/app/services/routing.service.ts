@@ -162,11 +162,9 @@ export class RoutingService {
                 context.photoPath = capturedPhotoPath;
                 context.exifOrientation = 1;
                 context.capturedPhotoPaths = [];
-                // console.log(response);
               })
               .catch(function(error) {
                 // handle error
-                // console.log(error);
               }),
               onDone: {
                 target: 'acceptCompositedPhoto'
