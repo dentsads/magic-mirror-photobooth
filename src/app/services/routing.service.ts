@@ -48,21 +48,16 @@ export class RoutingService {
     return {
       entry: ['transition'],
       meta: { "path": path, "assets": assets },
-      initial: 'execute_action',
+      initial: 'anim_loaded',
       states: {
-        execute_action: {
-          on: {
-            '': {
-              target: 'anim_loaded',
-              actions: (context, event) => {
-                if (action) { action(context, event); }
-              }
-            }
-          }
-        },
         anim_loaded: {
           on: {
-            'event.anim1.01': 'anim_running'
+            'event.anim1.01': {
+              target: 'anim_running',
+              actions: (context, event) => {
+                if (action) action(context, event);
+              }
+            }                ,            
           }
         },
         anim_running: {
@@ -99,7 +94,7 @@ export class RoutingService {
             this.ledService.triggerLed({
               direction: 'RIGHT',
               color: 'rgb(0, 0, 50)',
-              duration: 5034,
+              duration: event.delay || 0,
               loops: 1
             })
             .then((response) => {
