@@ -11,4 +11,8 @@ export class LedService {
   async triggerLed(options: any): Promise<AxiosResponse<any>> {
     return axios.post('/api/led/ball', options);
   }
+
+  async clearLed(): Promise<AxiosResponse<any>> {
+    return axios.get('/api/led/clear');
+  }
 }

@@ -1,7 +1,5 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Buffer } from 'buffer';
-import axios from 'axios';
 import { RoutingService } from '../../services/routing.service';
 import { Anim1 } from '../../models/anim1.model';
 import { Subscription } from 'rxjs';

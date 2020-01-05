@@ -9,7 +9,7 @@ import { ErrorPageComponent } from './components/error-page/error-page.component
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/drawing', pathMatch: 'full' },
+  { path: '', redirectTo: '/intro', pathMatch: 'full' },
   { path: 'intro', component: IntroComponent },
   { path: 'anim1/:id', component: Anim1Component },
   { path: 'drawing', component: DrawingToolComponent },

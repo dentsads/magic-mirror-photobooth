@@ -90,7 +90,7 @@ export class RoutingService {
               }
             }
           },
-          countdown: this.animationState(this.ANIM1_MAP[3], '/anim1/3', '#root.capturePhoto', (context, event) => {
+          countdown: this.animationState(this.ANIM1_MAP[3], '/anim1/3', '#root.clearLed', (context, event) => {
             this.ledService.triggerLed({
               direction: 'RIGHT',
               color: 'rgb(0, 0, 50)',
@@ -106,6 +106,26 @@ export class RoutingService {
               this.loggerService.log('error', error)
             });
           }),
+          clearLed: {
+            invoke: {
+              id: 'clear',
+              src: (context, event) => this.ledService.clearLed(),
+              onDone: {
+                target: 'capturePhoto',
+                actions: (context, event) => {
+                  // handle success
+                  this.loggerService.log('info', 'Clearing LED strip')     
+                }
+              },
+              onError: {
+                target: 'errorPage',
+                actions: (_, event) => {
+                  // handle error
+                  this.loggerService.log('error', event.data.response.data)
+                }
+              }              
+            }
+          },
           capturePhoto: {
             invoke: {
               id: 'capture',

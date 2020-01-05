@@ -114,10 +114,13 @@ class Photo {
       if (this.camera == undefined)
         return reject("Camera cannot be detected. Initialization failed.")
 
+      logger.log('info', 'Capturing picture with DSLR');
+
       // Take picture with camera object obtained from list()
       this.camera.takePicture({download: true}, (err, data: Buffer) => {
         if (err) return reject(err);             
 
+        logger.log('info', 'Successfully captured picture with DSLR');
 
         let jpegExifOrientation = this.getJpegExifOrientation(data);
         logger.log('info', 'Jpeg orientation is %d', jpegExifOrientation);
