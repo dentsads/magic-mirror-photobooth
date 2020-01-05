@@ -228,7 +228,12 @@ export class RoutingService {
           },
           errorPage: {
             entry: ['transition'],
-            meta: { path: '/error'},
+            meta: { 
+              path: '/error',
+              assets: { 
+                assetButtonHome: 'api/assets/compositions/home-solid-240.png'               
+              } 
+            },
             on: {
               'event.error-page.01': 'intro'
             }
