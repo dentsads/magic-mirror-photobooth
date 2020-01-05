@@ -5,6 +5,7 @@ import { IntroComponent } from './components/intro/intro.component';
 import { DrawingToolComponent } from './components/drawing-tool/drawing-tool.component';
 import { AcceptPhotoComponent } from './components/accept-photo/accept-photo.component';
 import { SelectPrintPhotosComponent } from './components/select-print-photos/select-print-photos.component';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
 
 
 const routes: Routes = [
@@ -13,7 +14,8 @@ const routes: Routes = [
   { path: 'anim1/:id', component: Anim1Component },
   { path: 'drawing', component: DrawingToolComponent },
   { path: 'accept-photo', component: AcceptPhotoComponent },
-  { path: 'select-print-photos', component: SelectPrintPhotosComponent }
+  { path: 'select-print-photos', component: SelectPrintPhotosComponent },
+  { path: 'error', component: ErrorPageComponent }
 ];
 
 @NgModule({

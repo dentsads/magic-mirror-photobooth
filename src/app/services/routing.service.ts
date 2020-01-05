@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'drawing',
+        initial: 'intro',
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,
@@ -112,26 +112,35 @@ export class RoutingService {
           capturePhoto: {
             invoke: {
               id: 'capture',
-              src: (context, event) => this.photoService.capturePhoto().then(function(response) {
-                // handle success
-                const capturedPhotoPath = response.data.result.imagePath;
-                context.photoPath = 'api/photos/' + capturedPhotoPath;
-                context.exifOrientation = response.data.result.exifOrientation;
-                context.capturedPhotoPaths.push(capturedPhotoPath);
-                // console.log(response);              
-              })
-              .catch(function(error) {
-                // handle error
-                console.error(error.response.data);
-              }),
+              src: (context, event) => this.photoService.capturePhoto(),
               onDone: {
-                target: 'acceptPhoto'
-              }
+                target: 'acceptPhoto',
+                actions: (context, event) => {
+                  // handle success
+                  const capturedPhotoPath = event.data.data.result.imagePath;
+                  context.photoPath = 'api/photos/' + capturedPhotoPath;
+                  context.exifOrientation = event.data.data.result.exifOrientation;
+                  context.capturedPhotoPaths.push(capturedPhotoPath);         
+                }
+              },
+              onError: {
+                target: 'errorPage',
+                actions: (_, event) => {
+                  // handle error
+                  console.log(event.data.response.data)
+                }
+              }              
             }
           },
           acceptPhoto:  {
             entry: ['updateMetaAssetsWithContext', 'transition'],
-            meta: { path: '/accept-photo', assets: { assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'} },
+            meta: { 
+              path: '/accept-photo', 
+              assets: { 
+                assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', 
+                assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'
+              } 
+            },
             on: {
               'event.accept-photo.01': [
                 // If number of required photos not reached, then repeat photo capture
@@ -162,26 +171,30 @@ export class RoutingService {
           },
           compositePhoto: {
             entry: ['transition'],
-            meta: { "path": '/anim1/6', "assets": this.ANIM1_MAP[6] },
+            meta: { path: '/anim1/6', assets: this.ANIM1_MAP[6] },
             invoke: {
               id: 'composite',
               src: (context, event) => this.photoService.compositePhoto({
                 templateLayout: 'THREE_UNIFORM',
                 imgSrcList: context.capturedPhotoPaths,
                 overlayImg: 'print-templates/christmas_01_overlay_base_03.png'
-              })
-              .then(function(response) {
-                // handle success
-                const capturedPhotoPath = response.data.result;
-                context.photoPath = capturedPhotoPath;
-                context.exifOrientation = 1;
-                context.capturedPhotoPaths = [];
-              })
-              .catch(function(error) {
-                // handle error
               }),
               onDone: {
-                target: 'acceptCompositedPhoto'
+                target: 'acceptCompositedPhoto',
+                actions: (context, event) => {
+                  // handle success
+                  const capturedPhotoPath = event.data.data.result;
+                  context.photoPath = capturedPhotoPath;
+                  context.exifOrientation = 1;
+                  context.capturedPhotoPaths = [];     
+                }
+              },
+              onError: {
+                target: 'errorPage',
+                actions: (_, event) => {
+                  // handle error
+                  console.log(event.data.response.data)
+                }
               }
             }
           },
@@ -212,7 +225,14 @@ export class RoutingService {
             on: {
               'event.select-print-photos.01': 'intro' // photos will be printed
             }
-          }          
+          },
+          errorPage: {
+            entry: ['transition'],
+            meta: { path: '/error'},
+            on: {
+              'event.error-page.01': 'intro'
+            }
+          },      
         }
       });
 
