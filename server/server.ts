@@ -72,6 +72,12 @@ app.post('/api/dslr/capture', (req, res, next) => {
   })    
 })
 
+app.post('/api/logger', (req, res, next) => {
+  var jsonObj = req.body
+
+  logger.log(jsonObj.level || 'error', jsonObj.data, { origin: 'client'})
+  return res.sendStatus(200)  
+})
 
 app.listen(4201, '127.0.0.1', function() {
     console.log('Server now listenting on 4201');

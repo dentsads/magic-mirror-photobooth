@@ -6,8 +6,6 @@ import axios, { AxiosResponse } from 'axios';
 })
 export class PhotoService {
 
-  componentData: any;
-
   constructor() { }
 
   async capturePhoto(options?: any): Promise<AxiosResponse<any>> {

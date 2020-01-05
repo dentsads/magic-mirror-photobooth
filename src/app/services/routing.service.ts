@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Machine, interpret, AnyEventObject } from 'xstate';
 import { LedService } from './led.service';
 import { PhotoService } from './photo.service';
+import { LoggerService } from './logger.service'
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class RoutingService {
   constructor(
     public router: Router,
     private ledService: LedService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private loggerService: LoggerService
   ) {
     this.createThemes();
     this.currentTheme = this.THEME_MAP[this.currentThemeId];
@@ -72,7 +74,7 @@ export class RoutingService {
     };
   }
 
-  createThemes() {
+  createThemes() {    
     const stateMachine = Machine(
       {
         id: 'root',
@@ -100,13 +102,13 @@ export class RoutingService {
               duration: 5034,
               loops: 1
             })
-            .then(function(response) {
+            .then((response) => {
               // handle success
-              // console.log(response);
+              this.loggerService.log('info', response)              
             })
-            .catch(function(error) {
+            .catch((error) => {              
               // handle error
-              // console.log(error);
+              this.loggerService.log('error', error)
             });
           }),
           capturePhoto: {
@@ -127,7 +129,7 @@ export class RoutingService {
                 target: 'errorPage',
                 actions: (_, event) => {
                   // handle error
-                  console.log(event.data.response.data)
+                  this.loggerService.log('error', event.data.response.data)
                 }
               }              
             }
@@ -193,7 +195,7 @@ export class RoutingService {
                 target: 'errorPage',
                 actions: (_, event) => {
                   // handle error
-                  console.log(event.data.response.data)
+                  this.loggerService.log('error', event.data.response.data)
                 }
               }
             }
@@ -245,9 +247,9 @@ export class RoutingService {
     {
       actions: {
         transition: (context, event, meta) => {
-          console.log('transitioning to: ' + JSON.stringify(meta.state.value));
+          this.loggerService.log('info', 'transitioning to: ' + JSON.stringify(meta.state.value))    
           const metadata: any = Object.values(meta.state.meta).shift();
-          // console.log(JSON.stringify(metadata));
+
           this.router.navigate([metadata.path]);
         },
         updateMetaAssetsWithContext: (context, event, meta) => {
@@ -256,7 +258,7 @@ export class RoutingService {
       },
       delays: {
         FINISH_ANIM: (context, event: AnyEventObject) => {
-          console.log('delay is ' + JSON.stringify(event));
+          this.loggerService.log('info', 'animation delay is ' + JSON.stringify(event))   
           return event.delay || 0;
         }
       },
