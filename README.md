@@ -68,7 +68,8 @@ The following global npm dependencies are needed
 sudo apt-get install -y imagemagick
 
 # see here: http://www.gphoto.org/
-sudo apt-get install gphoto2 
+sudo apt-get install -y libgphoto2-dev
+sudo apt-get install -y gphoto2 
 
 # libcairo for usage with https://www.npmjs.com/package/fabric
 # see here: https://www.cairographics.org/download/
@@ -79,6 +80,7 @@ sudo apt-get install -y libcairo2-dev
 curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo apt-get install -y build-essential
+sudo apt-get install -y udev
 
 # install other global npm dependencies
 sudo npm install license-checker -g
@@ -168,7 +170,7 @@ sudo systemctl status pm2-root.service
 this might return `status=failed`. A fresh reboot of the OS mitigates this. See here: https://www.freedesktop.org/software/systemd/man/systemd.service.html#Restart=
 for a list of when the systemd service will be restarted (default = on-failure)
 
-Now the service starts everytim you reboot or some system failure happens.
+Now the service starts everytime you reboot or some system failure happens.
 
 You can disable the service with 
 
@@ -197,7 +199,10 @@ see issue: https://github.com/gphoto/gphoto2/issues/181 when encountering
 
 For a quick fix this helps
 
-`sudo killall gvfs-gphoto2-volume-monitor`
+```
+sudo killall gvfs-gphoto2-volume-monitor
+sudo killall gvfsd-gphoto2
+```
 
 
  ## Nikon D3100
@@ -243,3 +248,25 @@ curl -H "Content-Type: application/json" \
 ```
 
 Please beware. In production mode with angular the server is proxied through port `4200` instead of `4201`.
+
+# Building and Running with Docker
+
+```bash
+# Build container
+sudo docker build -t magic-mirror-photobooth .
+
+# Run docker container
+sudo docker run -d \
+--restart unless-stopped \
+--privileged \
+--name magic-mirror-photobooth \
+-v $(pwd)/../magic-mirror-photobooth-assets:/root/magic-mirror-photobooth-assets \
+-v $(pwd)/../magic-mirror-photobooth-photos:/root/magic-mirror-photobooth-photos \
+-v /run/udev:/run/udev:ro \
+-p :4200:4200 \
+magic-mirror-photobooth
+
+
+# Exec into container
+sudo docker exec -it magic-mirror-photobooth /bin/bash
+```
