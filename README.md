@@ -43,7 +43,7 @@ Where to order:
 
 Install the IDE from [here](https://www.arduino.cc/en/main/software). For using Arduino IDE disable ModemManager in Linux otherwise it interferes with the Arduino I/O
 
-``` bash
+```bash
 systemctl status ModemManager.service
 systemctl disable ModemManager.service
 ```
@@ -62,7 +62,7 @@ You need to flash the `FIRMATA` library on the Arduino. You can find the source 
 
 The following global npm dependencies are needed
 
-``` bash
+```bash
 # install imagemagick for image compositing of printer templates
 # see here: https://imagemagick.org/index.php
 sudo apt-get install -y imagemagick
@@ -80,7 +80,7 @@ curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo apt-get install -y build-essential
 
-# install other dependencies
+# install other global npm dependencies
 sudo npm install license-checker -g
 sudo npm install @angular/cli -g
 sudo npm install typescript -g 
@@ -98,7 +98,7 @@ sudo npm install canvas -g --unsafe-perm=true --allow-root
 ## Install and run application
 
 
-``` bash
+```bash
 npm install
 
 # patch the node-pixel library with `j5-firmata-upg` branch, otherwise you will get
@@ -124,7 +124,7 @@ license-checker | grep licenses | sort | uniq
 # Increase inotify watches
 
 There might be processes holding too many file handes. You can increase the number of watches like this
-``` bash
+```bash
 sudo echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
 ```
 
@@ -149,7 +149,7 @@ identify -format "%[fx:w]x%[fx:h]" built/02.jpg
 
 ## Install pm2 startup script for systemd
 
-``` bash
+```bash
 # https://pm2.keymetrics.io/docs/usage/startup/
 sudo pm2 startup
 
@@ -161,7 +161,7 @@ sudo pm2 save
 
 then when executing
 
-```
+```bash
 sudo systemctl status pm2-root.service 
 ```
 
@@ -172,14 +172,14 @@ Now the service starts everytim you reboot or some system failure happens.
 
 You can disable the service with 
 
-``` bash
+```bash
 sudo systemctl stop pm2-root.service
 sudo systemctl disable pm2-root.service 
 ```
 
 ## Using PM2
 
-``` bash
+```bash
 # list processes
 sudo pm2 list
 
@@ -232,11 +232,14 @@ Now you can trigger the ring by using the REST API
 
 ```bash
 # trigger LED 'ball' animation mode
-curl -H "Content-Type: application/json" -d '{"direction":"RIGHT", "color":"rgb(0, 50, 0)", "duration":2000, "loops":3}' -X POST  http://localhost:4201/api/led/ball
+curl -H "Content-Type: application/json" \
+-d '{"direction":"RIGHT", "color":"rgb(0, 50, 0)", "duration":2000, "loops":3}' \
+-X POST  http://localhost:4201/api/led/ball
 
 # trigger LED 'barrel' animation mode
-curl -H "Content-Type: application/json" -d '{"direction":"RIGHT", "color":"rgb(0, 50, 0)", "duration":5000, "shiftDelay": 500}' -X POST  http://localhost:4201/api/led/barrel
-
+curl -H "Content-Type: application/json" \
+-d '{"direction":"RIGHT", "color":"rgb(0, 50, 0)", "duration":5000, "shiftDelay": 500}' \
+-X POST  http://localhost:4201/api/led/barrel
 ```
 
 Please beware. In production mode with angular the server is proxied through port `4200` instead of `4201`.
