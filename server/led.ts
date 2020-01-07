@@ -137,13 +137,12 @@ class Led {
       calculatedPos = pos    
 
     while (loopCounter !== abortAfterLoops) {
-      this.strip.pixel(calculatedPos).color(options.color);
-          
       if (this.isStateCleared) {
         this.isStateCleared = false;
         return;
       }
-
+      
+      this.strip.pixel(calculatedPos).color(options.color);        
       this.strip.show();
 
       if (options.direction == Direction.LEFT)
