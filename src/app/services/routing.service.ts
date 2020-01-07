@@ -57,7 +57,7 @@ export class RoutingService {
               actions: (context, event) => {
                 if (action) action(context, event);
               }
-            }                ,            
+            }           
           }
         },
         anim_running: {
@@ -73,7 +73,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'intro',
+        initial: 'drawing',
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,
@@ -118,7 +118,12 @@ export class RoutingService {
                 }
               },
               onError: {
-                target: 'errorPage',
+                /* 
+                  despite the error navigate to capturePhoto,
+                  since it is better to not disturbe the workflow
+                  than to interrupt because of an LED error
+                */
+                target: 'capturePhoto',
                 actions: (_, event) => {
                   // handle error
                   this.loggerService.log('error', event.data.response.data)
@@ -262,7 +267,7 @@ export class RoutingService {
     {
       actions: {
         transition: (context, event, meta) => {
-          this.loggerService.log('info', 'transitioning to: ' + JSON.stringify(meta.state.value))    
+          this.loggerService.log('info', 'Transitioning to: ' + JSON.stringify(meta.state.value))    
           const metadata: any = Object.values(meta.state.meta).shift();
 
           this.router.navigate([metadata.path]);
@@ -273,7 +278,7 @@ export class RoutingService {
       },
       delays: {
         FINISH_ANIM: (context, event: AnyEventObject) => {
-          this.loggerService.log('info', 'animation delay is ' + JSON.stringify(event))   
+          this.loggerService.log('info', 'Animation delay is ' + JSON.stringify(event))   
           return event.delay || 0;
         }
       },

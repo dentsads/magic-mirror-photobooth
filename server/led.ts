@@ -30,7 +30,8 @@ interface BarrelSpinOptions {
 
 class Led {
   private strip: Strip
-  private board: Board  
+  private board: Board
+  private isStateCleared: boolean;  
 
   public constructor() {
     this.board = new Board();
@@ -42,10 +43,13 @@ class Led {
           gamma: 2.8,
       });
     });
+
+    this.isStateCleared = false;
   }
 
   public clear(): void {
     this.strip.clear()
+    this.isStateCleared = true;
   }
 
   public rightBarrelSpin(): void {
@@ -132,8 +136,14 @@ class Led {
     if (options.direction == Direction.RIGHT)
       calculatedPos = pos    
 
-    while (loopCounter !== abortAfterLoops ) {
+    while (loopCounter !== abortAfterLoops && !this.isStateCleared) {
       this.strip.pixel(calculatedPos).color(options.color);
+          
+      if (this.isStateCleared) {
+        this.isStateCleared = false;
+        return;
+      }
+
       this.strip.show();
 
       if (options.direction == Direction.LEFT)
@@ -160,6 +170,7 @@ class Led {
     }
     
     this.strip.clear()
+    this.isStateCleared = false;
 
     return;
   }

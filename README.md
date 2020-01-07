@@ -214,8 +214,29 @@ For a list of restrictions on the remote control capabilities of your camera see
 
 If you want to start testing without using a DSLR you can enable DSLR mocking mode with
 
-```
+```bash
 export PHOTOBOOTH_CAMERA_MOCK=1
 ```
 
 Please note: You need internet connectivity for this to work since the mocked photos will now be fetched at https://picsum.photos
+
+# Using the LED ring
+
+You can prepare the LED ring by using PIN 6 of the Arduino Nano for data input on the ring, plugging it into USB and starting the server 
+
+```bash
+npm run start:server
+```
+
+Now you can trigger the ring by using the REST API
+
+```bash
+# trigger LED 'ball' animation mode
+curl -H "Content-Type: application/json" -d '{"direction":"RIGHT", "color":"rgb(0, 50, 0)", "duration":2000, "loops":3}' -X POST  http://localhost:4201/api/led/ball
+
+# trigger LED 'barrel' animation mode
+curl -H "Content-Type: application/json" -d '{"direction":"RIGHT", "color":"rgb(0, 50, 0)", "duration":5000, "shiftDelay": 500}' -X POST  http://localhost:4201/api/led/barrel
+
+```
+
+Please beware. In production mode with angular the server is proxied through port `4200` instead of `4201`.
