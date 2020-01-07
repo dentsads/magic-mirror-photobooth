@@ -136,7 +136,7 @@ class Led {
     if (options.direction == Direction.RIGHT)
       calculatedPos = pos    
 
-    while (loopCounter !== abortAfterLoops && !this.isStateCleared) {
+    while (loopCounter !== abortAfterLoops) {
       this.strip.pixel(calculatedPos).color(options.color);
           
       if (this.isStateCleared) {
