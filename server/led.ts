@@ -31,7 +31,8 @@ interface BarrelSpinOptions {
 class Led {
   private strip: Strip
   private board: Board
-  private isStateCleared: boolean;  
+  private isStateCleared: boolean;
+  private isBoardUnresponsive: boolean = false;
 
   public constructor() {
     this.board = new Board();
@@ -42,9 +43,22 @@ class Led {
           strips: [ {pin: 6, length: 24}, ],
           gamma: 2.8,
       });
+      this.isBoardUnresponsive = false;
+    });
+
+    this.board.on("close", () => {      
+      this.isBoardUnresponsive = true;
     });
 
     this.isStateCleared = false;
+  }
+
+  public isHealthy(): boolean {
+    if (this.strip && !this.isBoardUnresponsive) {
+      return true;
+    } else {
+      return false;
+    }     
   }
 
   public clear(): void {

@@ -14,6 +14,31 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api/photos', express.static('../magic-mirror-photobooth-photos'));
 app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
 
+app.get('/api/health', (req, res) => {      
+  let isHealthyOverall:boolean = led.isHealthy() && photo.isHealthy();
+  let isHealthyString = (isHealthy:boolean) => isHealthy ? 'healthy' : 'unhealthy';
+  let resultHealthJson: object = {
+    status: isHealthyString(isHealthyOverall),
+    components: [
+        {
+            name: "led",
+            status: isHealthyString(led.isHealthy())
+        },
+        {
+            name: "dslr",
+            status: isHealthyString(photo.isHealthy())
+        }
+    ]
+  };
+
+  if (isHealthyOverall) {
+    res.status(200).send(resultHealthJson).end()
+  } else {
+    res.status(500).send(resultHealthJson).end()
+  }
+  
+})
+
 app.post('/api/led/ball', (req, res) => {
     var jsonObj = req.body
     led.ballSpin(jsonObj)

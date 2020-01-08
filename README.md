@@ -105,8 +105,7 @@ npm install
 
 # patch the node-pixel library with `j5-firmata-upg` branch, otherwise you will get
 # NoWritablePortError: Node Pixel FIRMATA controller requires IO that can write out
-git clone https://github.com/ajfisher/node-pixel.git ../
-git checkout j5-firmata-upg
+git clone https://github.com/ajfisher/node-pixel.git ../node-pixel --branch j5-firmata-upg
 rm -rf node_modules/node-pixel
 cp -r ../node-pixel/ node_modules/
 rm -rf node_modules/node-pixel/.git
@@ -125,7 +124,7 @@ license-checker | grep licenses | sort | uniq
 
 # Increase inotify watches
 
-There might be processes holding too many file handes. You can increase the number of watches like this
+There might be processes holding too many file handles. You can increase the number of watches like this
 ```bash
 sudo echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
 ```

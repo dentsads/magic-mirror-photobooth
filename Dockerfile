@@ -50,10 +50,8 @@ RUN git clone https://github.com/ajfisher/node-pixel.git ../node-pixel --branch 
 && rm -rf node_modules/node-pixel/.git
 
 
-RUN ls -la && pwd && ng build --prod && npm run build:server
+RUN ls -la && pwd && npm run build:client -- --prod && npm run build:server
 
 ENV NODE_ENV production
 
 CMD ["pm2-runtime", "docker.pm2.ecosystem.config.js"]
-
-#USER node

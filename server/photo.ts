@@ -34,6 +34,14 @@ class Photo {
     })
   }
 
+  public isHealthy(): boolean {
+    if (!process.env.PHOTOBOOTH_CAMERA_MOCK && this.camera == undefined) {
+      return false;
+    } else {
+      return true;
+    }     
+  }
+
   private initializeGphoto() {    
     return new Promise((resolve, reject) => {
       this.GPhoto = new gphoto2.GPhoto2();
@@ -109,7 +117,7 @@ class Photo {
     })
   }
 
-  async downloadImage() {
+  private async downloadImage() {
     return new Promise((resolve, reject) => {
       if (this.camera == undefined)
         return reject("Camera cannot be detected. Initialization failed.")
