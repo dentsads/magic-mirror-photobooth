@@ -248,6 +248,26 @@ curl -H "Content-Type: application/json" \
 
 Please beware. In production mode with angular the server is proxied through port `4200` instead of `4201`.
 
+# Configuring Printer
+
+## Installing Gutenprint driver 5.3.4 from source
+
+First you need to download the gutenprint snapshot tarball from [here](https://sourceforge.net/projects/gimp-print/files/snapshots/)
+and untar it.
+
+Then you need to execute install the following dependencies and build the driver
+
+```bash
+sudo apt-get install -y autoconf autopoint byacc cvs docbook-utils doxygen flex gettext libglib2.0-dev libtool pkg-config sgmltools-lite texi2html 
+sudo apt-get install -y libcups2-dev
+sudo apt-get install -y libusb-1.0-0-dev
+sudo apt-get install -y libglib2.0-dev libgtk2.0-dev libgimp2.0-dev
+
+./configure
+make
+sudo make install
+```
+
 # Building and Running with Docker
 
 ```bash
