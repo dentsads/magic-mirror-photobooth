@@ -268,6 +268,50 @@ make
 sudo make install
 ```
 
+Note: When the Gutenprint packages get updated, the printers using Gutenprint drivers will stop working until you run `cups-genppdupdate` as root and restart CUPS. `cups-genppdupdate` will update the PPD files of the configured printers.
+
+```
+sudo cups-genppdupdate -x
+sudo systemctl restart cups
+
+open http://localhost:631
+```
+
+## Getting the best results
+
+The following printer options are recommended
+
+```
+StpColorCorrection=Raw
+StpColorPrecision=Best
+StpImageType=Photo
+```
+
+You should also use the ICC profile from DNP directly:
+
+http://git.shaftnet.org/cgit/selphy_print.git/tree/icm/DNP/DNP_DS620/DS620-R0.icc
+
+or you can download it from the official website [here](http://dnpphoto.com/en-us/Support/Downloads/Drivers-Tools)
+
+See [here](https://help.ubuntu.com/stable/ubuntu-help/color-howtoimport.html.en) for instructions on how to import color profiles in Ubuntu
+
+## Issue installing ICC profile in Ubuntu 18.04 LTE
+
+If you cannot import the ICC profile in Ubuntu 18.04 you may have a problem with `colord`. See [this issue](https://hub.displaycal.net/forums/topic/profile-installation-failure/)
+
+You can fix this by installing `colord-kde` and rebooting your machine
+
+```
+sudo apt-get install -y colord-kde
+```
+
+## Printing with `lpr` from the command line
+
+```
+# using printer DP-DS620
+sudo lpr -P DP-DS620 image.png
+```
+
 # Building and Running with Docker
 
 ```bash

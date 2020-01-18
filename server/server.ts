@@ -16,7 +16,7 @@ app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
 
 app.get('/api/health', (req, res) => {      
   let isHealthyOverall:boolean = led.isHealthy() && photo.isHealthy();
-  let isHealthyString = (isHealthy:boolean) => isHealthy ? 'healthy' : 'unhealthy';
+  let isHealthyString = (isHealthy:boolean):string => isHealthy ? 'healthy' : 'unhealthy';
   let resultHealthJson: object = {
     status: isHealthyString(isHealthyOverall),
     components: [
