@@ -255,14 +255,27 @@ Please beware. In production mode with angular the server is proxied through por
 First you need to download the gutenprint snapshot tarball from [here](https://sourceforge.net/projects/gimp-print/files/snapshots/)
 and untar it.
 
-Then you need to execute install the following dependencies and build the driver
+Then you need to install the following dependencies and build the driver
 
 ```bash
-sudo apt-get install -y autoconf autopoint byacc cvs docbook-utils doxygen flex gettext libglib2.0-dev libtool pkg-config sgmltools-lite texi2html 
+sudo apt-get install -y autoconf
+sudo apt-get install -y autopoint
+sudo apt-get install -y byacc
+sudo apt-get install -y cvs
+sudo apt-get install -y docbook-utils
+sudo apt-get install -y doxygen
+sudo apt-get install -y flex
+sudo apt-get install -y gettext
+sudo apt-get install -y libglib2.0-dev
+sudo apt-get install -y libtool
+sudo apt-get install -y pkg-config
+sudo apt-get install -y sgmltools-lite
+sudo apt-get install -y texi2html
 sudo apt-get install -y libcups2-dev
 sudo apt-get install -y libusb-1.0-0-dev
 sudo apt-get install -y libglib2.0-dev libgtk2.0-dev libgimp2.0-dev
 
+# build the gutenprint driver from source and install it
 ./configure
 make
 sudo make install
@@ -270,7 +283,7 @@ sudo make install
 
 Note: When the Gutenprint packages get updated, the printers using Gutenprint drivers will stop working until you run `cups-genppdupdate` as root and restart CUPS. `cups-genppdupdate` will update the PPD files of the configured printers.
 
-```
+```bash
 sudo cups-genppdupdate -x
 sudo systemctl restart cups
 
@@ -301,14 +314,14 @@ If you cannot import the ICC profile in Ubuntu 18.04 you may have a problem with
 
 You can fix this by installing `colord-kde` and rebooting your machine
 
-```
+```bash
 sudo apt-get install -y colord-kde
 ```
 
 ## Printing with `lpr` from the command line
 
-```
-# using printer DP-DS620
+```bash
+# using printer DP-DS620 and printing image.png
 sudo lpr -P DP-DS620 image.png
 ```
 
@@ -323,10 +336,12 @@ sudo docker run -d \
 --restart unless-stopped \
 --privileged \
 --name magic-mirror-photobooth \
+--env PHOTOBOOTH_CAMERA_MOCK=1 \
 -v $(pwd)/../magic-mirror-photobooth-assets:/root/magic-mirror-photobooth-assets \
 -v $(pwd)/../magic-mirror-photobooth-photos:/root/magic-mirror-photobooth-photos \
 -v /run/udev:/run/udev:ro \
 -p :4200:4200 \
+-p :632:631 \
 magic-mirror-photobooth
 
 

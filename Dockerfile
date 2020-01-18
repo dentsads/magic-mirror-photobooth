@@ -1,8 +1,79 @@
+FROM ubuntu:18.04 AS build
+
+USER root
+
+ENV HOME /root
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+WORKDIR $HOME/gutenprint
+
+# install devel dependencies for building gutenprint from source
+RUN apt-get update \
+&& apt-get install -y autoconf \
+&& apt-get install -y autopoint \
+&& apt-get install -y byacc \
+&& apt-get install -y cvs \
+&& apt-get install -y docbook-utils \
+&& apt-get install -y doxygen \
+&& apt-get install -y flex \
+&& apt-get install -y gettext \
+&& apt-get install -y libglib2.0-dev \
+&& apt-get install -y libtool \
+&& apt-get install -y pkg-config \
+&& apt-get install -y sgmltools-lite \
+&& apt-get install -y texi2html \
+&& apt-get install -y libcups2-dev \
+&& apt-get install -y libusb-1.0-0-dev \
+&& apt-get install -y libglib2.0-dev \
+&& apt-get install -y libgtk2.0-dev \
+&& apt-get install -y libgimp2.0-dev \
+&& apt-get install -y wget
+
+RUN wget -O gutenprint.tar.xz https://sourceforge.net/projects/gimp-print/files/snapshots/gutenprint-5.3.4-2020-01-09T01-00-f7eb9cfa.tar.xz \
+&& mkdir gutenprint \
+&& tar xvf gutenprint.tar.xz -C ./gutenprint --strip-components=1
+
+RUN cd gutenprint \
+&& ./configure \
+&& make
+
 FROM node:11.15.0
 
 USER root
 
 ENV HOME /root
+
+WORKDIR $HOME/gutenprint
+COPY --from=build $HOME/gutenprint .
+
+# install cups for printing
+RUN apt-get update \
+&& apt-get install -y cups \
+&& apt-get install -y autoconf \
+&& apt-get install -y autopoint \
+&& apt-get install -y byacc \
+&& apt-get install -y cvs \
+&& apt-get install -y docbook-utils \
+&& apt-get install -y doxygen \
+&& apt-get install -y flex \
+&& apt-get install -y gettext \
+&& apt-get install -y libglib2.0-dev \
+&& apt-get install -y libtool \
+&& apt-get install -y pkg-config \
+&& apt-get install -y sgmltools-lite \
+&& apt-get install -y texi2html \
+&& apt-get install -y libcups2-dev \
+&& apt-get install -y libusb-1.0-0-dev \
+&& apt-get install -y libglib2.0-dev \
+&& apt-get install -y libgtk2.0-dev \
+&& apt-get install -y libgimp2.0-dev \
+&& /etc/init.d/cups restart
+
+RUN cd gutenprint \
+&& make install \
+&& cups-genppdupdate -x \
+&& /etc/init.d/cups restart
 
 COPY . $HOME/magic-mirror-photobooth
 
