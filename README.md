@@ -329,7 +329,7 @@ sudo lpr -P DP-DS620 image.png
 
 ```bash
 # Build container
-sudo docker build -t magic-mirror-photobooth .
+sudo docker build --no-cache -t magic-mirror-photobooth .
 
 # Run docker container
 sudo docker run -d \
@@ -340,6 +340,8 @@ sudo docker run -d \
 -v $(pwd)/../magic-mirror-photobooth-assets:/root/magic-mirror-photobooth-assets \
 -v $(pwd)/../magic-mirror-photobooth-photos:/root/magic-mirror-photobooth-photos \
 -v /run/udev:/run/udev:ro \
+-v /var/run/dbus:/var/run/dbus \
+-v /dev/bus/usb:/dev/bus/usb \
 -p :4200:4200 \
 -p :632:631 \
 magic-mirror-photobooth
