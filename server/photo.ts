@@ -62,39 +62,54 @@ class Photo {
     }); 
   }
 
-  // see: https://www.exif.org/Exif2-2.PDF
-  private getJpegExifOrientation(data: Buffer): number {  
-    let idx= 0;
-    let value = 1; // Non-rotated is the default
-    let maxBytes = data.byteLength
-
-    // Is it a jpeg? If not then don't continue
-    if (data.readUInt16BE(0).toString(16) !== 'ffd8' && data.readUInt16BE(2).toString(16) !== 'ffe1') {
-      logger.log('debug', 'Buffered image is not a JPEG. Don\'t extract EXIF orientation');
-      return value
-    }     
-
-    while (idx < maxBytes - 2) {
-      let uint16 = data.readUInt16BE(idx).toString(16);
-
-      idx += 2;      
-      switch (uint16) {
-        case 'ffe1': // Start of EXIF
-          let exifLength = data.readUInt16BE(idx);
-          maxBytes = exifLength - idx;
-          idx += 2;
-          break;
-        case '112': // Orientation tag
-          // Read the value, its 6 bytes further out
-          // see: https://www.exif.org/Exif2-2.PDF
-          value = data.readUInt16BE(idx + 6);
-          maxBytes = 0; // Stop scanning
-          break;
-      }
+  private toArrayBuffer(buf) {
+    var ab = new ArrayBuffer(buf.length);
+    var view = new Uint8Array(ab);
+    for (var i = 0; i < buf.length; ++i) {
+        view[i] = buf[i];
     }
+    return ab;
+  }
 
-    return value;
-
+  // see: https://www.exif.org/Exif2-2.PDF
+  private getJpegExifOrientation(data: Buffer): number {
+    const view = new DataView(this.toArrayBuffer(data));
+  
+      if (view.getUint16(0, false) != 0xFFD8) {
+          return -2;
+      }
+  
+      const length = view.byteLength
+      let offset = 2;
+  
+      while (offset < length)
+      {
+          if (view.getUint16(offset+2, false) <= 8) return -1;
+          let marker = view.getUint16(offset, false);
+          offset += 2;
+  
+          if (marker == 0xFFE1) {
+            if (view.getUint32(offset += 2, false) != 0x45786966) {
+              return -1;
+            }
+  
+            let little = view.getUint16(offset += 6, false) == 0x4949;
+            offset += view.getUint32(offset + 4, little);
+            let tags = view.getUint16(offset, little);
+            offset += 2;
+            for (let i = 0; i < tags; i++) {
+              if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+                return view.getUint16(offset + (i * 12) + 8, little);
+              }
+            }
+          } else if ((marker & 0xFF00) != 0xFF00) {
+              break;
+          }
+          else {
+              offset += view.getUint16(offset, false);
+          }
+      }
+      return -1;
   }
 
   private async downloadImageTest() {
@@ -131,6 +146,7 @@ class Photo {
         logger.log('info', 'Successfully captured picture with DSLR');
 
         let jpegExifOrientation = this.getJpegExifOrientation(data);
+        
         logger.log('info', 'Jpeg orientation is %d', jpegExifOrientation);
 
         let uuidFileName = uuidv4() + '.jpg'

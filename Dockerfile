@@ -37,7 +37,8 @@ RUN cd gutenprint \
 && make \
 && make install \
 && cups-genppdupdate -x \
-&& /etc/init.d/cups restart
+&& /etc/init.d/cups restart \\
+&& usermod -a -G lpadmin root
 
 COPY . $HOME/magic-mirror-photobooth
 
