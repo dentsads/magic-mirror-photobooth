@@ -1,6 +1,7 @@
 import { ErrorHandler } from './errorhandler';
 import { logger } from './logger';
 var exec = require('child_process').exec
+var spawnSync = require('child_process').spawnSync
 
 interface PrinterOptions {
     img: string;
@@ -8,8 +9,7 @@ interface PrinterOptions {
 }
 
 class Printer {
-    //private readonly PRINTER:string = "DP-DS620"
-    private readonly PRINTER:string = "PDF"
+    private readonly PRINTER:string = "DP-DS620"
     private readonly PAGE_SIZE:string = "w288h432"
     private readonly MODEL:string = "gutenprint.5.3://dnp-ds620/expert"
     private readonly DEVICE:string = "gutenprint53+usb://dnp-ds620/DS6C98031738"
@@ -24,7 +24,13 @@ class Printer {
   }
 
   public isHealthy(): boolean {
-    return true;    
+    let code = spawnSync('lpstat', ['-p', this.PRINTER]).status; 
+
+    if (!process.env.PHOTOBOOTH_PRINTER_MOCK && code !== 0) {
+      return false;
+    } else {
+      return true;
+    }   
   }
 
   private initializePrinter() {
@@ -74,7 +80,9 @@ class Printer {
     logger.log('info', 'Printing image %s with printer', options.img, printer);      
     logger.log('info', 'lp ' + printArgs)
 
-    exec('lp ' + printArgs, { shell: true }, (err, stdout, stderr) => {
+    exec('lp ' + printArgs, (err, stdout, stderr) => {
+      logger.log('info', '%s', stdout);
+      logger.log('error', '%s', stderr);
       if (err) {
         return cb(null, ErrorHandler.createError("55",err))
       } else {
@@ -86,4 +94,4 @@ class Printer {
 
 }
   
-export { Printer }
+export { Printer, PrinterOptions }

@@ -347,6 +347,7 @@ sudo docker run -d \
 --env PHOTOBOOTH_CAMERA_MOCK=1 \
 -v $(pwd)/../magic-mirror-photobooth-assets:/root/magic-mirror-photobooth-assets \
 -v $(pwd)/../magic-mirror-photobooth-photos:/root/magic-mirror-photobooth-photos \
+-v $(pwd)/logs:/root/magic-mirror-photobooth-photos/logs \
 -v /run/udev:/run/udev:ro \
 -v /var/run/dbus:/var/run/dbus \
 -v /dev/bus/usb:/dev/bus/usb \
@@ -357,4 +358,8 @@ magic-mirror-photobooth
 
 # Exec into container
 sudo docker exec -it magic-mirror-photobooth /bin/bash
+
+
+# Delete dangling <none> images
+sudo docker rmi $(sudo docker images -f "dangling=true" -q)
 ```

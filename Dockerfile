@@ -29,6 +29,14 @@ RUN apt-get update \
 && apt-get install -y libgtk2.0-dev \
 && apt-get install -y libgimp2.0-dev
 
+COPY cupsd.conf /etc/cups/
+
+VOLUME /etc/cups/ /var/log/cups /var/spool/cups /var/cache/cups /usr/share/cups /usr/lib/cups /usr/share/ppd
+
+# Remove backends that don't make sense for container
+RUN rm /usr/lib/cups/backend/parallel \
+  && rm /usr/lib/cups/backend/serial
+
 RUN wget -O gutenprint.tar.xz https://sourceforge.net/projects/gimp-print/files/snapshots/gutenprint-5.3.4-2020-01-09T01-00-f7eb9cfa.tar.xz \
 && mkdir gutenprint \
 && tar xvf gutenprint.tar.xz -C ./gutenprint --strip-components=1
@@ -38,7 +46,7 @@ RUN cd gutenprint \
 && make \
 && make install \
 && cups-genppdupdate -x \
-&& /etc/init.d/cups restart \\
+&& /etc/init.d/cups restart \
 && usermod -a -G lpadmin root
 
 COPY . $HOME/magic-mirror-photobooth
@@ -92,4 +100,9 @@ RUN ls -la && pwd && npm run build:client -- --prod && npm run build:server
 
 ENV NODE_ENV production
 
-CMD ["pm2-runtime", "docker.pm2.ecosystem.config.js"]
+CMD /usr/sbin/cupsd -f -c  /etc/cups/cupsd.conf ; pm2-runtime docker.pm2.ecosystem.config.js
+
+#RUN chmod +x startup.sh
+#CMD ["startup.sh"]
+
+# CMD ["pm2-runtime", "docker.pm2.ecosystem.config.js"]
