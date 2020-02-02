@@ -70,17 +70,18 @@ class Printer {
   public print(options: PrinterOptions, cb: (stdout?: object, e?: Error) => void): void {
     let printer = process.env.PHOTOBOOTH_PRINTER_MOCK ? 'PDF' : this.PRINTER
 
-    let printArgs = `-d ${printer} ${options.img}`
-    logger.log('info', 'Printing image %s with printer', options.img, printer);  
-    
-    exec('lp ' + printArgs, (err, stdout, stderr) => { 
+    let printArgs = `-d ${printer} -n ${options.numberOfCopies} ${this.PHOTOS_DIR}${options.img}`
+    logger.log('info', 'Printing image %s with printer', options.img, printer);      
+    logger.log('info', 'lp ' + printArgs)
+
+    exec('lp ' + printArgs, { shell: true }, (err, stdout, stderr) => {
       if (err) {
         return cb(null, ErrorHandler.createError("55",err))
       } else {
         logger.log('info', 'Successfully printed image %s with printer %s', options.img, printer);  
         return cb({ "status" : "success" });
       }      
-    });    
+    });
   }
 
 }

@@ -5,6 +5,7 @@ import { Machine, interpret, AnyEventObject } from 'xstate';
 import { LedService } from './led.service';
 import { PhotoService } from './photo.service';
 import { LoggerService } from './logger.service'
+import { PrinterService } from './printer.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class RoutingService {
     public router: Router,
     private ledService: LedService,
     private photoService: PhotoService,
+    private printService: PrinterService,
     private loggerService: LoggerService
   ) {
     this.createThemes();
@@ -245,7 +247,30 @@ export class RoutingService {
               } 
             },
             on: {
-              'event.select-print-photos.01': 'intro' // photos will be printed
+              'event.select-print-photos.01': 'printPhoto' // photos will be printed
+            }
+          },
+          printPhoto: {
+            invoke: {
+              id: 'print',
+              src: (context, event) => this.printService.printPhoto({
+                img: 'result.png',
+                numberOfCopies: event.numberOfCopies
+              }),
+              onDone: {
+                target: 'intro',
+                actions: (context, event) => {
+                  // handle error
+                  this.loggerService.log('info', event.data.data.status)       
+                }
+              },
+              onError: {
+                target: 'errorPage',
+                actions: (_, event) => {
+                  // handle error
+                  this.loggerService.log('error', event.data.response.data)
+                }
+              }              
             }
           },
           errorPage: {

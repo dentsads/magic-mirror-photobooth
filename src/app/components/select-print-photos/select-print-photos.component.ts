@@ -25,7 +25,7 @@ export class SelectPrintPhotosComponent implements OnInit {
   }
 
   async handleEvent(eventId: string) {
-    this.routingService.handleEvent(eventId);
+    this.routingService.handleEvent(eventId, { numberOfCopies: this.printCounterValue });
   }
 
   decrement() {

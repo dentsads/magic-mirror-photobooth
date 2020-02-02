@@ -230,7 +230,7 @@ Likewise if you want to mock the printer you can use the CUPS PDF printer instea
 export PHOTOBOOTH_PRINTER_MOCK=1
 ```
 
-Result PDFs are located at `/PDF`
+Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to know exactly whre they are put look for the `Out` config in `/etc/cups/cups-pdf.conf`
 
 # Using the LED ring
 
