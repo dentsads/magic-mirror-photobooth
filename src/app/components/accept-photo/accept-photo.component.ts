@@ -32,18 +32,18 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
     this.document = document;
 
+  }  
+
+  async ngOnInit() {
+    this.subscription = this.activatedRoute.paramMap.subscribe(params => {
+      this.componentData = this.routingService.getComponentData();
+    });
   }
 
   async ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-  }
-
-  async ngOnInit() {
-    this.subscription = this.activatedRoute.paramMap.subscribe(params => {
-      this.componentData = this.routingService.getComponentData();
-    });
   }
 
   async handleEvent(eventId: string) {

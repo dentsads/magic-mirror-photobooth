@@ -18,7 +18,7 @@ export class SelectPrintPhotosComponent implements OnInit {
     private routingService: RoutingService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(params => {
       this.componentData = this.routingService.getComponentData();
     });

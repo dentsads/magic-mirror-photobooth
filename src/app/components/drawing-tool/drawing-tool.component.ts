@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { RoutingService } from '../../services/routing.service';
 import { fabric } from 'fabric';
 
@@ -8,8 +9,9 @@ import { fabric } from 'fabric';
   templateUrl: './drawing-tool.component.html',
   styleUrls: ['./drawing-tool.component.css']
 })
-export class DrawingToolComponent implements OnInit {
+export class DrawingToolComponent implements OnInit, OnDestroy {
 
+  private subscription: Subscription;
   componentData: any;
   canvas: any;
 
@@ -26,7 +28,7 @@ export class DrawingToolComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.subscription = this.activatedRoute.paramMap.subscribe(params => {
       this.componentData = this.routingService.getComponentData();
     });
 
@@ -40,6 +42,12 @@ export class DrawingToolComponent implements OnInit {
     this.canvas.freeDrawingBrush.shadow.blur = this.drawingShadowWidth;
 
     this.canvas.renderAll();
+  }
+
+  async ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   async handleEvent(eventId: string) {
