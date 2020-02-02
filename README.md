@@ -214,7 +214,7 @@ Configuration steps on the camera
 
 For a list of restrictions on the remote control capabilities of your camera see here: http://www.gphoto.org/doc/remote/
 
-## Mocking the DSLR
+## Mocking the DSLR and Printer
 
 If you want to start testing without using a DSLR you can enable DSLR mocking mode with
 
@@ -223,6 +223,14 @@ export PHOTOBOOTH_CAMERA_MOCK=1
 ```
 
 Please note: You need internet connectivity for this to work since the mocked photos will now be fetched at https://picsum.photos
+
+Likewise if you want to mock the printer you can use the CUPS PDF printer instead. As before you can enable mocking with
+
+```bash
+export PHOTOBOOTH_PRINTER_MOCK=1
+```
+
+Result PDFs are located at `/PDF`
 
 # Using the LED ring
 

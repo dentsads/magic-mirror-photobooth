@@ -9,6 +9,7 @@ WORKDIR $HOME/gutenprint
 # install cups for printing
 RUN apt-get update \
 && apt-get install -y cups \
+&& apt-get install -y printer-driver-cups-pdf \
 && apt-get install -y autoconf \
 && apt-get install -y autopoint \
 && apt-get install -y byacc \

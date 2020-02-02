@@ -3,19 +3,25 @@ import { Led } from './led';
 import { ImageCompositor } from './imagecompositor' ;
 import { Photo } from './photo';
 import { logger } from './logger';
+import { Printer } from './printer';
 
 const app = express();
 const led = new Led();
 const compositor = new ImageCompositor();
 const photo = new Photo();
+const printer = new Printer();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/photos', express.static('../magic-mirror-photobooth-photos'));
 app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
 
-app.get('/api/health', (req, res) => {      
-  let isHealthyOverall:boolean = led.isHealthy() && photo.isHealthy();
+app.get('/api/health', (req, res) => {    
+  let isHealthyOverall:boolean = 
+    led.isHealthy() && 
+    photo.isHealthy() &&
+    printer.isHealthy();
+
   let isHealthyString = (isHealthy:boolean):string => isHealthy ? 'healthy' : 'unhealthy';
   let resultHealthJson: object = {
     status: isHealthyString(isHealthyOverall),
@@ -27,7 +33,11 @@ app.get('/api/health', (req, res) => {
         {
             name: "dslr",
             status: isHealthyString(photo.isHealthy())
-        }
+        },
+        {
+          name: "printer",
+          status: isHealthyString(printer.isHealthy())
+      }
     ]
   };
 
@@ -87,6 +97,20 @@ app.post('/api/dslr/capture', (req, res, next) => {
   var jsonObj = req.body
 
   photo.capturePhoto(jsonObj, (out, err) => {
+    if (err) {
+      logger.log('error', err);
+      res.status(500).send(err).end()
+    } else {
+      logger.log('info', out);
+      res.status(200).send(out).end()
+    }          
+  })    
+})
+
+app.post('/api/printer/print', (req, res, next) => {
+  var jsonObj = req.body
+
+  printer.print(jsonObj, (out, err) => {
     if (err) {
       logger.log('error', err);
       res.status(500).send(err).end()
