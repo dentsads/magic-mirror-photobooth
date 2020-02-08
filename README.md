@@ -363,3 +363,11 @@ sudo docker exec -it magic-mirror-photobooth /bin/bash
 # Delete dangling <none> images
 sudo docker rmi $(sudo docker images -f "dangling=true" -q)
 ```
+
+# Bootstrapping installation
+
+for bootstrapping the installation process run this script
+
+```bash
+sudo -E ./scripts/install.sh 
+```

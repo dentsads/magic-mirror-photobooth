@@ -27,6 +27,11 @@ if [ -z "$HOME" ]; then
     exit 1
 fi
 
+if ! which docker > /dev/null; then
+   echo "docker was not found. Please install it. See here: https://docs.docker.com/install/linux/docker-ce/ubuntu/"
+   exit 1
+fi
+
 if ! which jq > /dev/null; then
    echo "jq cli was not found. Please install it, e.g. with 'apt-get install jq'"
    exit 1
