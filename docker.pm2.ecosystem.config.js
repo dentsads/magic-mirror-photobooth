@@ -9,7 +9,7 @@ module.exports = {
         },
         {
             name: "magic-mirror-client",
-            script: "npm run start:client -- --host 0.0.0.0"
+            script: "npm run start:client -- --host 0.0.0.0 --configuration=production"
         }
     ]
 }

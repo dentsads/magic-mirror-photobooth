@@ -1,0 +1,4 @@
+* {
+    /* disable chrome browser hover cards: https://support.google.com/chrome/thread/17467192?hl=en */
+    cursor: none;
+}

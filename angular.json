@@ -23,8 +23,14 @@
               "src/favicon.ico",
               "src/assets"
             ],
+            "extractCss": true,
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              {
+                "input": "src/production.styles.css",
+                "bundleName": "productionStyles",
+                "inject": false
+              }
             ],
             "scripts": []
           },
