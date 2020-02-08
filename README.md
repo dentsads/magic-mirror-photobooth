@@ -329,8 +329,8 @@ sudo apt-get install -y colord-kde
 ## Printing with `lpr` from the command line
 
 ```bash
-# using printer DP-DS620 and printing image.png
-sudo lpr -P DP-DS620 image.png
+# using printer DNP-DS620 and printing image.png
+sudo lpr -P DNP-DS620 image.png
 ```
 
 # Building and Running with Docker

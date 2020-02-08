@@ -4,6 +4,7 @@ import { ImageCompositor } from './imagecompositor' ;
 import { Photo } from './photo';
 import { logger } from './logger';
 import { Printer } from './printer';
+//import config from '../config.json'
 
 const app = express();
 const led = new Led();
@@ -13,8 +14,8 @@ const printer = new Printer();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/api/photos', express.static('../magic-mirror-photobooth-photos'));
-app.use('/api/assets', express.static('../magic-mirror-photobooth-assets'));
+app.use('/api/photos', express.static("../magic-mirror-photobooth-photos"));
+app.use('/api/assets', express.static("../magic-mirror-photobooth-assets"));
 
 app.get('/api/health', (req, res) => {    
   let isHealthyOverall:boolean = 

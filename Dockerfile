@@ -4,30 +4,22 @@ USER root
 
 ENV HOME /root
 
-WORKDIR $HOME/gutenprint
+WORKDIR $HOME/magic-mirror-photobooth
 
-# install cups for printing
+# install cups and dependencies for printing
 RUN apt-get update \
-&& apt-get install -y cups \
-&& apt-get install -y printer-driver-cups-pdf \
-&& apt-get install -y autoconf \
-&& apt-get install -y autopoint \
-&& apt-get install -y byacc \
-&& apt-get install -y cvs \
-&& apt-get install -y docbook-utils \
-&& apt-get install -y doxygen \
-&& apt-get install -y flex \
-&& apt-get install -y gettext \
-&& apt-get install -y libglib2.0-dev \
-&& apt-get install -y libtool \
-&& apt-get install -y pkg-config \
-&& apt-get install -y sgmltools-lite \
-&& apt-get install -y texi2html \
-&& apt-get install -y libcups2-dev \
-&& apt-get install -y libusb-1.0-0-dev \
-&& apt-get install -y libglib2.0-dev \
-&& apt-get install -y libgtk2.0-dev \
-&& apt-get install -y libgimp2.0-dev
+&& apt-get -y install \
+cups \
+printer-driver-cups-pdf \
+cups-filters \
+whois \
+usbutils \
+lib32stdc++6 \
+lib32gcc1 \
+libc6-i386 \
+wget \
+argyll \
+vim
 
 COPY cupsd.conf /etc/cups/
 
@@ -37,41 +29,29 @@ VOLUME /etc/cups/ /var/log/cups /var/spool/cups /var/cache/cups /usr/share/cups 
 RUN rm /usr/lib/cups/backend/parallel \
   && rm /usr/lib/cups/backend/serial
 
-RUN wget -O gutenprint.tar.xz https://sourceforge.net/projects/gimp-print/files/snapshots/gutenprint-5.3.4-2020-01-09T01-00-f7eb9cfa.tar.xz \
-&& mkdir gutenprint \
-&& tar xvf gutenprint.tar.xz -C ./gutenprint --strip-components=1
-
-RUN cd gutenprint \
-&& ./configure \
-&& make \
-&& make install \
-&& cups-genppdupdate -x \
-&& /etc/init.d/cups restart \
-&& usermod -a -G lpadmin root
-
 COPY . $HOME/magic-mirror-photobooth
-
-WORKDIR $HOME/magic-mirror-photobooth
 
 RUN echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
 
 RUN apt-get update \
-&& apt-get -y install s3cmd \
-&& apt-get install -y build-essential \
-&& apt-get install -y usbutils \
-&& apt-get install -y udev \
+&& apt-get -y install \
+s3cmd \
+build-essential \
+usbutils \
+udev \
+jq \
 
 # install imagemagick for image compositing of printer templates
 # see here: https://imagemagick.org/index.php
-&& apt-get install -y imagemagick \
+imagemagick \
 
 # see here: http://www.gphoto.org/
-&& apt-get install -y libgphoto2-dev \
-&& apt-get install -y gphoto2 \
+libgphoto2-dev \
+gphoto2 \
 
 # libcairo for usage with https://www.npmjs.com/package/fabric
 # see here: https://www.cairographics.org/download/
-&& apt-get install -y libcairo2-dev \
+libcairo2-dev \
 
 # install other global npm dependencies
 && npm install license-checker -g \
@@ -100,9 +80,9 @@ RUN ls -la && pwd && npm run build:client -- --prod && npm run build:server
 
 ENV NODE_ENV production
 
-CMD /usr/sbin/cupsd -f -c  /etc/cups/cupsd.conf ; pm2-runtime docker.pm2.ecosystem.config.js
+# CMD /usr/sbin/cupsd -c  /etc/cups/cupsd.conf ; pm2-runtime docker.pm2.ecosystem.config.js
 
-#RUN chmod +x startup.sh
-#CMD ["startup.sh"]
+RUN chmod +x startup.sh
+CMD ./startup.sh $(jq -r .printer_name config.json)
 
 # CMD ["pm2-runtime", "docker.pm2.ecosystem.config.js"]

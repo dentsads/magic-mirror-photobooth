@@ -6,6 +6,7 @@ import { LedService } from './led.service';
 import { PhotoService } from './photo.service';
 import { LoggerService } from './logger.service'
 import { PrinterService } from './printer.service';
+import config from '../../../config.json'
 
 @Injectable({
   providedIn: 'root'
@@ -75,12 +76,12 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'drawing',
+        initial: 'intro',
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,
           photoPath: '',
-          maxNumberOfPhotos: 3
+          maxNumberOfPhotos: config.maxNumberOfPhotos
         },
         states: {
           intro: {
@@ -278,7 +279,8 @@ export class RoutingService {
             meta: { 
               path: '/error',
               assets: { 
-                assetButtonHome: 'api/assets/compositions/home-solid-240.png'               
+                assetButtonHome: 'api/assets/compositions/home-solid-240.png',
+                phoneNumber: config.phone_number             
               } 
             },
             on: {

@@ -1,4 +1,5 @@
 import { ErrorHandler, Error } from './errorhandler'
+//import config from '../config.json'
 var exec = require('child_process').exec
 
 enum TemplateLayout {
@@ -27,8 +28,8 @@ class ImageCompositor {
   private readonly TMP_DIR:string = "./built"
   private readonly TMP_FILE:string = this.TMP_DIR + "/tmp.png"
   private readonly PHOTOS_PATH:string = 'api/photos/'
-  private readonly PHOTOS_DIR:string = '../magic-mirror-photobooth-photos/'
-  private readonly ASSETS_DIR:string = '../magic-mirror-photobooth-assets/'
+  private readonly PHOTOS_DIR:string = "../magic-mirror-photobooth-photos"
+  private readonly ASSETS_DIR:string = "../magic-mirror-photobooth-assets"
 
   public constructor() {}
 
@@ -45,7 +46,7 @@ class ImageCompositor {
 
     options.imgSrcList.forEach( (img, imgIndex)  => {
       compositeArgs.push('\\(')
-      compositeArgs.push(this.PHOTOS_DIR + img)
+      compositeArgs.push(this.PHOTOS_DIR + '/' + img)
       compositeArgs.push('-auto-orient')
       compositeArgs.push(`-resize ${templateImageSizes[options.templateLayout][imgIndex]}`)    
       compositeArgs.push(`-repage ${templateImageOffsets[options.templateLayout][imgIndex]}`)            
@@ -57,13 +58,13 @@ class ImageCompositor {
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
       if (err) return cb(null, ErrorHandler.createError("1",err))
-      this.compose(this.TMP_FILE, this.ASSETS_DIR + options.overlayImg, cb)
+      this.compose(this.TMP_FILE, this.ASSETS_DIR + '/' + options.overlayImg, cb)
     });
 
   }
 
   public compose(img: string = '', overlayImg: string = '', cb: (stdout?: object, e?: Error) => void): void {
-    let compositeArgs = `${img} ${overlayImg} -compose over -composite ${this.PHOTOS_DIR}result.png`
+    let compositeArgs = `${img} ${overlayImg} -compose over -composite ${this.PHOTOS_DIR}/result.png`
 
     exec('convert ' + compositeArgs, (err, stdout, stderr) => { 
       if (err) {
