@@ -1,5 +1,6 @@
 import { Board } from 'johnny-five';
 import { Strip, FORWARD, BACKWARD } from 'node-pixel';
+import config from '../config.json'
 
 function sleep(ms): Promise<any> {
   return new Promise((resolve): any => setTimeout(resolve, ms))
@@ -40,7 +41,7 @@ class Led {
       this.strip = new Strip({
           board: this.board,
           controller: "FIRMATA",
-          strips: [ {pin: 6, length: 24}, ],
+          strips: [ {pin: 6, length: config.led_pin_size}, ],
           gamma: 2.8,
       });
       this.isBoardUnresponsive = false;
