@@ -29,13 +29,13 @@ export class RoutingService {
   }
 
   ANIM1_MAP: Record<string, Anim1> = {
-    1: { assetPath: 'api/assets/compositions/wedding_01_touchtostart_02.mp4'},
-    2: { assetPath: 'api/assets/compositions/are_you_ready.gif' },
-    3: { assetPath: 'api/assets/compositions/general_01_countdown_03.mp4' },
-    4: { assetPath: 'api/assets/compositions/say_cheese.gif' },
-    5: { assetPath: 'api/assets/compositions/general_01_lookatcamera_01.mp4' },
-    6: { assetPath: 'api/assets/compositions/wedding_01_loveinair_01.mp4' },
-    7: { assetPath: 'api/assets/compositions/photos_are_ready.gif' }
+    1: { assetPath: 'api/assets/wedding_01_touchtostart_02.mp4'},
+    2: { assetPath: 'api/assets/are_you_ready.gif' },
+    3: { assetPath: 'api/assets/general_01_countdown_03.mp4' },
+    4: { assetPath: 'api/assets/say_cheese.gif' },
+    5: { assetPath: 'api/assets/general_01_lookatcamera_01.mp4' },
+    6: { assetPath: 'api/assets/wedding_01_loveinair_01.mp4' },
+    7: { assetPath: 'api/assets/photos_are_ready.gif' }
   };
 
   handleEvent(eventId: string, options?: any): void {
@@ -162,8 +162,8 @@ export class RoutingService {
             meta: { 
               path: '/accept-photo', 
               assets: { 
-                assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', 
-                assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'
+                assetButtonOkPath: 'api/assets/check-circle-solid-240.png', 
+                assetButtonNokPath: 'api/assets/x-circle-solid-240.png'
               } 
             },
             on: {
@@ -185,9 +185,9 @@ export class RoutingService {
             meta: { 
               path: '/drawing', 
               assets: { 
-                assetButtonClear: 'api/assets/compositions/undo-regular-240.png', 
-                assetButtonOk: 'api/assets/compositions/check-circle-regular-240.png',
-                assetButtonColor: 'api/assets/compositions/color-fill-solid-240.png'
+                assetButtonClear: 'api/assets/undo-regular-240.png', 
+                assetButtonOk: 'api/assets/check-circle-regular-240.png',
+                assetButtonColor: 'api/assets/color-fill-solid-240.png'
               } 
             },
             on: {
@@ -202,7 +202,7 @@ export class RoutingService {
               src: (context, event) => this.photoService.compositePhoto({
                 templateLayout: 'THREE_UNIFORM',
                 imgSrcList: context.capturedPhotoPaths,
-                overlayImg: 'print-templates/christmas_01_overlay_base_03.png'
+                overlayImg: 'christmas_01_overlay_base_03.png'
               }),
               onDone: {
                 target: 'acceptCompositedPhoto',
@@ -228,8 +228,8 @@ export class RoutingService {
             meta: { 
               path: '/accept-photo', 
               assets: { 
-                assetButtonOkPath: 'api/assets/compositions/check-circle-solid-240.png', 
-                assetButtonNokPath: 'api/assets/compositions/x-circle-solid-240.png'                
+                assetButtonOkPath: 'api/assets/check-circle-solid-240.png', 
+                assetButtonNokPath: 'api/assets/x-circle-solid-240.png'                
               } 
             },
             on: {
@@ -242,9 +242,9 @@ export class RoutingService {
             meta: { 
               path: '/select-print-photos', 
               assets: { 
-                assetButtonPlus: 'api/assets/compositions/plus-circle-regular-240.png', 
-                assetButtonMinus: 'api/assets/compositions/minus-circle-regular-240.png',
-                assetButtonPrinter: 'api/assets/compositions/printer-regular-240.png',
+                assetButtonPlus: 'api/assets/plus-circle-regular-240.png', 
+                assetButtonMinus: 'api/assets/minus-circle-regular-240.png',
+                assetButtonPrinter: 'api/assets/printer-regular-240.png',
               } 
             },
             on: {
@@ -279,7 +279,7 @@ export class RoutingService {
             meta: { 
               path: '/error',
               assets: { 
-                assetButtonHome: 'api/assets/compositions/home-solid-240.png',
+                assetButtonHome: 'api/assets/home-solid-240.png',
                 phoneNumber: config.phone_number             
               } 
             },

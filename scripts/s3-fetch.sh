@@ -41,19 +41,20 @@ if ! which s3cmd > /dev/null; then
 fi
 
 if [ -z "$AWS_ACCESS_KEY" ]; then
-    echo "Need to set the AWS_ACCESS_KEY environment variable for the AWS access token"
+    echo "You need to set the AWS_ACCESS_KEY environment variable for the AWS access token"
     exit 1
 fi
 
 if [ -z "$AWS_SECRET_KEY" ]; then
-    echo "Need to set the AWS_SECRET_KEY environment variable for the AWS secret token"
+    echo "You need to set the AWS_SECRET_KEY environment variable for the AWS secret token"
     exit 1
 fi
 
 S3BUCKET="magic-mirror-photobooth-assets"
+S3OBJECT="rendered-assets"
 DESTINATION_FOLDER_PATH="$1"
 
 echo 'Fetching magic-mirror-photobooth asset files from S3 bucket'
-s3cmd get s3://$S3BUCKET/ --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY --no-ssl -P --no-mime-magic --skip-existing -r $DESTINATION_FOLDER_PATH && echo "Fetching was successful"
+s3cmd get s3://$S3BUCKET/$S3OBJECT/ --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY --no-ssl -P --no-mime-magic --skip-existing -r $DESTINATION_FOLDER_PATH && echo "Fetching was successful"
 
 exit $?
