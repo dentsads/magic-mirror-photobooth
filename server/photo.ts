@@ -115,7 +115,7 @@ class Photo {
   private async downloadImageTest() {
     const randomString = Math.random().toString(36).substring(2, 8)
     const url = 'https://picsum.photos/533/800'
-    const path = Path.resolve(__dirname, '../../magic-mirror-photobooth-photos', randomString + '_random.jpg')
+    const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', randomString + '_random.jpg')
     const writer = fs.createWriteStream(path)
   
     const response = await Axios({
@@ -151,7 +151,7 @@ class Photo {
 
         let uuidFileName = uuidv4() + '.jpg'
 
-        const path = Path.resolve(__dirname, '../../magic-mirror-photobooth-photos', uuidFileName)
+        const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', uuidFileName)
         fs.writeFileSync(path, data);
 
         return resolve({ imagePath: uuidFileName, exifOrientation: jpegExifOrientation } )
