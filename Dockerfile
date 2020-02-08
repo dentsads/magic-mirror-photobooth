@@ -75,14 +75,9 @@ RUN git clone https://github.com/ajfisher/node-pixel.git ../node-pixel --branch 
 && cp -r ../node-pixel/ node_modules/ \
 && rm -rf node_modules/node-pixel/.git
 
-
 RUN ls -la && pwd && npm run build:client -- --prod && npm run build:server
 
 ENV NODE_ENV production
 
-# CMD /usr/sbin/cupsd -c  /etc/cups/cupsd.conf ; pm2-runtime docker.pm2.ecosystem.config.js
-
 RUN chmod +x startup.sh
 CMD ./startup.sh $(jq -r .printer_name config.json)
-
-# CMD ["pm2-runtime", "docker.pm2.ecosystem.config.js"]

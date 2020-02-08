@@ -4,7 +4,30 @@ import { ImageCompositor } from './imagecompositor' ;
 import { Photo } from './photo';
 import { logger } from './logger';
 import { Printer } from './printer';
-//import config from '../config.json'
+import config from '../config.json'
+
+const fs = require('fs') 
+const os = require('os')
+
+var config_dir = os.homedir() + "/" + config.config_dir;
+var photos_dir = config_dir + "/" + config.photos_sub_dir;
+var assets_dir = config_dir + "/" + config.assets_sub_dir;
+
+// create config home path if it does not exist
+if (!fs.existsSync(config_dir)){
+    fs.mkdirSync(config_dir);
+}
+
+// create photos path if it does not exist
+if (!fs.existsSync(photos_dir)){
+  fs.mkdirSync(photos_dir);
+}
+
+// create assets home path if it does not exist
+if (!fs.existsSync(assets_dir)){
+  fs.mkdirSync(assets_dir);
+}
+
 
 const app = express();
 const led = new Led();
@@ -14,8 +37,8 @@ const printer = new Printer();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/api/photos', express.static("../magic-mirror-photobooth-photos"));
-app.use('/api/assets', express.static("../magic-mirror-photobooth-assets"));
+app.use('/api/photos', express.static(photos_dir));
+app.use('/api/assets', express.static(assets_dir));
 
 app.get('/api/health', (req, res) => {    
   let isHealthyOverall:boolean = 

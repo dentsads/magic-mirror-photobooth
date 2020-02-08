@@ -1,6 +1,7 @@
 {
-    "photos_path": "../magic-mirror-photobooth-photos",
-    "assets_path": "../magic-mirror-photobooth-assets",
+    "config_dir": ".magic-mirror-photobooth",
+    "photos_sub_dir": "photos",
+    "assets_sub_dir": "assets",
     "printer_name": "DNP-DS620",
     "phone_number": "+49 176 62297047",
     "maxNumberOfPhotos": 3

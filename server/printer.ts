@@ -1,6 +1,10 @@
 import { ErrorHandler } from './errorhandler';
 import { logger } from './logger';
 import config from '../config.json'
+const os = require('os')
+
+var config_dir = os.homedir() + "/" + config.config_dir;
+var photos_dir = config_dir + "/" + config.photos_sub_dir;
 
 var exec = require('child_process').exec
 var spawnSync = require('child_process').spawnSync
@@ -12,7 +16,7 @@ interface PrinterOptions {
 
 class Printer {
     private readonly PRINTER:string = process.env.PHOTOBOOTH_PRINTER_MOCK ? 'PDF' : config.printer_name
-    private readonly PHOTOS_DIR:string = config.photos_path;
+    private readonly PHOTOS_DIR:string = photos_dir;
 
   public constructor() {
     // if no printer is available then mock the printer by using the CUPS PDF printer

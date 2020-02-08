@@ -1,6 +1,12 @@
 import { ErrorHandler, Error } from './errorhandler'
-//import config from '../config.json'
+import config from '../config.json'
 var exec = require('child_process').exec
+
+const os = require('os')
+
+var config_dir = os.homedir() + "/" + config.config_dir;
+var photos_dir = config_dir + "/" + config.photos_sub_dir;
+var assets_dir = config_dir + "/" + config.assets_sub_dir;
 
 enum TemplateLayout {
   TWO_UNIFORM = "TWO_UNIFORM",
@@ -28,8 +34,8 @@ class ImageCompositor {
   private readonly TMP_DIR:string = "./built"
   private readonly TMP_FILE:string = this.TMP_DIR + "/tmp.png"
   private readonly PHOTOS_PATH:string = 'api/photos/'
-  private readonly PHOTOS_DIR:string = "../magic-mirror-photobooth-photos"
-  private readonly ASSETS_DIR:string = "../magic-mirror-photobooth-assets"
+  private readonly PHOTOS_DIR:string = photos_dir
+  private readonly ASSETS_DIR:string = assets_dir
 
   public constructor() {}
 

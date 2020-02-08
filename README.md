@@ -340,14 +340,14 @@ sudo lpr -P DNP-DS620 image.png
 sudo docker build --no-cache -t magic-mirror-photobooth .
 
 # Run docker container
-sudo docker run -d \
+sudo -E docker run -d \
 --restart unless-stopped \
 --privileged \
 --name magic-mirror-photobooth \
 --env PHOTOBOOTH_CAMERA_MOCK=1 \
--v $(pwd)/../magic-mirror-photobooth-assets:/root/magic-mirror-photobooth-assets \
--v $(pwd)/../magic-mirror-photobooth-photos:/root/magic-mirror-photobooth-photos \
--v $(pwd)/logs:/root/magic-mirror-photobooth-photos/logs \
+-v $HOME/.magic-mirror-photobooth/assets:/root/.magic-mirror-photobooth/assets \
+-v $HOME/.magic-mirror-photobooth/photos:/root/.magic-mirror-photobooth/photos \
+-v $HOME/.magic-mirror-photobooth/logs:/root/magic-mirror-photobooth/logs \
 -v /run/udev:/run/udev:ro \
 -v /var/run/dbus:/var/run/dbus \
 -v /dev/bus/usb:/dev/bus/usb \

@@ -1,5 +1,7 @@
 import { ErrorHandler } from './errorhandler';
 import { logger } from './logger';
+import config from '../config.json'
+
 var exec = require('child_process').exec
 
 const gphoto2 = require('gphoto2');
@@ -7,6 +9,10 @@ const fs = require('fs')
 const Path = require('path')  
 const Axios = require('axios')
 const uuidv4 = require('uuid/v4');
+const os = require('os')
+
+var config_dir = os.homedir() + "/" + config.config_dir;
+var photos_dir = config_dir + "/" + config.photos_sub_dir;
 
 function sleep(ms): Promise<any> {
   return new Promise((resolve): any => setTimeout(resolve, ms))
@@ -115,7 +121,8 @@ class Photo {
   private async downloadImageTest() {
     const randomString = Math.random().toString(36).substring(2, 8)
     const url = 'https://picsum.photos/533/800'
-    const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', randomString + '_random.jpg')
+
+    const path = photos_dir + '/' + randomString + '_random.jpg'
     const writer = fs.createWriteStream(path)
   
     const response = await Axios({
@@ -151,7 +158,7 @@ class Photo {
 
         let uuidFileName = uuidv4() + '.jpg'
 
-        const path = Path.resolve(__dirname, '../../../magic-mirror-photobooth-photos', uuidFileName)
+        const path = photos_dir + '/' + uuidFileName
         fs.writeFileSync(path, data);
 
         return resolve({ imagePath: uuidFileName, exifOrientation: jpegExifOrientation } )
