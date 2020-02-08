@@ -57,6 +57,11 @@ class Printer {
   }
 
   public print(options: PrinterOptions, cb: (stdout?: object, e?: Error) => void): void {
+    if (options.numberOfCopies < 1) {
+      logger.log('info', 'Skipping image printing, since less than 0 copies have been requested');  
+      return cb({ "status" : "success" });
+    }
+
     let printer = this.PRINTER;
 
     let printArgs = `-d ${printer} -n ${options.numberOfCopies} ${this.PHOTOS_DIR}/${options.img}`
