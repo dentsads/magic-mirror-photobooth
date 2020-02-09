@@ -51,5 +51,7 @@ docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY
 docker pull $DOCKER_REGISTRY/d.dentsas/magic-mirror-photobooth:latest
 docker logout $DOCKER_REGISTRY
 
+docker tag $DOCKER_REGISTRY/d.dentsas/magic-mirror-photobooth magic-mirror-photobooth
+
 # run the magic-mirror-photobooth container
 bash $THIS_DIR/docker-run.sh

@@ -15,6 +15,10 @@ export class AppComponent {
   ) {
     this.document = document;
     
+    
+    // disable dragging across all items
+    window.ondragstart = function() { return false; } 
+
     if (environment.production)
       this.loadProductionCss();
   }

@@ -139,7 +139,8 @@ class Led {
   public async ballSpin(options: BallSpinOptions): Promise<void> {
 
     this.strip.clear()
-   
+    this.isStateCleared = false;
+    
     let calculatedPos: number
     let pos = 0;
     let loopCounter = 0
