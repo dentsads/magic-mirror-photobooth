@@ -1,0 +1,18 @@
+[Unit]
+Description=Magic Mirror Google Chrome
+After=docker.service
+StartLimitIntervalSec=10
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=/usr/bin/google-chrome \
+--kiosk \
+--incognito \
+--password-store=basic \
+--disable-restore-session-state \
+--disable-features=TranslateUI \
+--disable-session-crashed-bubble \
+--app=http://localhost:4200
+
+[Install]
+WantedBy=graphical.target
