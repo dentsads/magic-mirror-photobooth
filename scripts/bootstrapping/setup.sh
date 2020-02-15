@@ -123,8 +123,8 @@ exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-b
 exec_cmd 'gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false'
 
 print_status "Enable automatic login to Ubuntu for current user ${SUDO_USER}..."
-exec_cmd "sed -ie 's/^.*AutomaticLoginEnable *= *true$/FOUND/g' /etc/gdm3/custom.conf"
-exec_cmd "sed -e 's/^.*AutomaticLogin *= *.*$/AutomaticLogin='"${SUDO_USER}"'/g' /etc/gdm3/custom.conf"
+exec_cmd "sed -ie 's/^.*AutomaticLoginEnable *= *.*$/AutomaticLoginEnable=true/g' /etc/gdm3/custom.conf"
+exec_cmd "sed -ie 's/^.*AutomaticLogin *= *.*$/AutomaticLogin='"${SUDO_USER}"'/g' /etc/gdm3/custom.conf"
 
 print_status "Create ~/.config/systemd/user if it does not exist already..."
 exec_cmd_no_sudo 'mkdir -p ~/.config/systemd/user'
