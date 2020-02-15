@@ -3,11 +3,11 @@
 # Script to setup the Ubuntu host machine for running
 # in uninterrupted kiosk mode
 #
-# Run as root or insert `sudo -E` before `bash`:
+# Run like this:
 #
-# curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/setup.sh | bash -
+# curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/setup.sh | sudo bash -
 #   or
-# wget -qO- https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/setup.sh | bash -
+# wget -qO- https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/setup.sh | sudo bash -
 #
 # Copyright 2020 Dimitrios Dentsas
 
@@ -84,7 +84,18 @@ exec_cmd_no_sudo() {
     exec_cmd_no_sudo_nobail "$1" || bail
 }
 
-print_bold "SETUP OF HOST MACHINE" "Setting up Ubuntu host machine for magic-mirror-photobooth..."
+print_bold "SETUP OF HOST MACHINE" "\
+
+Setting up Ubuntu host machine for magic-mirror-photobooth...
+
+ |  \/  |           (_)      |  \/  (_)                    
+ | \  / | __ _  __ _ _  ___  | \  / |_ _ __ _ __ ___  _ __ 
+ | |\/| |/ _` |/ _` | |/ __| | |\/| | | '__| '__/ _ \| '__|
+ | |  | | (_| | (_| | | (__  | |  | | | |  | | | (_) | |   
+ |_|  |_|\__,_|\__, |_|\___| |_|  |_|_|_|  |_|  \___/|_|   
+                __/ |                                      
+               |___/ 
+"
 sleep 1
 
 print_status "Installing newest stable Google Chrome..."
@@ -93,21 +104,38 @@ exec_cmd "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable m
 exec_cmd 'apt-get update'
 exec_cmd 'apt-get install -y google-chrome-stable'
 
-print_status "Disabling screensaver, blank screen and automatic screen lock..."
-
+# search for gsettings schemas, e.g.
+# gsettings list-recursively | grep screen-keyboard | sort
+#
+# describe or list possible values (range), e.g.
+# gsettings describe|range org.gnome.settings-daemon.plugins.power idle-dim
+#
+# get values schema key, e.g.
+# gsettings get org.gnome.settings-daemon.plugins.power idle-dim
+print_status "Disabling screensaver, blank screen, automatic screen lock, etc..."
 exec_cmd 'gsettings set org.gnome.desktop.screensaver lock-enabled false'
 exec_cmd 'gsettings set org.gnome.desktop.lockdown disable-lock-screen true'
 exec_cmd 'gsettings set org.gnome.desktop.session idle-delay 0'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power idle-dim false'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power notify-perhaps-recall false'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type nothing'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type nothing'
+exec_cmd 'gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false'
 
-print_status "Create ~/.config/systemd/user if it does not exist already"
+print_status "Enable automatic login to Ubuntu for current user ${SUDO_USER}..."
+exec_cmd "sed -ie 's/^.*AutomaticLoginEnable *= *true$/FOUND/g' /etc/gdm3/custom.conf"
+exec_cmd "sed -e 's/^.*AutomaticLogin *= *.*$/AutomaticLogin='"${SUDO_USER}"'/g' /etc/gdm3/custom.conf"
+
+print_status "Create ~/.config/systemd/user if it does not exist already..."
 exec_cmd_no_sudo 'mkdir -p ~/.config/systemd/user'
 
-print_status "Creating kiosk shell script..."
+print_status "Creating mkiosk shell script..."
 exec_cmd 'cat <<EOT > /opt/mkiosk.sh
 #!/bin/bash
 
-# rm -rf ~/.{config,cache}/google-chrome/
-google-chrome \
+rm -rf ~/.{config,cache}/google-chrome/
+
+/usr/bin/google-chrome \
 --kiosk \
 --no-first-run \
 --incognito \
@@ -115,6 +143,7 @@ google-chrome \
 --disable-restore-session-state \
 --disable-features=TranslateUI \
 --disable-session-crashed-bubble \
+--noerrdialogs \
 --app=http://localhost:4200
 EOT'
 exec_cmd 'chmod +x /opt/mkiosk.sh'
@@ -124,10 +153,11 @@ exec_cmd_no_sudo 'cat <<EOT > ~/.config/systemd/user/mkiosk.service
 [Unit]
 Description=Magic Mirror Kiosk (MKiosk)
 After=docker.service
-StartLimitIntervalSec=10
+
 [Service]
 Type=simple
 Restart=on-failure
+
 ExecStart=/bin/bash -e /opt/mkiosk.sh
 
 [Install]

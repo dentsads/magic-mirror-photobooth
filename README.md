@@ -369,8 +369,14 @@ sudo docker rmi $(sudo docker images -f "dangling=true" -q)
 for bootstrapping the installation process of the Docker container run this script
 
 ```bash
-sudo -E ./scripts/install.sh 
+curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E bash -
 ```
+
+This will do the following
+
+* download all relevant assets (images, movies) onto the host machine
+* download the latest magic-mirror-photobooth Docker image
+* create a new container from it and start it
 
 # Bootstrapping of Host Ubuntu Machine
 
