@@ -5,12 +5,14 @@ body {
     vertical-align: middle;
 }
 html, body {
-    height: 100%;
+    height: 100%;    
+    overscroll-behavior: none;
 }
 
 html {
     display: table;
-    margin: auto;    
+    margin: auto;
+    touch-action: none;
 }
 h1, p {
     color: white;
