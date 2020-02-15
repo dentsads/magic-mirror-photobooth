@@ -66,51 +66,52 @@ exec_cmd() {
     exec_cmd_nobail "$1" || bail
 }
 
+sudo_exec_cmd_nobail() {
+    echo "+ $1"
+    sudo bash -c "$1"
+}
+
+sudo_exec_cmd() {
+    sudo_exec_cmd_nobail "$1" || bail
+}
+
 print_bold "SETUP OF HOST MACHINE" "Setting up Ubuntu host machine for magic-mirror-photobooth..."
 sleep 1
 
 print_status "Installing newest stable Google Chrome..."
+sudo_exec_cmd 'wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -'
+sudo_exec_cmd "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list"
+sudo_exec_cmd 'apt-get update'
+sudo_exec_cmd 'apt-get install -y google-chrome-stable'
 
-exec_cmd 'wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -'
-exec_cmd "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list"
-exec_cmd 'apt-get update'
-exec_cmd 'apt-get install -y google-chrome-stable'
+print_status "Disabling screensaver, blank screen and automatic screen lock..."
+
+sudo_exec_cmd 'gsettings set org.gnome.desktop.screensaver lock-enabled false'
+sudo_exec_cmd 'gsettings set org.gnome.desktop.lockdown disable-lock-screen true'
+sudo_exec_cmd 'gsettings set org.gnome.desktop.session idle-delay 0'
+
+print_status "Create ~/.config/systemd/user if it does not exist already"
+exec_cmd 'mkdir -p ~/.config/systemd/user'
 
 print_status "Creating kiosk shell script..."
-
-#exec_cmd 'gsettings set org.gnome.desktop.screensaver lock-enabled false'
-#exec_cmd 'gsettings set org.gnome.desktop.lockdown disable-lock-screen true'
-#exec_cmd 'gsettings set org.gnome.desktop.session idle-delay 0'
-
-cat <<EOT >> /opt/kiosk.sh
+sudo_exec_cmd 'cat <<EOT > /opt/mkiosk.sh
 #!/bin/bash
 
-# "Disabling screensaver and automatic screen lock..."
-sudo gsettings set org.gnome.desktop.screensaver lock-enabled false
-sudo gsettings set org.gnome.desktop.lockdown disable-lock-screen true
-sudo gsettings set org.gnome.desktop.session idle-delay 0
-
-while true; do
-    rm -rf ~/.{config,cache}/google-chrome/
-    /usr/bin/google-chrome \
-    --kiosk \
-    --no-first-run \
-    --incognito \
-    --password-store=basic \
-    --disable-restore-session-state \
-    --disable-features=TranslateUI \
-    --disable-session-crashed-bubble \
-    --app=http://localhost:4200
-
-    sleep 1s
-done
-EOT
-exec_cmd 'chmod +x /opt/kiosk.sh'
-
+# rm -rf ~/.{config,cache}/google-chrome/
+google-chrome \
+--kiosk \
+--no-first-run \
+--incognito \
+--password-store=basic \
+--disable-restore-session-state \
+--disable-features=TranslateUI \
+--disable-session-crashed-bubble \
+--app=http://localhost:4200
+EOT'
+sudo_exec_cmd 'chmod +x /opt/mkiosk.sh'
 
 print_status "Creating systemd service for magic mirror kiosk..."
-
-cat <<EOT > /lib/systemd/system/mkiosk.service
+exec_cmd 'cat <<EOT > ~/.config/systemd/user/mkiosk.service
 [Unit]
 Description=Magic Mirror Kiosk (MKiosk)
 After=docker.service
@@ -118,12 +119,13 @@ StartLimitIntervalSec=10
 [Service]
 Type=simple
 Restart=on-failure
-ExecStart=/bin/bash -e /opt/kiosk.sh
+ExecStart=/bin/bash -e /opt/mkiosk.sh
 
 [Install]
 WantedBy=graphical.target
-EOT
+EOT'
 
+print_status "Start mkiosk systemd service..."
 exec_cmd 'systemctl daemon-reload'
-exec_cmd 'systemctl enable /lib/systemd/system/mkiosk.service'
-exec_cmd 'systemctl start mkiosk.service'
+exec_cmd 'systemctl --user enable mkiosk'
+exec_cmd 'systemctl --user start mkiosk'
