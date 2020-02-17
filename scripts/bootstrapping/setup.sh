@@ -153,7 +153,7 @@ function disable() {
 EOT'
 
 print_status "Set correct file permissions for gnome shell extension..."
-exec_cmd "chmod 755 ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads/metadata.js"
+exec_cmd "chmod 755 ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads/metadata.json"
 exec_cmd "chmod 755 ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads/extension.js"
 
 print_status "Enable the gnome shell extension..."
