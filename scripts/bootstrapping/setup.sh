@@ -127,7 +127,7 @@ exec_cmd "sed -ie 's/^.*AutomaticLoginEnable *= *.*$/AutomaticLoginEnable=true/g
 exec_cmd "sed -ie 's/^.*AutomaticLogin *= *.*$/AutomaticLogin='"${SUDO_USER}"'/g' /etc/gdm3/custom.conf"
 
 
-print_status "Disable Gnome shell multitouch gestures..."
+print_status "Disable gnome shell multitouch gestures..."
 exec_cmd_no_sudo 'mkdir -p ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads'
 exec_cmd_no_sudo 'cat <<EOT > ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads/metadata.js
 {
