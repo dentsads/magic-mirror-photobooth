@@ -131,6 +131,9 @@ print_status "Enable automatic login to Ubuntu for current user ${SUDO_USER}..."
 exec_cmd "sed -ie 's/^.*AutomaticLoginEnable *= *.*$/AutomaticLoginEnable=true/g' /etc/gdm3/custom.conf"
 exec_cmd "sed -ie 's/^.*AutomaticLogin *= *.*$/AutomaticLogin='"${SUDO_USER}"'/g' /etc/gdm3/custom.conf"
 
+print_status "Ignore the laptop lid state, so the external monitor can stay in portrait mode when closing the laptop..."
+exec_cmd "sed -ie 's/^.*IgnoreLid *= *.*$/IgnoreLid=true/g' /etc/UPower/UPower.conf"
+exec_cmd 'systemctl restart upower.service'
 
 print_status "Disable gnome shell multitouch gestures..."
 exec_cmd_no_sudo 'mkdir -p ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads'
