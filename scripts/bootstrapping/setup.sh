@@ -135,6 +135,10 @@ print_status "Ignore the laptop lid state, so the external monitor can stay in p
 exec_cmd "sed -ie 's/^.*IgnoreLid *= *.*$/IgnoreLid=true/g' /etc/UPower/UPower.conf"
 exec_cmd 'systemctl restart upower.service'
 
+print_status "Purge all crash logs and disable apport to prevent system crash problem popups..."
+exec_cmd 'rm /var/crash/*'
+exec_cmd "sed -ie 's/^.*enabled *= *.*$/enabled=0/g' /etc/default/apport"'
+
 print_status "Disable gnome shell multitouch gestures..."
 exec_cmd_no_sudo 'mkdir -p ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads'
 exec_cmd_no_sudo 'cat <<EOT > ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads/metadata.json
