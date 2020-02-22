@@ -121,6 +121,11 @@ exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power notify-perhaps-r
 exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type nothing'
 exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type nothing'
 exec_cmd 'gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power lid-close-suspend-with-external-monitor false'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power notify-perhaps-recall false'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power percentage-low 0'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power percentage-critical 0'
+exec_cmd 'gsettings set org.gnome.settings-daemon.plugins.power percentage-action 0'
 
 print_status "Enable automatic login to Ubuntu for current user ${SUDO_USER}..."
 exec_cmd "sed -ie 's/^.*AutomaticLoginEnable *= *.*$/AutomaticLoginEnable=true/g' /etc/gdm3/custom.conf"
@@ -157,20 +162,25 @@ exec_cmd "chmod 755 ~/.local/share/gnome-shell/extensions/disable-gestures@dents
 exec_cmd "chmod 755 ~/.local/share/gnome-shell/extensions/disable-gestures@dentsads/extension.js"
 
 print_status "Enable the gnome shell extension..."
-exec_cmd_no_sudo 'gnome-shell-extension-tool -e disable-gestures@dentsads'
+exec_cmd 'gnome-shell-extension-tool -e disable-gestures@dentsads || echo 0'
 
 print_status "Restart gnome shell..."
-exec_cmd_no_sudo 'gnome-shell --replace'
+exec_cmd 'killall -3 gnome-shell'
+
+sleep 2
 
 print_status "Create ~/.config/systemd/user if it does not exist already..."
 exec_cmd_no_sudo 'mkdir -p ~/.config/systemd/user'
 
 print_status "Creating mkiosk shell script..."
-exec_cmd 'cat <<EOT > /opt/mkiosk.sh
+exec_cmd "cat <<EOT > /opt/mkiosk.sh
 #!/bin/bash
 
-rm -rf ~/.{config,cache}/google-chrome/
+# map touch frame input to monitor output
+xinput --map-to-output \"\$(xinput list --name-only | grep '^Touchscreen small size$')\" VGA-1
 
+# clean config and cache and start chrome in kiosk mode
+rm -rf ~/.{config,cache}/google-chrome/
 /usr/bin/google-chrome \
 --kiosk \
 --no-first-run \
@@ -181,7 +191,7 @@ rm -rf ~/.{config,cache}/google-chrome/
 --disable-session-crashed-bubble \
 --noerrdialogs \
 --app=http://localhost:4200
-EOT'
+EOT"
 exec_cmd 'chmod +x /opt/mkiosk.sh'
 
 print_status "Creating systemd service for magic mirror kiosk..."
