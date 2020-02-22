@@ -2,6 +2,7 @@ import { ErrorHandler, Error } from './errorhandler'
 import config from '../config.json'
 var exec = require('child_process').exec
 
+const fs = require('fs')  
 const os = require('os')
 
 var config_dir = os.homedir() + "/" + config.config_dir;
@@ -17,6 +18,7 @@ enum TemplateLayout {
 interface CompositorOptions {
   templateLayout: TemplateLayout;
   imgSrcList: string[];
+  drawingImg: string;
   overlayImg: string;
 }
 
@@ -48,7 +50,7 @@ class ImageCompositor {
     let compositeArgs = [
       '-size', `${this.IMAGE_HEIGHT}x${this.IMAGE_WIDTH}`,
       'xc:none'
-    ]
+    ]         
 
     options.imgSrcList.forEach( (img, imgIndex)  => {
       compositeArgs.push('\\(')
@@ -58,6 +60,19 @@ class ImageCompositor {
       compositeArgs.push(`-repage ${templateImageOffsets[options.templateLayout][imgIndex]}`)            
       compositeArgs.push('\\)')
     });
+
+    if (options.drawingImg !== '') {
+      var data = options.drawingImg.replace(/^data:image\/\w+;base64,/, "");
+      var buf = new Buffer(data, 'base64');
+      const path = this.PHOTOS_DIR + '/drawing.png'
+      fs.writeFileSync(path, buf);
+
+      compositeArgs.push('\\(')
+      compositeArgs.push(path)
+      compositeArgs.push(`-resize 200x200`)    
+      compositeArgs.push(`-repage +1218+245`)            
+      compositeArgs.push('\\)')
+    }   
 
     compositeArgs.push('-layers', 'flatten')
     compositeArgs.push(this.TMP_FILE)

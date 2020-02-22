@@ -76,7 +76,7 @@ export class RoutingService {
     const stateMachine = Machine(
       {
         id: 'root',
-        initial: 'intro',
+        initial: 'drawing',
         context: {
           capturedPhotoPaths: [],
           exifOrientation: 1,
@@ -208,6 +208,7 @@ export class RoutingService {
               src: (context, event) => this.photoService.compositePhoto({
                 templateLayout: 'THREE_UNIFORM',
                 imgSrcList: context.capturedPhotoPaths,
+                drawingImg: event.imageDataURL,
                 overlayImg: 'christmas_01_overlay_base_03.png'
               }),
               onDone: {

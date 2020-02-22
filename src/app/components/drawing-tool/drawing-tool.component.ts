@@ -52,7 +52,7 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
 
   async handleEvent(eventId: string) {
     var dataURL = this.canvas.toDataURL();
-    this.routingService.handleEvent(eventId, { imageDataURL: dataURL });
+    this.routingService.handleEvent(eventId, { imageDataURL: this.canvas.isEmpty() ? "": dataURL });
   }
 
   handleClearCanvas() {
