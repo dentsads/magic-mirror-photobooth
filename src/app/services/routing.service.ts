@@ -86,7 +86,13 @@ export class RoutingService {
         states: {
           intro: {
             entry: ['transition'],
-            meta: { path: '/intro', assets: this.ANIM1_MAP[1] },
+            meta: { 
+              path: '/intro', 
+              assets: {
+                assetPath: this.ANIM1_MAP[1].assetPath,
+                website: config.website
+              }
+            },
             on: {
               'event.intro.01': {
                 target: 'countdown'

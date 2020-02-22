@@ -5,5 +5,6 @@
     "printer_name": "DNP-DS620",
     "phone_number": "+49 176 62297047",
     "led_pin_size": 40,
-    "maxNumberOfPhotos": 3
+    "maxNumberOfPhotos": 3,
+    "website": "www.fotospiegelwelt.de"
 }

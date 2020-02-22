@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../services/routing.service';
+import { Subscription } from 'rxjs';
 import { Anim1 } from '../../models/anim1.model';
 
 @Component({
@@ -8,8 +9,9 @@ import { Anim1 } from '../../models/anim1.model';
   templateUrl: './intro.component.html',
   styleUrls: ['./intro.component.css']
 })
-export class IntroComponent implements OnInit {
+export class IntroComponent implements OnInit, OnDestroy {
 
+  private subscription: Subscription;
   componentData: Anim1;
 
   constructor(
@@ -17,8 +19,16 @@ export class IntroComponent implements OnInit {
     private routingService: RoutingService
   ) {}
 
-  ngOnInit() {
-    this.componentData = this.routingService.getComponentData();
+  async ngOnInit() {
+    this.subscription = this.activatedRoute.paramMap.subscribe(params => {
+      this.componentData = this.routingService.getComponentData();
+    });
+  }
+
+  async ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   async handleEvent(eventId: string) {
