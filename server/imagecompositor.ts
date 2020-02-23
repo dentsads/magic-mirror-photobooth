@@ -33,11 +33,14 @@ const templateImageSizes: Record<string,string[]> = {
 class ImageCompositor {
   private readonly IMAGE_WIDTH:number = 1205
   private readonly IMAGE_HEIGHT:number = 1795
+  private readonly DRAWING_WIDTH:number = 200
+  private readonly DRAWING_HEIGHT:number = 200
   private readonly TMP_DIR:string = "./built"
-  private readonly TMP_FILE:string = this.TMP_DIR + "/tmp.png"
+  private readonly TMP_FILE:string = this.TMP_DIR + "/tmp.png"  
   private readonly PHOTOS_PATH:string = 'api/photos/'
   private readonly PHOTOS_DIR:string = photos_dir
   private readonly ASSETS_DIR:string = assets_dir
+  private readonly DRAWING_FILE:string = this.PHOTOS_DIR + "/drawing.png"
 
   public constructor() {}
 
@@ -61,16 +64,23 @@ class ImageCompositor {
       compositeArgs.push('\\)')
     });
 
+    // Overlay drawing result (if available) on lower left corner of last image to be rendered
     if (options.drawingImg !== '') {
-      var data = options.drawingImg.replace(/^data:image\/\w+;base64,/, "");
-      var buf = new Buffer(data, 'base64');
-      const path = this.PHOTOS_DIR + '/drawing.png'
-      fs.writeFileSync(path, buf);
+      let drawingImageBase64 = options.drawingImg.replace(/^data:image\/\w+;base64,/, "");
+      let bufferedImage = new Buffer(drawingImageBase64, 'base64');
+      fs.writeFileSync(this.DRAWING_FILE, bufferedImage);
+
+      let lastImgIndex = templateImageSizes[options.templateLayout].length - 1;
+      let imageSizeArr = templateImageSizes[options.templateLayout][lastImgIndex].split('x')
+      let imageSizeHeight = Number(imageSizeArr[1])
+      let imageOffsetArr = templateImageOffsets[options.templateLayout][lastImgIndex].split('+')
+      let imageOffsetX = Number(imageOffsetArr[1])
+      let imageOffsetY = Number(imageOffsetArr[2])
 
       compositeArgs.push('\\(')
-      compositeArgs.push(path)
-      compositeArgs.push(`-resize 200x200`)    
-      compositeArgs.push(`-repage +1218+245`)            
+      compositeArgs.push(this.DRAWING_FILE)
+      compositeArgs.push(`-resize ${this.DRAWING_HEIGHT}x${this.DRAWING_WIDTH}`)    
+      compositeArgs.push(`-repage +${imageOffsetX}+${imageOffsetY + imageSizeHeight - this.DRAWING_HEIGHT}`)            
       compositeArgs.push('\\)')
     }   
 
