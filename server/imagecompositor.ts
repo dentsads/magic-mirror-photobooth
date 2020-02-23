@@ -18,8 +18,10 @@ enum TemplateLayout {
 interface CompositorOptions {
   templateLayout: TemplateLayout;
   imgSrcList: string[];
-  drawingImg: string;
-  overlayImg: string;
+  drawingImageDataURL: string;
+  overlayImage: string;
+  logoImage: string;
+  logoImageOffset: string;
 }
 
 const templateImageOffsets: Record<string,string[]> = {
@@ -30,9 +32,11 @@ const templateImageSizes: Record<string,string[]> = {
   'THREE_UNIFORM': [ '533x800', '533x800', '533x800' ]
 }
 
+const logoImageSize: string = '100x100'
+
 class ImageCompositor {
-  private readonly IMAGE_WIDTH:number = 1205
-  private readonly IMAGE_HEIGHT:number = 1795
+  private readonly IMAGE_WIDTH:number = 1795
+  private readonly IMAGE_HEIGHT:number = 1205
   private readonly DRAWING_WIDTH:number = 200
   private readonly DRAWING_HEIGHT:number = 200
   private readonly TMP_DIR:string = "./built"
@@ -40,18 +44,18 @@ class ImageCompositor {
   private readonly PHOTOS_PATH:string = 'api/photos/'
   private readonly PHOTOS_DIR:string = photos_dir
   private readonly ASSETS_DIR:string = assets_dir
-  private readonly DRAWING_FILE:string = this.PHOTOS_DIR + "/drawing.png"
+  private readonly DRAWING_FILE:string = this.PHOTOS_DIR + '/drawing.png'
 
   public constructor() {}
 
   public composite(options: CompositorOptions, cb: (stdout?: object, e?: Error) => void): void {
     if (options.imgSrcList.length == undefined)
       return cb(null, ErrorHandler.createError("1","There are no images to composite into print template."));
-    if (options.overlayImg === '')
+    if (options.overlayImage === '')
       return cb(null, ErrorHandler.createError("0","No path for overlay image to be composed was specified."));
 
     let compositeArgs = [
-      '-size', `${this.IMAGE_HEIGHT}x${this.IMAGE_WIDTH}`,
+      '-size', `${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT}`,
       'xc:none'
     ]         
 
@@ -65,8 +69,8 @@ class ImageCompositor {
     });
 
     // Overlay drawing result (if available) on lower left corner of last image to be rendered
-    if (options.drawingImg !== '') {
-      let drawingImageBase64 = options.drawingImg.replace(/^data:image\/\w+;base64,/, "");
+    if (options.drawingImageDataURL !== '') {
+      let drawingImageBase64 = options.drawingImageDataURL.replace(/^data:image\/\w+;base64,/, "");
       let bufferedImage = new Buffer(drawingImageBase64, 'base64');
       fs.writeFileSync(this.DRAWING_FILE, bufferedImage);
 
@@ -82,22 +86,46 @@ class ImageCompositor {
       compositeArgs.push(`-resize ${this.DRAWING_HEIGHT}x${this.DRAWING_WIDTH}`)    
       compositeArgs.push(`-repage +${imageOffsetX}+${imageOffsetY + imageSizeHeight - this.DRAWING_HEIGHT}`)            
       compositeArgs.push('\\)')
-    }   
+    }       
 
     compositeArgs.push('-layers', 'flatten')
     compositeArgs.push(this.TMP_FILE)
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
       if (err) return cb(null, ErrorHandler.createError("1",err))
-      this.compose(this.TMP_FILE, this.ASSETS_DIR + '/' + options.overlayImg, cb)
+
+      let logoImage = options.logoImage == undefined ? undefined : this.ASSETS_DIR + '/' + options.logoImage
+      this.compose(this.TMP_FILE, this.ASSETS_DIR + '/' + options.overlayImage, logoImage, options.logoImageOffset, cb)
     });
 
   }
 
-  public compose(img: string = '', overlayImg: string = '', cb: (stdout?: object, e?: Error) => void): void {
-    let compositeArgs = `${img} ${overlayImg} -compose over -composite ${this.PHOTOS_DIR}/result.png`
+  public compose(img: string = '', overlayImage: string = '', overlayLogoImg: string = '', overlayLogoImgOffset: string = '+10+10', cb: (stdout?: object, e?: Error) => void): void {
+    let compositeArgs = [
+      '-size', `${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT}`,
+      'xc:none'
+    ]
 
-    exec('convert ' + compositeArgs, (err, stdout, stderr) => { 
+    compositeArgs.push(img)
+    compositeArgs.push('-composite')
+    compositeArgs.push(`${overlayImage}`)
+    compositeArgs.push('-composite')
+
+    // Overlay logo (if available)
+    if (overlayLogoImg !== '') {
+      compositeArgs.push('\\(')
+      compositeArgs.push(overlayLogoImg)
+      compositeArgs.push(`-resize ${logoImageSize}`)               
+      compositeArgs.push('\\)')
+      compositeArgs.push(`-geometry ${overlayLogoImgOffset}`)
+      compositeArgs.push('-composite')
+    }
+
+    compositeArgs.push(this.PHOTOS_DIR + '/result.png')
+
+    //let compositeArgs = `-size ${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT} xc:none ${img} -composite ${overlayImage} -composite \\( ${overlayLogoImg} -resize ${logoImageSize} \\) -geometry ${overlayLogoImgOffset} -composite ${this.PHOTOS_DIR}/result.png`
+
+    exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
       if (err) {
         return cb(null, ErrorHandler.createError("1",err))
       } else {

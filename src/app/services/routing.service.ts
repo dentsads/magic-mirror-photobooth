@@ -208,8 +208,10 @@ export class RoutingService {
               src: (context, event) => this.photoService.compositePhoto({
                 templateLayout: 'THREE_UNIFORM',
                 imgSrcList: context.capturedPhotoPaths,
-                drawingImg: event.imageDataURL,
-                overlayImg: 'christmas_01_overlay_base_03.png'
+                drawingImageDataURL: event.imageDataURL,
+                overlayImage: 'christmas_01_overlay_base_03.png',
+                logoImage: 'logo.png',
+                logoImageOffset: '+10+200'
               }),
               onDone: {
                 target: 'acceptCompositedPhoto',
