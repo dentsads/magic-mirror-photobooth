@@ -112,7 +112,7 @@ class ImageCompositor {
     compositeArgs.push('-composite')
 
     // Overlay logo (if available)
-    if (overlayLogoImg !== '') {
+    if (overlayLogoImg !== ''&& fs.existsSync(overlayLogoImg)) {
       compositeArgs.push('\\(')
       compositeArgs.push(overlayLogoImg)
       compositeArgs.push(`-resize ${logoImageSize}`)               
@@ -122,8 +122,6 @@ class ImageCompositor {
     }
 
     compositeArgs.push(this.PHOTOS_DIR + '/result.png')
-
-    //let compositeArgs = `-size ${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT} xc:none ${img} -composite ${overlayImage} -composite \\( ${overlayLogoImg} -resize ${logoImageSize} \\) -geometry ${overlayLogoImgOffset} -composite ${this.PHOTOS_DIR}/result.png`
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
       if (err) {
