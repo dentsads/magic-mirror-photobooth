@@ -15,7 +15,7 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
   componentData: any;
   canvas: any;
 
-  drawingLineWidth = 5;
+  drawingLineWidth = 8;
   drawingColor = '#ffffff';
   drawingShadowColor = '#004aff';
   drawingShadowWidth = 12;
