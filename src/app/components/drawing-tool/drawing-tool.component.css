@@ -1,3 +1,5 @@
+@import "~@simonwep/pickr/dist/themes/nano.min.css";
+
 #canvas {
     border: 1px solid rgb(170, 170, 170);
 }
@@ -5,6 +7,16 @@
 .inner {
     display: flex;
     justify-content:center;
+}
+
+.inner img {
+    width:120px;
+}
+
+#button-color button {
+    width: 100px;
+    height: 100px;
+    margin-top: 10%;
 }
 
 #button-clear {
@@ -19,7 +31,7 @@
 
 #button-color {
     display: inline-block;
-    margin-left: 5%;
+    margin-left: 5%;    
 }
 
 #button-ok {
@@ -30,22 +42,4 @@
     sepia(100%) 
     saturate(2000%) 
     hue-rotate(40deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
-}
-
-img {
-    width:120px;
-}
-
-
-input[type="color"] {
-	-webkit-appearance: none;
-	border: none;
-	width: 100px;
-	height: 100px;
-}
-input[type="color"]::-webkit-color-swatch-wrapper {
-	padding: 0;
-}
-input[type="color"]::-webkit-color-swatch {
-	border: none;
 }

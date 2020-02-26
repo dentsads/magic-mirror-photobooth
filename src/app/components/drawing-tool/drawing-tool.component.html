@@ -1,7 +1,7 @@
 <div>
   <div class="inner">
     <div (click)="handleClearCanvas()" id="button-clear"><img src="{{componentData.assetButtonClear}}"></div>
-    <div  id="button-color"><input type="color" value="{{drawingShadowColor}}" id="drawing-shadow-color" (change)="handleDrawingShadowColorElChange($event)"></div>
+    <div id="button-color"><div class="color-picker"></div></div>
     <div (click)="handleEvent('event.drawing-tool.01')" id="button-ok"><img src="{{componentData.assetButtonOk}}"></div>
   </div>
 </div>
