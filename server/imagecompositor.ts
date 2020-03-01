@@ -1,4 +1,5 @@
 import { ErrorHandler, Error } from './errorhandler'
+import { logger } from './logger';
 import config from '../config.json'
 var exec = require('child_process').exec
 
@@ -25,11 +26,13 @@ interface CompositorOptions {
 }
 
 const templateImageOffsets: Record<string,string[]> = {
-  'THREE_UNIFORM': [ '+50+245', '+623+245', '+1218+245' ]
+  'THREE_UNIFORM': [ '+50+245', '+627+245', '+1218+245' ],
+  'THREE_NON_UNIFORM': [ '+98+199', '+617+144', '+1248+199' ]
 }
 
 const templateImageSizes: Record<string,string[]> = {
-  'THREE_UNIFORM': [ '533x800', '533x800', '533x800' ]
+  'THREE_UNIFORM': [ '533x800', '533x800', '533x800' ],
+  'THREE_NON_UNIFORM': [ '450x675', '562x844', '450x675' ]
 }
 
 const logoImageSize: string = '100x100'
@@ -91,6 +94,8 @@ class ImageCompositor {
     compositeArgs.push('-layers', 'flatten')
     compositeArgs.push(this.TMP_FILE)
 
+    logger.log('info', 'convert ' + compositeArgs.join(' '))
+
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
       if (err) return cb(null, ErrorHandler.createError("1",err))
 
@@ -122,6 +127,8 @@ class ImageCompositor {
     }
 
     compositeArgs.push(this.PHOTOS_DIR + '/result.png')
+
+    logger.log('info', 'convert ' + compositeArgs.join(' '))
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
       if (err) {
