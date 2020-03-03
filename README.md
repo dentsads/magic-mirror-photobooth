@@ -326,11 +326,20 @@ You can fix this by installing `colord-kde` and rebooting your machine
 sudo apt-get install -y colord-kde
 ```
 
-## Printing with `lpr` from the command line
+## Printing with `lp` from the command line
 
 ```bash
 # using printer DNP-DS620 and printing image.png
-sudo lpr -P DNP-DS620 image.png
+sudo lp -d DNP-DS620 image.png
+```
+
+## scaling the image for printing
+
+due to the current preset image margins for the printer driver the image has to be scaled first in order for the margins to be corrected on the printed result
+
+```bash
+# for 6x4 inch print
+convert /tmp/result.png -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 /tmp/result_scaled.png
 ```
 
 # Building and Running with Docker
