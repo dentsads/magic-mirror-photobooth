@@ -5,6 +5,7 @@ var exec = require('child_process').exec
 
 const fs = require('fs')  
 const os = require('os')
+const uuidv4 = require('uuid/v4');
 
 var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
@@ -56,7 +57,7 @@ class ImageCompositor {
       return cb(null, ErrorHandler.createError("1","There are no images to composite into print template."));
     if (options.overlayImage === '')
       return cb(null, ErrorHandler.createError("0","No path for overlay image to be composed was specified."));
-
+ 
     let compositeArgs = [
       '-size', `${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT}`,
       'xc:none'
@@ -106,6 +107,8 @@ class ImageCompositor {
   }
 
   public compose(img: string = '', overlayImage: string = '', overlayLogoImg: string = '', overlayLogoImgOffset: string = '+10+10', cb: (stdout?: object, e?: Error) => void): void {
+    let uuidFileName = uuidv4() + '_collage.png'
+
     let compositeArgs = [
       '-size', `${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT}`,
       'xc:none'
@@ -126,16 +129,18 @@ class ImageCompositor {
       compositeArgs.push('-composite')
     }
 
-    compositeArgs.push(this.PHOTOS_DIR + '/result.png')
+    compositeArgs.push(this.PHOTOS_DIR + '/' + uuidFileName)
 
     logger.log('info', 'convert ' + compositeArgs.join(' '))
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
-      if (err) {
-        return cb(null, ErrorHandler.createError("1",err))
-      } else {
-        return cb({ "result" : this.PHOTOS_PATH + "result.png" });
-      }      
+      exec('convert ' + this.PHOTOS_DIR + '/' + uuidFileName + ' -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 ' + this.PHOTOS_DIR + '/printable_result.png', (err, stdout, stderr) => { 
+        if (err) {
+          return cb(null, ErrorHandler.createError("1",err))
+        } else {
+          return cb({ "result" : this.PHOTOS_PATH + uuidFileName });
+        }      
+      });       
     });    
   }
 

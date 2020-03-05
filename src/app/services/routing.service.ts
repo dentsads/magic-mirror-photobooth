@@ -264,7 +264,7 @@ export class RoutingService {
             invoke: {
               id: 'print',
               src: (context, event) => this.printService.printPhoto({
-                img: 'result.png',
+                img: 'printable_result.png',
                 numberOfCopies: event.numberOfCopies
               }),
               onDone: {
