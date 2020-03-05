@@ -184,7 +184,7 @@ exec_cmd "cat <<EOT > /opt/mkiosk.sh
 #!/bin/bash
 
 # map touch frame input to monitor output
-xinput --map-to-output \"\$(xinput list --name-only | grep '^Touchscreen small size$')\" VGA-1
+xinput --map-to-output \"\$(xinput list --name-only | grep '^Touchscreen small size$')\" HDMI-1
 
 # clean config and cache and start chrome in kiosk mode
 rm -rf ~/.{config,cache}/google-chrome/
