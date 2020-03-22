@@ -1,11 +1,11 @@
 <div class="counter"><p id="copies">Kopien</p></div>
-<div class="counter"><p id="counter">{{printCounterValue}}</p></div>
+<div *ngIf="componentData" class="counter"><p id="counter">{{printCounterValue}}</p></div>
 
-<div class="incdecButtons">
+<div *ngIf="componentData" class="incdecButtons">
     <div (click)="increment()" id="button-increment"><img src="{{componentData.assetButtonPlus}}"></div>
     <div (click)="decrement()" id="button-decrement"><img src="{{componentData.assetButtonMinus}}"></div>
 </div>
 
-<div class="printButton">
+<div *ngIf="componentData" class="printButton">
     <div (click)="handleEvent('event.select-print-photos.01')" id="button-printer"><img src="{{componentData.assetButtonPrinter}}"></div>
 </div>

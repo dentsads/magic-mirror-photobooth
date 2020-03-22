@@ -113,7 +113,12 @@
       },
       "compositePhoto": {
         "entry": ["transition"],
-        "meta": { "path": "/anim1/6", "assets": "{{{theme.assets.compositePhoto}}}" },
+        "meta": { 
+          "path": "/anim1/6", 
+          "assets": {
+            "assetPath": "{{{theme.assets.compositePhoto}}}"
+          }      
+        },
         "invoke": {
           "id": "composite",
           "src": "compositePhoto",

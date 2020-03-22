@@ -1,8 +1,8 @@
 <div>
   <div class="inner">
-    <div (click)="handleClearCanvas()" id="button-clear"><img src="{{componentData.assetButtonClear}}"></div>
+    <div *ngIf="componentData" (click)="handleClearCanvas()" id="button-clear"><img src="{{componentData.assetButtonClear}}"></div>
     <div id="button-color"><div class="color-picker"></div></div>
-    <div (click)="handleEvent('event.drawing-tool.01')" id="button-ok"><img src="{{componentData.assetButtonOk}}"></div>
+    <div *ngIf="componentData" (click)="handleEvent('event.drawing-tool.01')" id="button-ok"><img src="{{componentData.assetButtonOk}}"></div>
   </div>
 </div>
 

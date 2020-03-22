@@ -2,7 +2,7 @@
 <div><p class="text-subheader">Tut uns sehr leid, aber es ist ein Fehler aufgetreten</p></div>
 <div id="text-subsubheader-div"><p class="text-subsubheader">Probieren Sie es erneut. Sollte das Problem weiterhin bestehen, dann melden Sie den Fehler hier</p></div>
 <br><br>
-<div id="text-subsubheader-div"><p class="text-subsubheader"><b>{{componentData.phoneNumber}}</b></p></div>
+<div *ngIf="componentData" id="text-subsubheader-div"><p class="text-subsubheader"><b>{{componentData.phoneNumber}}</b></p></div>
 <br><br><br><br><br><br>
 <div id="text-subsubheader-div"></div><div><p class="text-subsubheader">Um zur Startseite zu gelangen, druecken Sie diesen Knopf</p></div>
-<div (click)="handleEvent('event.error-page.01')" id="button-home"><img src="{{componentData.assetButtonHome}}"></div>
+<div *ngIf="componentData" (click)="handleEvent('event.error-page.01')" id="button-home"><img src="{{componentData.assetButtonHome}}"></div>

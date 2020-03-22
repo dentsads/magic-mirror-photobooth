@@ -28,7 +28,6 @@ export class RoutingService {
     private http: HttpClient
   ) {
     this.createThemes();
-    this.currentTheme = this.THEME_MAP[this.currentThemeId];
   }
 
   ANIM1_MAP: Record<string, Anim1> = {
@@ -45,10 +44,23 @@ export class RoutingService {
     this.currentTheme.send(eventId, options);
   }
 
-  getComponentData() {
-    if (!this.currentTheme) return undefined;
+  sleep(ms): Promise<any> {
+    return new Promise((resolve): any => setTimeout(resolve, ms))
+  }
+  
+  async wait(ms): Promise<any> {
+    await this.sleep(ms)
+  }
+  
+
+  async getComponentData() {
+    let counter:number = 0
+    while (!this.currentTheme && counter < 10) {
+      console.log("Loading theme profile. Please wait...");
+      await this.wait(10);
+      counter++;
+    }
     
-    console.log("ASDFSDFSDF")
     const metadata: any = Object.values(this.currentTheme.state.meta).shift();
     return metadata.assets;
   }
@@ -60,8 +72,6 @@ export class RoutingService {
   createThemes() {
     this.fetchProfile().subscribe(data => {
       let profile = data;    
-      console.log("AAAAA")
-      console.log(profile)
       const stateMachine = Machine(profile);
   
       const extendedStateMachine = stateMachine.withConfig(

@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="componentData">
     <video [muted]="true" autoplay playsinline id="animVideo" (play)="handleStartEvent('event.anim1.01')" (ended)="handleEndEvent('event.anim1.02')">
         <source src="{{componentData.assetPath}}" type="video/mp4">
         Your browser does not support the video tag.
