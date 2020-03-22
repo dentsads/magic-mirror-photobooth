@@ -1,7 +1,7 @@
-<div (click)="handleEvent('event.intro.01')">
+<div *ngIf="componentData" (click)="handleEvent('event.intro.01')">
     <video width="540" [muted]="true" autoplay playsinline loop id="introVideo">
         <source src="{{componentData.assetPath}}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
-<div id="text"><p>{{componentData.website}}</p></div>
+<div *ngIf="componentData" id="text"><p>{{componentData.website}}</p></div>

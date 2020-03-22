@@ -4,6 +4,7 @@ import { ImageCompositor } from './imagecompositor' ;
 import { Photo } from './photo';
 import { logger } from './logger';
 import { Printer } from './printer';
+import * as Mustache from 'mustache';
 import config from '../config.json'
 
 const fs = require('fs') 
@@ -101,6 +102,12 @@ app.post('/api/led/barrel', (req, res) => {
 app.get('/api/led/clear', (req, res) => {      
     led.clear();
     res.sendStatus(200)
+})
+
+app.get('/api/profile', (req, res) => {
+  let template:string = fs.readFileSync('./profiles/' + config.theme.profile + '.mustache', 'utf8');  
+  let renderedTemplate = Mustache.render(template, config); 
+  res.status(200).send(JSON.parse(renderedTemplate)).end()
 })
 
 app.post('/api/compositor/composite', (req, res, next) => {

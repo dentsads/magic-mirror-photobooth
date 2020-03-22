@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Anim1 } from '../models/anim1.model';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { Machine, interpret, AnyEventObject } from 'xstate';
 import { LedService } from './led.service';
 import { PhotoService } from './photo.service';
 import { LoggerService } from './logger.service'
 import { PrinterService } from './printer.service';
 import config from '../../../config.json'
+import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +24,8 @@ export class RoutingService {
     private ledService: LedService,
     private photoService: PhotoService,
     private printService: PrinterService,
-    private loggerService: LoggerService
+    private loggerService: LoggerService,
+    private http: HttpClient
   ) {
     this.createThemes();
     this.currentTheme = this.THEME_MAP[this.currentThemeId];
@@ -43,290 +46,116 @@ export class RoutingService {
   }
 
   getComponentData() {
+    if (!this.currentTheme) return undefined;
+    
+    console.log("ASDFSDFSDF")
     const metadata: any = Object.values(this.currentTheme.state.meta).shift();
     return metadata.assets;
   }
-
-  private animationState(assets: object, path: string, targetState: string, action?: (context: any, event: any) => void): object {
-    return {
-      entry: ['transition'],
-      meta: { "path": path, "assets": assets },
-      initial: 'anim_loaded',
-      states: {
-        anim_loaded: {
-          on: {
-            'event.anim1.01': {
-              target: 'anim_running',
-              actions: (context, event) => {
-                if (action) action(context, event);
-              }
-            }           
-          }
-        },
-        anim_running: {
-          after: {
-            FINISH_ANIM: targetState
-          }
-        }
-      }
-    };
+  
+  fetchProfile(): Observable<any> {
+    return this.http.get("/api/profile");
   }
 
-  createThemes() {    
-    const stateMachine = Machine(
+  createThemes() {
+    this.fetchProfile().subscribe(data => {
+      let profile = data;    
+      console.log("AAAAA")
+      console.log(profile)
+      const stateMachine = Machine(profile);
+  
+      const extendedStateMachine = stateMachine.withConfig(
       {
-        id: 'root',
-        initial: 'intro',
-        context: {
-          capturedPhotoPaths: [],
-          exifOrientation: 1,
-          photoPath: '',
-          maxNumberOfPhotos: config.maxNumberOfPhotos
-        },
-        states: {
-          intro: {
-            entry: ['transition'],
-            meta: { 
-              path: '/intro', 
-              assets: {
-                assetPath: this.ANIM1_MAP[1].assetPath,
-                website: config.website
-              }
-            },
-            on: {
-              'event.intro.01': {
-                target: 'countdown'
-              }
-            }
+        actions: {
+          transition: (context, event, meta) => {
+            this.loggerService.log('info', 'Transitioning to: ' + JSON.stringify(meta.state.value))    
+            const metadata: any = Object.values(meta.state.meta).shift();
+  
+            this.router.navigate([metadata.path]);
           },
-          countdown: this.animationState(this.ANIM1_MAP[3], '/anim1/3', '#root.clearLed', (context, event) => {
+          updateMetaAssetsWithContext: (context, event, meta) => {
+            meta.state.meta[Object.keys(meta.state.meta).shift()].assets.context = context;
+          },
+          logError: (_, event) => {
+            // handle error
+            this.loggerService.log('error', event.data.response.data)
+          },
+          logStatus: (context, event) => {
+            this.loggerService.log('info', event.data.data.status)       
+          },
+          logClearLed: (context, event) => {
+            // handle success
+            this.loggerService.log('info', 'Clearing LED strip')     
+          },
+          triggerLed: (context, event) => {
             this.ledService.triggerLed({
-              direction: 'RIGHT',
-              color: 'rgb(0, 0, 50)',
-              duration: event.delay || 0,
-              loops: 1
+                "direction": "RIGHT",
+                "color": "rgb(0, 0, 50)",
+                "duration": event.delay || 0,
+                "loops": 1
             })
             .then((response) => {
-              // handle success
-              this.loggerService.log('info', response)              
+                // handle success
+                this.loggerService.log("info", response)              
             })
             .catch((error) => {              
-              // handle error
-              this.loggerService.log('error', error)
+                // handle error
+                this.loggerService.log("error", error)
             });
+          },                
+          setCapturedPhoto: (context, event) => {
+            // handle success
+            const capturedPhotoPath = event.data.data.result.imagePath;
+            context.photoPath = 'api/photos/' + capturedPhotoPath;
+            context.exifOrientation = event.data.data.result.exifOrientation;
+            context.capturedPhotoPaths.push(capturedPhotoPath);         
+          },
+          popCapturedPhotos: (context, event) => {
+            context.capturedPhotoPaths.pop();
+          },
+          clearCapturedPhotos: (context, event) => {
+            // handle success
+            const capturedPhotoPath = event.data.data.result;
+            context.photoPath = capturedPhotoPath;
+            context.exifOrientation = 1;
+            context.capturedPhotoPaths = [];     
+          }        
+        },
+        delays: {
+          FINISH_ANIM: (context, event: AnyEventObject) => {
+            this.loggerService.log('info', 'Animation delay is ' + JSON.stringify(event))   
+            return event.delay || 0;
+          }
+        },
+        guards: {
+          targetNumberOfPhotosReached: (context, event) => {
+            return context.capturedPhotoPaths.length >= context.maxNumberOfPhotos;
+          }
+        },
+        services: {
+          clearLed: (context, event) => this.ledService.clearLed(),
+          capturePhoto: (context, event) => this.photoService.capturePhoto(),
+          compositePhoto: (context, event) => this.photoService.compositePhoto({
+            templateLayout: 'THREE_UNIFORM',
+            imgSrcList: context.capturedPhotoPaths,
+            drawingImageDataURL: event.imageDataURL,
+            overlayImage: 'christmas_01_overlay_base_03.png',
+            logoImage: 'logo_small.png',
+            logoImageOffset: '+10+200'
           }),
-          clearLed: {
-            invoke: {
-              id: 'clear',
-              src: (context, event) => this.ledService.clearLed(),
-              onDone: {
-                target: 'capturePhoto',
-                actions: (context, event) => {
-                  // handle success
-                  this.loggerService.log('info', 'Clearing LED strip')     
-                }
-              },
-              onError: {
-                /* 
-                  despite the error navigate to capturePhoto,
-                  since it is better to not disturbe the workflow
-                  than to interrupt because of an LED error
-                */
-                target: 'capturePhoto',
-                actions: (_, event) => {
-                  // handle error
-                  this.loggerService.log('error', event.data.response.data)
-                }
-              }              
-            }
-          },
-          capturePhoto: {
-            invoke: {
-              id: 'capture',
-              src: (context, event) => this.photoService.capturePhoto(),
-              onDone: {
-                target: 'acceptPhoto',
-                actions: (context, event) => {
-                  // handle success
-                  const capturedPhotoPath = event.data.data.result.imagePath;
-                  context.photoPath = 'api/photos/' + capturedPhotoPath;
-                  context.exifOrientation = event.data.data.result.exifOrientation;
-                  context.capturedPhotoPaths.push(capturedPhotoPath);         
-                }
-              },
-              onError: {
-                target: 'errorPage',
-                actions: (_, event) => {
-                  // handle error
-                  this.loggerService.log('error', event.data.response.data)
-                }
-              }              
-            }
-          },
-          acceptPhoto:  {
-            entry: ['updateMetaAssetsWithContext', 'transition'],
-            meta: { 
-              path: '/accept-photo', 
-              assets: { 
-                assetButtonOkPath: 'api/assets/check-circle-solid-240.png', 
-                assetButtonNokPath: 'api/assets/x-circle-solid-240.png'
-              } 
-            },
-            on: {
-              'event.accept-photo.01': [
-                // If number of required photos not reached, then repeat photo capture
-                { target: 'drawing', cond: 'targetNumberOfPhotosReached' },
-                { target: 'countdown'}
-              ], // photo ok
-              'event.accept-photo.02': {
-                target: 'countdown',
-                actions: (context, event) => {
-                  context.capturedPhotoPaths.pop();
-                }
-              } // photo not ok
-            }
-          },
-          drawing:  {
-            entry: ['transition'],
-            meta: { 
-              path: '/drawing', 
-              assets: { 
-                assetButtonClear: 'api/assets/undo-regular-240.png', 
-                assetButtonOk: 'api/assets/check-circle-regular-240.png',
-                assetButtonColor: 'api/assets/color-fill-solid-240.png'
-              } 
-            },
-            on: {
-              'event.drawing-tool.01': 'compositePhoto' // photos will be printed
-            }
-          },
-          compositePhoto: {
-            entry: ['transition'],
-            meta: { path: '/anim1/6', assets: this.ANIM1_MAP[6] },
-            invoke: {
-              id: 'composite',
-              src: (context, event) => this.photoService.compositePhoto({
-                templateLayout: 'THREE_UNIFORM',
-                imgSrcList: context.capturedPhotoPaths,
-                drawingImageDataURL: event.imageDataURL,
-                overlayImage: 'christmas_01_overlay_base_03.png',
-                logoImage: 'logo_small.png',
-                logoImageOffset: '+10+200'
-              }),
-              onDone: {
-                target: 'acceptCompositedPhoto',
-                actions: (context, event) => {
-                  // handle success
-                  const capturedPhotoPath = event.data.data.result;
-                  context.photoPath = capturedPhotoPath;
-                  context.exifOrientation = 1;
-                  context.capturedPhotoPaths = [];     
-                }
-              },
-              onError: {
-                target: 'errorPage',
-                actions: (_, event) => {
-                  // handle error
-                  this.loggerService.log('error', event.data.response.data)
-                }
-              }
-            }
-          },
-          acceptCompositedPhoto:  {
-            entry: ['transition', 'updateMetaAssetsWithContext'],
-            meta: { 
-              path: '/accept-photo', 
-              assets: { 
-                assetButtonOkPath: 'api/assets/check-circle-solid-240.png', 
-                assetButtonNokPath: 'api/assets/x-circle-solid-240.png'                
-              } 
-            },
-            on: {
-              'event.accept-photo.01': 'selectPrintPhotos', // photo ok
-              'event.accept-photo.02': 'countdown'  // photo not ok
-            }
-          },
-          selectPrintPhotos:  {
-            entry: ['transition'],
-            meta: { 
-              path: '/select-print-photos', 
-              assets: { 
-                assetButtonPlus: 'api/assets/plus-circle-regular-240.png', 
-                assetButtonMinus: 'api/assets/minus-circle-regular-240.png',
-                assetButtonPrinter: 'api/assets/printer-regular-240.png',
-              } 
-            },
-            on: {
-              'event.select-print-photos.01': 'printPhoto' // photos will be printed
-            }
-          },
-          printPhoto: {
-            invoke: {
-              id: 'print',
-              src: (context, event) => this.printService.printPhoto({
-                img: 'printable_result.png',
-                numberOfCopies: event.numberOfCopies
-              }),
-              onDone: {
-                target: 'intro',
-                actions: (context, event) => {
-                  // handle error
-                  this.loggerService.log('info', event.data.data.status)       
-                }
-              },
-              onError: {
-                target: 'errorPage',
-                actions: (_, event) => {
-                  // handle error
-                  this.loggerService.log('error', event.data.response.data)
-                }
-              }              
-            }
-          },
-          errorPage: {
-            entry: ['transition'],
-            meta: { 
-              path: '/error',
-              assets: { 
-                assetButtonHome: 'api/assets/home-solid-240.png',
-                phoneNumber: config.phone_number             
-              } 
-            },
-            on: {
-              'event.error-page.01': 'intro'
-            }
-          },      
+          printPhoto: (context, event) => this.printService.printPhoto({
+            img: 'printable_result.png',
+            numberOfCopies: event.numberOfCopies
+          })
         }
       });
+  
+      const stateService = interpret(extendedStateMachine).start();
+  
+      this.THEME_MAP.WEDDING = stateService;
 
-    const extendedStateMachine = stateMachine.withConfig(
-    {
-      actions: {
-        transition: (context, event, meta) => {
-          this.loggerService.log('info', 'Transitioning to: ' + JSON.stringify(meta.state.value))    
-          const metadata: any = Object.values(meta.state.meta).shift();
-
-          this.router.navigate([metadata.path]);
-        },
-        updateMetaAssetsWithContext: (context, event, meta) => {
-          meta.state.meta[Object.keys(meta.state.meta).shift()].assets.context = context;
-        }
-      },
-      delays: {
-        FINISH_ANIM: (context, event: AnyEventObject) => {
-          this.loggerService.log('info', 'Animation delay is ' + JSON.stringify(event))   
-          return event.delay || 0;
-        }
-      },
-      guards: {
-        targetNumberOfPhotosReached: (context, event) => {
-          return context.capturedPhotoPaths.length >= context.maxNumberOfPhotos;
-        }
-      }
+      this.currentTheme = this.THEME_MAP[this.currentThemeId];
     });
 
-    const stateService = interpret(extendedStateMachine).start();
-
-    this.THEME_MAP.WEDDING = stateService;
   }
 }

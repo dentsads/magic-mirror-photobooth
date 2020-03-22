@@ -1,4 +1,35 @@
 {
+    "theme": {
+        "profile": "wedding_01",
+        "assets": {
+            "intro": {
+                "assetPath": "api/assets/wedding_01_touchtostart_02.mp4"
+            },
+            "countdown": "api/assets/general_01_countdown_03.mp4",
+            "acceptPhoto": { 
+                "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
+                "assetButtonNokPath": "api/assets/x-circle-solid-240.png"
+            },
+            "drawing": { 
+                "assetButtonClear": "api/assets/undo-regular-240.png", 
+                "assetButtonOk": "api/assets/check-circle-regular-240.png",
+                "assetButtonColor": "api/assets/color-fill-solid-240.png"
+            },
+            "compositePhoto": "api/assets/wedding_01_loveinair_01.mp4",
+            "acceptCompositedPhoto": { 
+                "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
+                "assetButtonNokPath": "api/assets/x-circle-solid-240.png"                
+            },
+            "selectPrintPhotos": { 
+                "assetButtonPlus": "api/assets/plus-circle-regular-240.png", 
+                "assetButtonMinus": "api/assets/minus-circle-regular-240.png",
+                "assetButtonPrinter": "api/assets/printer-regular-240.png"
+            },
+            "errorPage": { 
+                "assetButtonHome": "api/assets/home-solid-240.png"       
+            }
+        }
+    },
     "config_dir": ".magic-mirror-photobooth",
     "photos_sub_dir": "photos",
     "assets_sub_dir": "assets",
