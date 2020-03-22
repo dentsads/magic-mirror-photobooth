@@ -151,6 +151,7 @@ sleep 1
 CONFIG_DIR="$HOME/.magic-mirror-photobooth"
 ASSETS_DIR="$CONFIG_DIR/assets"
 PHOTOS_DIR="$CONFIG_DIR/photos"
+THEMES_DIR="$CONFIG_DIR/themes"
 LOGS_DIR="$CONFIG_DIR/logs"
 DOCKER_REGISTRY="registry.gitlab.com"
 S3BUCKET="magic-mirror-photobooth-assets"
@@ -175,6 +176,8 @@ sudo -E docker run -d \
 --name magic-mirror-photobooth \
 -v $ASSETS_DIR:/root/.magic-mirror-photobooth/assets \
 -v $PHOTOS_DIR:/root/.magic-mirror-photobooth/photos \
+-v $THEMES_DIR:/root/magic-mirror-photobooth/themes \
+-v $CONFIG_DIR/config.json:/root/magic-mirror-photobooth/built/config.json \
 -v $LOGS_DIR:/root/magic-mirror-photobooth/logs \
 -v /run/udev:/run/udev:ro \
 -v /var/run/dbus:/var/run/dbus \
