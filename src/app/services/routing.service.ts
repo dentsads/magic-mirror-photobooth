@@ -16,7 +16,6 @@ import { Observable } from 'rxjs/internal/Observable';
 export class RoutingService {
 
   THEME_MAP: Record<string, any> = {};
-  currentThemeId = 'WEDDING';
   currentTheme;
 
   constructor(
@@ -30,16 +29,6 @@ export class RoutingService {
     this.createThemes();
   }
 
-  ANIM1_MAP: Record<string, Anim1> = {
-    1: { assetPath: 'api/assets/wedding_01_touchtostart_02.mp4'},
-    2: { assetPath: 'api/assets/are_you_ready.gif' },
-    3: { assetPath: 'api/assets/general_01_countdown_03.mp4' },
-    4: { assetPath: 'api/assets/say_cheese.gif' },
-    5: { assetPath: 'api/assets/general_01_lookatcamera_01.mp4' },
-    6: { assetPath: 'api/assets/wedding_01_loveinair_01.mp4' },
-    7: { assetPath: 'api/assets/photos_are_ready.gif' }
-  };
-
   handleEvent(eventId: string, options?: any): void {
     this.currentTheme.send(eventId, options);
   }
@@ -52,12 +41,11 @@ export class RoutingService {
     await this.sleep(ms)
   }
   
-
   async getComponentData() {
     let counter:number = 0
     while (!this.currentTheme && counter < 10) {
       console.log("Loading theme profile. Please wait...");
-      await this.wait(10);
+      await this.wait(100);
       counter++;
     }
     
@@ -66,7 +54,7 @@ export class RoutingService {
   }
   
   fetchProfile(): Observable<any> {
-    return this.http.get("/api/profile");
+    return this.http.get("/api/theme");
   }
 
   createThemes() {
@@ -161,10 +149,7 @@ export class RoutingService {
       });
   
       const stateService = interpret(extendedStateMachine).start();
-  
-      this.THEME_MAP.WEDDING = stateService;
-
-      this.currentTheme = this.THEME_MAP[this.currentThemeId];
+      this.currentTheme = stateService;
     });
 
   }

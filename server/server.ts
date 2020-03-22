@@ -13,6 +13,7 @@ const os = require('os')
 var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var assets_dir = config_dir + "/" + config.assets_sub_dir;
+var themes_dir = config_dir + "/" + config.themes_sub_dir;
 
 // create config home path if it does not exist
 if (!fs.existsSync(config_dir)){
@@ -29,6 +30,10 @@ if (!fs.existsSync(assets_dir)){
   fs.mkdirSync(assets_dir);
 }
 
+// create themes home path if it does not exist
+if (!fs.existsSync(themes_dir)){
+  fs.mkdirSync(themes_dir);
+}
 
 const app = express();
 const led = new Led();
@@ -104,10 +109,11 @@ app.get('/api/led/clear', (req, res) => {
     res.sendStatus(200)
 })
 
-app.get('/api/profile', (req, res) => {
-  let template:string = fs.readFileSync('./profiles/' + config.theme.profile + '.mustache', 'utf8');  
-  let renderedTemplate = Mustache.render(template, config); 
-  res.status(200).send(JSON.parse(renderedTemplate)).end()
+app.get('/api/theme', (req, res) => {
+  let themeTempateFile:string = fs.readFileSync('./themes/' + config['current_theme'], 'utf8');
+  let assetsFile:string = fs.readFileSync('./themes/' + config['current_assets'], 'utf8');  
+  let renderedTheme = Mustache.render(themeTempateFile, Object.assign(JSON.parse(assetsFile), config));  
+  res.status(200).send(JSON.parse(renderedTheme)).end()
 })
 
 app.post('/api/compositor/composite', (req, res, next) => {
