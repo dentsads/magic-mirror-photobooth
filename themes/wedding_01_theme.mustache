@@ -5,7 +5,13 @@
     "capturedPhotoPaths": [],
     "exifOrientation": 1,
     "photoPath": "",
-    "maxNumberOfPhotos": {{{maxNumberOfPhotos}}}
+    "maxNumberOfPhotos": {{{maxNumberOfPhotos}}},
+    "compositeConfig": {
+        "templateLayout": "{{{assets.compositePhoto.compositeConfig.templateLayout}}}",                                
+        "overlayImage": "{{{assets.compositePhoto.compositeConfig.overlayImage}}}",
+        "logoImage": "{{{assets.compositePhoto.compositeConfig.logoImage}}}",
+        "logoImageOffset": "{{{assets.compositePhoto.compositeConfig.logoImageOffset}}}"
+    }
   },
   "states": {
     "intro": {
@@ -19,17 +25,16 @@
       },
       "on": {
         "event.intro.01": {
-          "target": "countdown"
+          "target": "lookatcamera"
         }
       }
     },
-    "countdown": {
+    "lookatcamera": {
       "entry": ["transition"],
       "meta": { 
-        "path": "/anim1/3", 
+        "path": "/anim1/8", 
         "assets": {
-            "assetPath": "{{{assets.countdown}}}",
-            "website": "{{{website}}}"
+            "assetPath": "{{{assets.lookatcamera}}}"
         } 
       },
       "initial": "anim_loaded",
@@ -54,15 +59,40 @@
         "id": "clear",
         "src": "clearLed",
         "onDone": {
-          "target": "capturePhoto",
+          "target": "countdown",
           "actions": "logClearLed"
         },
         "onError": {
-          "target": "capturePhoto",
+          "target": "countdown",
           "actions": "logError"
         }              
       }
     },
+    "countdown": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/3", 
+        "assets": {
+            "assetPath": "{{{assets.countdown}}}",
+            "website": "{{{website}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.capturePhoto"
+              }
+          }
+      }
+    },    
     "capturePhoto": {
       "invoke": {
         "id": "capture",
@@ -116,7 +146,7 @@
       "meta": { 
         "path": "/anim1/6", 
         "assets": {
-          "assetPath": "{{{assets.compositePhoto}}}"
+          "assetPath": "{{{assets.compositePhoto.assetPath}}}"
         }      
       },
       "invoke": {

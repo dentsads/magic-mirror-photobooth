@@ -28,11 +28,15 @@ export class Anim1Component implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      return false;
+    };
+
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
       this.componentData = await this.routingService.getComponentData();
     });
   }
-
+  
   async ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();

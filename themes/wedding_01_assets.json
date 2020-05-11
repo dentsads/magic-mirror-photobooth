@@ -3,7 +3,8 @@
         "intro": {
             "assetPath": "api/assets/wedding_01_touchtostart_02.mp4"
         },
-        "countdown": "api/assets/general_01_countdown_03.mp4",
+        "lookatcamera": "api/assets/wedding_01_lookatcamera_02.mp4",
+        "countdown": "api/assets/wedding_01_countdown_01.mp4",
         "acceptPhoto": { 
             "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
             "assetButtonNokPath": "api/assets/x-circle-solid-240.png"
@@ -13,7 +14,15 @@
             "assetButtonOk": "api/assets/check-circle-regular-240.png",
             "assetButtonColor": "api/assets/color-fill-solid-240.png"
         },
-        "compositePhoto": "api/assets/wedding_01_loveinair_01.mp4",
+        "compositePhoto": {
+            "assetPath": "api/assets/wedding_01_loveinair_01.mp4",
+            "compositeConfig": {
+                "templateLayout": "THREE_UNIFORM",                                
+                "overlayImage": "wedding_01_overlay_base_03_01.png",
+                "logoImage": "fotospiegelwelt_logo_scaled.png",
+                "logoImageOffset": "+30+1090"
+            }
+        },
         "acceptCompositedPhoto": { 
             "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
             "assetButtonNokPath": "api/assets/x-circle-solid-240.png"                

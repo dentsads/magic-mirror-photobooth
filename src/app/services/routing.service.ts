@@ -43,12 +43,12 @@ export class RoutingService {
   
   async getComponentData() {
     let counter:number = 0
-    while (!this.currentTheme && counter < 10) {
+    while (!this.currentTheme && counter < 50) {
       console.log("Loading theme profile. Please wait...");
       await this.wait(100);
       counter++;
     }
-    
+
     const metadata: any = Object.values(this.currentTheme.state.meta).shift();
     return metadata.assets;
   }
@@ -134,12 +134,12 @@ export class RoutingService {
           clearLed: (context, event) => this.ledService.clearLed(),
           capturePhoto: (context, event) => this.photoService.capturePhoto(),
           compositePhoto: (context, event) => this.photoService.compositePhoto({
-            templateLayout: 'THREE_UNIFORM',
-            imgSrcList: context.capturedPhotoPaths,
-            drawingImageDataURL: event.imageDataURL,
-            overlayImage: 'christmas_01_overlay_base_03.png',
-            logoImage: 'logo_small.png',
-            logoImageOffset: '+10+200'
+              templateLayout: context.compositeConfig.templateLayout,
+              imgSrcList: context.capturedPhotoPaths,
+              drawingImageDataURL: event.imageDataURL,
+              overlayImage: context.compositeConfig.overlayImage,
+              logoImage: context.compositeConfig.logoImage,
+              logoImageOffset: context.compositeConfig.logoImageOffset
           }),
           printPhoto: (context, event) => this.printService.printPhoto({
             img: 'printable_result.png',

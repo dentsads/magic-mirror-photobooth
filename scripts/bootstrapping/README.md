@@ -31,4 +31,4 @@ This will do the following
   * uses the basic password store
   * automatically loads the magic-mirror frontend URL
   * disables the session crashed popups
-  * disables the "Tranlate UI" feature
+  * disables the "Translate UI" feature

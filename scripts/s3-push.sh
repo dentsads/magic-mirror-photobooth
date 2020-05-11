@@ -54,7 +54,7 @@ S3BUCKET="dentsads-public"
 S3PREFIX="magic-mirror-photobooth/scripts"
 FILE="$1"
 
-echo 'Fetching magic-mirror-photobooth asset files from S3 bucket'
+echo 'Putting magic-mirror-photobooth asset files to S3 bucket'
 s3cmd put $FILE s3://$S3BUCKET/$S3PREFIX/ --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY --no-ssl -P && echo "Pushing was successful"
 
 exit $?
