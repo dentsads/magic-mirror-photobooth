@@ -165,9 +165,9 @@ exec_cmd_no_sudo "s3cmd get s3://$S3BUCKET/$S3OBJECT/ --access_key=\"$AWS_ACCESS
 
 print_status "pull magic-mirror-photobooth docker image from $DOCKER_REGISTRY..."
 exec_cmd "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"
-exec_cmd "docker pull $DOCKER_REGISTRY/d.dentsas/magic-mirror-photobooth:latest"
+exec_cmd "docker pull $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth:latest"
 exec_cmd "docker logout $DOCKER_REGISTRY"
-exec_cmd "docker tag $DOCKER_REGISTRY/d.dentsas/magic-mirror-photobooth magic-mirror-photobooth"
+exec_cmd "docker tag $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth magic-mirror-photobooth"
 
 print_status "run the magic-mirror-photobooth container..."
 sudo -E docker run -d \

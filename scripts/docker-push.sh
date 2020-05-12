@@ -17,5 +17,5 @@ fi
 DOCKER_REGISTRY="registry.gitlab.com"
 
 docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY
-docker tag magic-mirror-photobooth $DOCKER_REGISTRY/d.dentsas/magic-mirror-photobooth
-docker push $DOCKER_REGISTRY/d.dentsas/magic-mirror-photobooth:latest
+docker tag magic-mirror-photobooth $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth
+docker push $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth:latest
