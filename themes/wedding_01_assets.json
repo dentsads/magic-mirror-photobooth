@@ -1,8 +1,6 @@
 {
     "assets": {
-        "intro": {
-            "assetPath": "api/assets/wedding_01_touchtostart_02.mp4"
-        },
+        "intro": "api/assets/wedding_01_touchtostart_02.mp4",
         "mirrotWillTakePhotos": "api/assets/wedding_01_mirrorwilltakephotos_01.mp4",
         "lookAtCamera": "api/assets/wedding_01_lookatcamera_02.mp4",
         "countdown": "api/assets/wedding_01_countdown_01.mp4",
