@@ -24,6 +24,10 @@ interface CompositorOptions {
   overlayImage: string;
   logoImage: string;
   logoImageOffset: string;
+  logoImageSize: string;
+  overlayText: string;
+  overlayTextSize: string;
+  overlayTextOffset: string;
 }
 
 const templateImageOffsets: Record<string,string[]> = {
@@ -35,8 +39,6 @@ const templateImageSizes: Record<string,string[]> = {
   'THREE_UNIFORM': [ '533x800', '533x800', '533x800' ],
   'THREE_NON_UNIFORM': [ '450x675', '562x844', '450x675' ]
 }
-
-const logoImageSize: string = '100x100'
 
 class ImageCompositor {
   private readonly IMAGE_WIDTH:number = 1795
@@ -101,12 +103,12 @@ class ImageCompositor {
       if (err) return cb(null, ErrorHandler.createError("1",err))
 
       let logoImage = options.logoImage == undefined ? undefined : this.ASSETS_DIR + '/' + options.logoImage
-      this.compose(this.TMP_FILE, this.ASSETS_DIR + '/' + options.overlayImage, logoImage, options.logoImageOffset, cb)
+      this.compose(this.TMP_FILE, this.ASSETS_DIR + '/' + options.overlayImage, logoImage, options.logoImageOffset, options.logoImageSize, options.overlayText, options.overlayTextSize, options.overlayTextOffset, cb)
     });
 
   }
 
-  public compose(img: string = '', overlayImage: string = '', overlayLogoImg: string = '', overlayLogoImgOffset: string = '+10+10', cb: (stdout?: object, e?: Error) => void): void {
+  public compose(img: string = '', overlayImage: string = '', overlayLogoImg: string = '', overlayLogoImgOffset: string = '+10+10', logoImageSize: string = '200', overlayText: string = '', overlayTextSize: string, overlayTextOffset: string, cb: (stdout?: object, e?: Error) => void): void {
     let uuidFileName = uuidv4() + '_collage.png'
 
     let compositeArgs = [
@@ -127,6 +129,15 @@ class ImageCompositor {
       compositeArgs.push('\\)')
       compositeArgs.push(`-geometry ${overlayLogoImgOffset}`)
       compositeArgs.push('-composite')
+    }
+
+    // Overlay text (usually the componay URL)
+    if (overlayText !== '') {
+      compositeArgs.push('\\(')      
+      compositeArgs.push(`-pointsize ${overlayTextSize}`)         
+      compositeArgs.push(`-annotate ${overlayTextOffset}`)      
+      compositeArgs.push(overlayText)
+      compositeArgs.push('\\)')
     }
 
     compositeArgs.push(this.PHOTOS_DIR + '/' + uuidFileName)

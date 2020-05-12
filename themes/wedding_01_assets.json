@@ -3,7 +3,8 @@
         "intro": {
             "assetPath": "api/assets/wedding_01_touchtostart_02.mp4"
         },
-        "lookatcamera": "api/assets/wedding_01_lookatcamera_02.mp4",
+        "mirrotWillTakePhotos": "api/assets/wedding_01_mirrorwilltakephotos_01.mp4",
+        "lookAtCamera": "api/assets/wedding_01_lookatcamera_02.mp4",
         "countdown": "api/assets/wedding_01_countdown_01.mp4",
         "acceptPhoto": { 
             "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
@@ -19,8 +20,12 @@
             "compositeConfig": {
                 "templateLayout": "THREE_UNIFORM",                                
                 "overlayImage": "wedding_01_overlay_base_03_01.png",
-                "logoImage": "fotospiegelwelt_logo_scaled.png",
-                "logoImageOffset": "+30+1090"
+                "logoImage": "fotospiegelwelt_logo2_scaled.png",
+                "logoImageOffset": "+30+1065",
+                "logoImageSize": "80",
+                "overlayText": "www.fotospiegelwelt.de",
+                "overlayTextSize": "30",
+                "overlayTextOffset": "+110+1120"
             }
         },
         "acceptCompositedPhoto": { 
@@ -32,6 +37,7 @@
             "assetButtonMinus": "api/assets/minus-circle-regular-240.png",
             "assetButtonPrinter": "api/assets/printer-regular-240.png"
         },
+        "mirrorWillPrintPhotos": "api/assets/wedding_01_mirrorwillprintphotos_01.mp4",
         "errorPage": { 
             "assetButtonHome": "api/assets/home-solid-240.png"       
         }

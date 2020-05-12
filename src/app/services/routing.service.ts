@@ -139,7 +139,11 @@ export class RoutingService {
               drawingImageDataURL: event.imageDataURL,
               overlayImage: context.compositeConfig.overlayImage,
               logoImage: context.compositeConfig.logoImage,
-              logoImageOffset: context.compositeConfig.logoImageOffset
+              logoImageSize: context.compositeConfig.logoImageSize,
+              logoImageOffset: context.compositeConfig.logoImageOffset,
+              overlayText: context.compositeConfig.overlayText,
+              overlayTextSize: context.compositeConfig.overlayTextSize,
+              overlayTextOffset: context.compositeConfig.overlayTextOffset
           }),
           printPhoto: (context, event) => this.printService.printPhoto({
             img: 'printable_result.png',

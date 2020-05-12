@@ -10,7 +10,11 @@
         "templateLayout": "{{{assets.compositePhoto.compositeConfig.templateLayout}}}",                                
         "overlayImage": "{{{assets.compositePhoto.compositeConfig.overlayImage}}}",
         "logoImage": "{{{assets.compositePhoto.compositeConfig.logoImage}}}",
-        "logoImageOffset": "{{{assets.compositePhoto.compositeConfig.logoImageOffset}}}"
+        "logoImageOffset": "{{{assets.compositePhoto.compositeConfig.logoImageOffset}}}",
+        "logoImageSize": "{{{assets.compositePhoto.compositeConfig.logoImageSize}}}",
+        "overlayText": "{{{assets.compositePhoto.compositeConfig.overlayText}}}",
+        "overlayTextSize": "{{{assets.compositePhoto.compositeConfig.overlayTextSize}}}",
+        "overlayTextOffset": "{{{assets.compositePhoto.compositeConfig.overlayTextOffset}}}"
     }
   },
   "states": {
@@ -25,16 +29,65 @@
       },
       "on": {
         "event.intro.01": {
-          "target": "lookatcamera"
+          "target": "mirrotWillTakePhotos"
         }
       }
     },
-    "lookatcamera": {
+    "mirrotWillTakePhotos": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/6", 
+        "assets": {
+            "assetPath": "{{{assets.mirrotWillTakePhotos}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.countdown"
+              }
+          }
+      }
+    },
+    "countdown": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/3", 
+        "assets": {
+            "assetPath": "{{{assets.countdown}}}",
+            "website": "{{{website}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.lookAtCamera"
+              }
+          }
+      }
+    },
+    "lookAtCamera": {
       "entry": ["transition"],
       "meta": { 
         "path": "/anim1/8", 
         "assets": {
-            "assetPath": "{{{assets.lookatcamera}}}"
+            "assetPath": "{{{assets.lookAtCamera}}}"
         } 
       },
       "initial": "anim_loaded",
@@ -59,40 +112,15 @@
         "id": "clear",
         "src": "clearLed",
         "onDone": {
-          "target": "countdown",
+          "target": "capturePhoto",
           "actions": "logClearLed"
         },
         "onError": {
-          "target": "countdown",
+          "target": "capturePhoto",
           "actions": "logError"
         }              
       }
-    },
-    "countdown": {
-      "entry": ["transition"],
-      "meta": { 
-        "path": "/anim1/3", 
-        "assets": {
-            "assetPath": "{{{assets.countdown}}}",
-            "website": "{{{website}}}"
-        } 
-      },
-      "initial": "anim_loaded",
-      "states": {
-          "anim_loaded": {
-              "on": {
-                  "event.anim1.01": {
-                      "target": "anim_running"
-                  }           
-              }
-          },
-          "anim_running": {
-              "after": {
-                  "FINISH_ANIM": "#root.capturePhoto"
-              }
-          }
-      }
-    },    
+    },        
     "capturePhoto": {
       "invoke": {
         "id": "capture",
@@ -195,13 +223,37 @@
         "id": "print",
         "src": "printPhoto",
         "onDone": {
-          "target": "intro",
+          "target": "mirrorWillPrintPhotos",
           "actions": "logStatus"
         },
         "onError": {
           "target": "errorPage",
           "actions": "logError"
         }              
+      }
+    },
+    "mirrorWillPrintPhotos": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/7", 
+        "assets": {
+            "assetPath": "{{{assets.mirrorWillPrintPhotos}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.intro"
+              }
+          }
       }
     },
     "errorPage": {
