@@ -136,7 +136,7 @@ exec_cmd "sed -ie 's/^.*IgnoreLid *= *.*$/IgnoreLid=true/g' /etc/UPower/UPower.c
 exec_cmd 'systemctl restart upower.service'
 
 print_status "Purge all crash logs and disable apport to prevent system crash problem popups..."
-exec_cmd 'rm /var/crash/*'
+exec_cmd 'rm -rf /var/crash/*'
 exec_cmd "sed -ie 's/^.*enabled *= *.*$/enabled=0/g' /etc/default/apport"
 
 print_status "Disable gnome shell multitouch gestures..."
