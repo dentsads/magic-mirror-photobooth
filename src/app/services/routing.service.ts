@@ -86,20 +86,52 @@ export class RoutingService {
             this.loggerService.log('info', 'Clearing LED strip')     
           },
           triggerLed: (context, event) => {
-            this.ledService.triggerLed({
+            if (context.triggerLedConfig && context.triggerLedConfig.animationType && context.triggerLedConfig.animationType == 'ball') {
+              this.ledService.triggerLed("ball", {
+                "direction": context.triggerLedConfig.direction || "RIGHT",
+                "color": context.triggerLedConfig.color || "rgb(0, 0, 150)",
+                "duration": event.delay || 0,
+                "loops": context.triggerLedConfig.loops || 1
+              })
+              .then((response) => {
+                  // handle success
+                  this.loggerService.log("info", response)              
+              })
+              .catch((error) => {              
+                  // handle error
+                  this.loggerService.log("error", error)
+              });
+            } else if (context.triggerLedConfig && context.triggerLedConfig.animationType && context.triggerLedConfig.animationType == 'barrel') {
+              this.ledService.triggerLed("barrel", {
+                "direction": context.triggerLedConfig.direction,
+                "color": context.triggerLedConfig.color,
+                "duration": event.delay || 0,
+                "shiftDelay": context.triggerLedConfig.shiftDelay || 500
+              })
+              .then((response) => {
+                  // handle success
+                  this.loggerService.log("info", response)              
+              })
+              .catch((error) => {              
+                  // handle error
+                  this.loggerService.log("error", error)
+              });
+            } else {
+              this.ledService.triggerLed("ball", {
                 "direction": "RIGHT",
-                "color": "rgb(0, 0, 50)",
+                "color": "rgb(0, 0, 150)",
                 "duration": event.delay || 0,
                 "loops": 1
-            })
-            .then((response) => {
-                // handle success
-                this.loggerService.log("info", response)              
-            })
-            .catch((error) => {              
-                // handle error
-                this.loggerService.log("error", error)
-            });
+              })
+              .then((response) => {
+                  // handle success
+                  this.loggerService.log("info", response)              
+              })
+              .catch((error) => {              
+                  // handle error
+                  this.loggerService.log("error", error)
+              });
+            }
           },                
           setCapturedPhoto: (context, event) => {
             // handle success

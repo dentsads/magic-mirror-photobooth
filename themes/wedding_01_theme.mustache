@@ -16,6 +16,22 @@
         "overlayTextSize": "{{{assets.compositePhoto.compositeConfig.overlayTextSize}}}",
         "overlayTextOffset": "{{{assets.compositePhoto.compositeConfig.overlayTextOffset}}}"
     }
+    {{#assets.triggerLed.ball}},
+    "triggerLedConfig": {
+        "animationType": "ball",
+        "direction": "{{{assets.triggerLed.ball.direction}}}",
+        "color": "{{{assets.triggerLed.ball.color}}}",
+        "loops": {{{assets.triggerLed.ball.loops}}}
+    }
+    {{/assets.triggerLed.ball}}
+    {{#assets.triggerLed.barrel}},
+    "triggerLedConfig": {
+        "animationType": "barrel",
+        "direction": "{{{assets.triggerLed.barrel.direction}}}",
+        "color": "{{{assets.triggerLed.barrel.color}}}",
+        "shiftDelay": {{{assets.triggerLed.barrel.shiftDelay}}}
+    }
+    {{/assets.triggerLed.barrel}}
   },
   "states": {
     "intro": {

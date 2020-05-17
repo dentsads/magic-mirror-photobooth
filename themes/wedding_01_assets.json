@@ -4,6 +4,13 @@
         "mirrotWillTakePhotos": "api/assets/wedding_01_mirrorwilltakephotos_01.mp4",
         "lookAtCamera": "api/assets/wedding_01_lookatcamera_02.mp4",
         "countdown": "api/assets/wedding_01_countdown_01.mp4",
+        "triggerLed": {
+            "ball": {
+                "direction": "RIGHT",
+                "color": "rgb(0, 0, 150)",
+                "loops": 1
+            }            
+        },
         "acceptPhoto": { 
             "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
             "assetButtonNokPath": "api/assets/x-circle-solid-240.png"
