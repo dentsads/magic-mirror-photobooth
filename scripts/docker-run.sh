@@ -3,6 +3,7 @@
 sudo -E docker run -d \
 --restart unless-stopped \
 --privileged \
+--label autoheal=true \
 --name magic-mirror-photobooth \
 -v $HOME/.magic-mirror-photobooth/assets:/root/.magic-mirror-photobooth/assets \
 -v $HOME/.magic-mirror-photobooth/photos:/root/.magic-mirror-photobooth/photos \
