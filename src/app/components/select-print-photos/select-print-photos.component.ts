@@ -35,7 +35,7 @@ export class SelectPrintPhotosComponent implements OnInit {
   }
 
   increment() {
-    if (this.printCounterValue < 5) {
+    if (this.printCounterValue < parseInt(this.componentData.maxNumberOfPrints)) {
       this.printCounterValue++;
     }
   }
