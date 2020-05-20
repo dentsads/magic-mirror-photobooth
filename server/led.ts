@@ -33,25 +33,35 @@ class Led {
   private strip: Strip
   private board: Board
   private isStateCleared: boolean;
-  private isBoardUnresponsive: boolean = false;
+  private isBoardUnresponsive: boolean = true;
+  private connectionAttempts: number = 0;
+  private maxConnectionAttempts: number = 5;
 
   public constructor() {
-    this.board = new Board();
-    this.board.on("ready", () => {      
+    this.initializeBoard()    
+  }
+
+  private async initializeBoard(): Promise<void> {
+    this.board = new Board({repl: false, port: "/dev/ttyACM0"});      
+    
+    this.board.on("ready", () => {
+      console.log("board is ready...")
       this.strip = new Strip({
           board: this.board,
           controller: "FIRMATA",
           strips: [ {pin: 6, length: config.led_pin_size}, ],
           gamma: 2.8,
-      });
+      });      
       this.isBoardUnresponsive = false;
     });
 
-    this.board.on("close", () => {      
+    this.board.on("close", () => {
+      console.log("board is closing...")
       this.isBoardUnresponsive = true;
     });
 
     this.isStateCleared = false;
+    this.connectionAttempts++;
   }
 
   public isHealthy(): boolean {
@@ -86,6 +96,8 @@ class Led {
   }
 
   public async barrelSpin(options: BarrelSpinOptions): Promise<void> {
+    if (this.isBoardUnresponsive && this.connectionAttempts < this.maxConnectionAttempts) 
+      return this.initializeBoard()
 
     this.strip.clear()
    
@@ -131,12 +143,14 @@ class Led {
       await wait( options.shiftDelay )
     }          
 
-    this.strip.clear()
+    this.strip.clear()    
 
     return;
   }
 
   public async ballSpin(options: BallSpinOptions): Promise<void> {
+    if (this.isBoardUnresponsive && this.connectionAttempts < this.maxConnectionAttempts)
+      return this.initializeBoard()
 
     this.strip.clear()
     this.isStateCleared = false;
