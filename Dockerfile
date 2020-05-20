@@ -80,8 +80,5 @@ RUN ls -la && pwd && npm run build:client -- --prod && npm run build:server
 ENV NODE_ENV production
 
 RUN chmod +x startup.sh
-RUN chmod +x bin/status_check.sh
-
-HEALTHCHECK --interval=20s --timeout=20s --start-period=60s --retries=1 CMD bash bin/status_check.sh
 
 CMD ./startup.sh $(jq -r .printer_name config.json)
