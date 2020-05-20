@@ -28,10 +28,12 @@ class Printer {
         })
   }
 
-  public isHealthy(): boolean {
-    let code = spawnSync('lpstat', ['-p', this.PRINTER]).status; 
+  public isHealthy(): boolean { 
+    let lpinfoSpawn = spawnSync('lpinfo', ['-v']);
+    let grepSpawnCode = spawnSync('grep', ['-i', 'direct gutenprint'], { input: lpinfoSpawn.stdout }).status;
+    let printerStatusSpawnCode = spawnSync('lpstat', ['-p', this.PRINTER]).status;
 
-    if (!process.env.PHOTOBOOTH_PRINTER_MOCK && code !== 0) {
+    if (!process.env.PHOTOBOOTH_PRINTER_MOCK && (grepSpawnCode !== 0 || printerStatusSpawnCode !== 0) ) {
       return false;
     } else {
       return true;
