@@ -204,13 +204,17 @@ sudo killall gvfsd-gphoto2
 ```
 
 
- ## Nikon D3100
+ ## Nikon D5200
 
-Configuration steps on the camera
+Configuration steps on the camera for best results
 
 * You have to disable the `Ausloesesperre` from the settings menu under `system` for capturing to work
-* You have to set the wheel on exposure mode `P`. See [here](https://imaging.nikon.com/support/digitutor/d5300/functions/shootingmodes_p.html) for detailed explanations
+* You have to set the wheel on exposure mode `M`. See [here](https://imaging.nikon.com/support/digitutor/d5300/functions/shootingmodes_m.html) for detailed explanations
 * Set camera from `Active Focus (AF)` to `Manual Focus (MF)` through the physical button on the lens
+* Turn the lens to the widest setting `18mm`
+* Set the shutter speed to `1/100`. See [here](https://imaging.nikon.com/support/digitutor/d5300/functions/shootingmodes_m.html) for detailed explanations
+* Change the aperture to `F8`. See [here](https://imaging.nikon.com/support/digitutor/d5300/functions/shootingmodes_m.html) for detailed explanations
+* Change the ISO to `1600`
 
 For a list of restrictions on the remote control capabilities of your camera see here: http://www.gphoto.org/doc/remote/
 
