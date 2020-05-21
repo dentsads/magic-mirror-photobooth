@@ -173,6 +173,7 @@ print_status "run the magic-mirror-photobooth container..."
 sudo -E docker run -d \
 --restart unless-stopped \
 --privileged \
+--label autoheal=true \
 --name magic-mirror-photobooth \
 -v $ASSETS_DIR:/root/.magic-mirror-photobooth/assets \
 -v $PHOTOS_DIR:/root/.magic-mirror-photobooth/photos \

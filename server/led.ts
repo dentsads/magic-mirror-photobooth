@@ -36,32 +36,60 @@ class Led {
   private isBoardUnresponsive: boolean = true;
   private connectionAttempts: number = 0;
   private maxConnectionAttempts: number = 5;
+  private ongoingInitialization: boolean = false;
 
   public constructor() {
     this.initializeBoard()    
   }
 
-  private async initializeBoard(): Promise<void> {
-    this.board = new Board({repl: false, port: "/dev/ttyACM0"});      
-    
-    this.board.on("ready", () => {
-      console.log("board is ready...")
-      this.strip = new Strip({
-          board: this.board,
-          controller: "FIRMATA",
-          strips: [ {pin: 6, length: config.led_pin_size}, ],
-          gamma: 2.8,
+  private async initializeBoard(): Promise<void> {       
+
+    console.log("initialize board...")
+    try {
+      // use this semaphore to prevent re-initialization while the board is still initializing
+      // otherwise the board and server crashes
+      if (this.ongoingInitialization == false) {
+        this.ongoingInitialization = true;
+      } else {
+        return;
+      }   
+
+      this.board = new Board({repl: false, port: "/dev/ttyACM0"}); 
+      this.board.on("ready", () => {
+        console.log("board is ready...")
+        this.strip = new Strip({
+            board: this.board,
+            controller: "FIRMATA",
+            strips: [ {pin: 6, length: config.led_pin_size}, ],
+            gamma: 2.8,
+        });      
+        this.isBoardUnresponsive = false;
+        this.ongoingInitialization = false;
+      });
+  
+      this.board.on("close", () => {
+        console.log("board is closing...")
+        this.isBoardUnresponsive = true;
+        this.ongoingInitialization = false;
+      });
+
+      this.board.on("fail", () => {
+        console.log("board is failing...")
+      });
+
+      this.board.on("error", () => {
+        console.log("board is erroring...")
+        this.isBoardUnresponsive = true;
+        this.ongoingInitialization = false;
       });      
-      this.isBoardUnresponsive = false;
-    });
-
-    this.board.on("close", () => {
-      console.log("board is closing...")
-      this.isBoardUnresponsive = true;
-    });
-
-    this.isStateCleared = false;
-    this.connectionAttempts++;
+  
+      this.isStateCleared = false;
+      this.connectionAttempts++;
+    }
+    catch (e) {    
+      console.log(e)    
+    }      
+        
   }
 
   public isHealthy(): boolean {
