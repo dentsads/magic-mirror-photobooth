@@ -14,15 +14,21 @@ var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var assets_dir = config_dir + "/" + config.assets_sub_dir;
 var themes_dir = config_dir + "/" + config.themes_sub_dir;
+var event_dir = photos_dir + "/" + config.event_id;
 
 // create config home path if it does not exist
 if (!fs.existsSync(config_dir)){
     fs.mkdirSync(config_dir);
 }
 
-// create photos path if it does not exist
+// create root photos path if it does not exist
 if (!fs.existsSync(photos_dir)){
   fs.mkdirSync(photos_dir);
+}
+
+// create event photos path if it does not exist
+if (!fs.existsSync(event_dir)){
+  fs.mkdirSync(event_dir);
 }
 
 // create assets home path if it does not exist

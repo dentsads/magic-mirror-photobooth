@@ -10,6 +10,7 @@ const uuidv4 = require('uuid/v4');
 var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var assets_dir = config_dir + "/" + config.assets_sub_dir;
+var event_dir = photos_dir + "/" + config.event_id;
 
 enum TemplateLayout {
   TWO_UNIFORM = "TWO_UNIFORM",
@@ -47,8 +48,9 @@ class ImageCompositor {
   private readonly DRAWING_HEIGHT:number = 200
   private readonly TMP_DIR:string = "./built"
   private readonly TMP_FILE:string = this.TMP_DIR + "/tmp.png"  
-  private readonly PHOTOS_PATH:string = 'api/photos/'
+  private readonly PHOTOS_PATH:string = 'api/photos/' + config.event_id + '/'
   private readonly PHOTOS_DIR:string = photos_dir
+  private readonly EVENT_DIR:string = event_dir
   private readonly ASSETS_DIR:string = assets_dir
   private readonly DRAWING_FILE:string = this.PHOTOS_DIR + '/drawing.png'
 
@@ -67,7 +69,7 @@ class ImageCompositor {
 
     options.imgSrcList.forEach( (img, imgIndex)  => {
       compositeArgs.push('\\(')
-      compositeArgs.push(this.PHOTOS_DIR + '/' + img)
+      compositeArgs.push(this.EVENT_DIR + '/' + img)
       compositeArgs.push('-auto-orient')
       compositeArgs.push(`-resize ${templateImageSizes[options.templateLayout][imgIndex]}`)    
       compositeArgs.push(`-repage ${templateImageOffsets[options.templateLayout][imgIndex]}`)            
@@ -140,12 +142,12 @@ class ImageCompositor {
       compositeArgs.push('\\)')
     }
 
-    compositeArgs.push(this.PHOTOS_DIR + '/' + uuidFileName)
+    compositeArgs.push(this.EVENT_DIR + '/' + uuidFileName)
 
     logger.log('info', 'convert ' + compositeArgs.join(' '))
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
-      exec('convert ' + this.PHOTOS_DIR + '/' + uuidFileName + ' -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 ' + this.PHOTOS_DIR + '/printable_result.png', (err, stdout, stderr) => { 
+      exec('convert ' + this.EVENT_DIR + '/' + uuidFileName + ' -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 ' + this.PHOTOS_DIR + '/printable_result.png', (err, stdout, stderr) => { 
         if (err) {
           return cb(null, ErrorHandler.createError("1",err))
         } else {

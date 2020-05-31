@@ -13,6 +13,7 @@ const os = require('os')
 
 var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
+var event_dir = photos_dir + "/" + config.event_id;
 
 function sleep(ms): Promise<any> {
   return new Promise((resolve): any => setTimeout(resolve, ms))
@@ -122,7 +123,7 @@ class Photo {
     const randomString = Math.random().toString(36).substring(2, 8)
     const url = 'https://picsum.photos/533/800'
 
-    const path = photos_dir + '/' + randomString + '_random.jpg'
+    const path = event_dir + '/' + randomString + '_random.jpg'
     const writer = fs.createWriteStream(path)
   
     const response = await Axios({
@@ -158,7 +159,7 @@ class Photo {
 
         let uuidFileName = uuidv4() + '.jpg'
 
-        const path = photos_dir + '/' + uuidFileName
+        const path = event_dir + '/' + uuidFileName
         fs.writeFileSync(path, data);
 
         return resolve({ imagePath: uuidFileName, exifOrientation: jpegExifOrientation } )

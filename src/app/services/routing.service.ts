@@ -136,7 +136,7 @@ export class RoutingService {
           setCapturedPhoto: (context, event) => {
             // handle success
             const capturedPhotoPath = event.data.data.result.imagePath;
-            context.photoPath = 'api/photos/' + capturedPhotoPath;
+            context.photoPath = 'api/photos/' + config.event_id + '/' + capturedPhotoPath;
             context.exifOrientation = event.data.data.result.exifOrientation;
             context.capturedPhotoPaths.push(capturedPhotoPath);         
           },
