@@ -7,7 +7,7 @@ sudo -E docker run -d \
 --name magic-mirror-photobooth \
 -v $HOME/.magic-mirror-photobooth/assets:/root/.magic-mirror-photobooth/assets \
 -v $HOME/.magic-mirror-photobooth/photos:/root/.magic-mirror-photobooth/photos \
--v $HOME/.magic-mirror-photobooth/themes:/root/magic-mirror-photobooth/themes \
+-v $HOME/.magic-mirror-photobooth/events:/root/magic-mirror-photobooth/events \
 -v $HOME/.magic-mirror-photobooth/config.json:/root/magic-mirror-photobooth/built/config.json \
 -v $HOME/.magic-mirror-photobooth/logs:/root/magic-mirror-photobooth/logs \
 -v /run/udev:/run/udev:ro \
