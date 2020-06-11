@@ -43,3 +43,9 @@
     saturate(2000%) 
     hue-rotate(40deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
 }
+
+#text {
+    font-family: "Helvetica";
+    font-size: x-large;
+    text-align: center;
+}
