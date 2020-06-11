@@ -155,13 +155,18 @@ EVENTS_DIR="$CONFIG_DIR/events"
 LOGS_DIR="$CONFIG_DIR/logs"
 DOCKER_REGISTRY="registry.gitlab.com"
 S3BUCKET="magic-mirror-photobooth-assets"
-S3OBJECT="rendered-assets"
 
 print_status "Creating asset directory $ASSETS_DIR..."
 exec_cmd_no_sudo "mkdir -p $ASSETS_DIR"
 
+print_status "Creating events directory $EVENTS_DIR..."
+exec_cmd_no_sudo "mkdir -p $EVENTS_DIR"
+
 print_status "Fetching assets from S3 bucket $S3BUCKET..."
-exec_cmd_no_sudo "s3cmd get s3://$S3BUCKET/$S3OBJECT/ --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl -P --no-mime-magic --skip-existing -r $ASSETS_DIR"
+exec_cmd_no_sudo "s3cmd get s3://$S3BUCKET/rendered-assets/ --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl -P --no-mime-magic --skip-existing -r $ASSETS_DIR"
+
+print_status "Fetching event files from S3 bucket $S3BUCKET..."
+exec_cmd_no_sudo "s3cmd get s3://$S3BUCKET/events/ --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl -P --no-mime-magic --skip-existing -r $EVENTS_DIR"
 
 print_status "pull magic-mirror-photobooth docker image from $DOCKER_REGISTRY..."
 exec_cmd "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"
