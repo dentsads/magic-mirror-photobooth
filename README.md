@@ -356,11 +356,13 @@ sudo docker build --no-cache -t magic-mirror-photobooth .
 sudo -E docker run -d \
 --restart unless-stopped \
 --privileged \
+--label autoheal=true \
 --name magic-mirror-photobooth \
---env PHOTOBOOTH_CAMERA_MOCK=1 \
--v $HOME/.magic-mirror-photobooth/assets:/root/.magic-mirror-photobooth/assets \
--v $HOME/.magic-mirror-photobooth/photos:/root/.magic-mirror-photobooth/photos \
--v $HOME/.magic-mirror-photobooth/logs:/root/magic-mirror-photobooth/logs \
+-v $ASSETS_DIR:/root/.magic-mirror-photobooth/assets \
+-v $PHOTOS_DIR:/root/.magic-mirror-photobooth/photos \
+-v $EVENTS_DIR:/root/magic-mirror-photobooth/events \
+-v $CONFIG_DIR/config.json:/root/magic-mirror-photobooth/built/config.json \
+-v $LOGS_DIR:/root/magic-mirror-photobooth/logs \
 -v /run/udev:/run/udev:ro \
 -v /var/run/dbus:/var/run/dbus \
 -v /dev/bus/usb:/dev/bus/usb \
@@ -377,7 +379,21 @@ sudo docker exec -it magic-mirror-photobooth /bin/bash
 sudo docker rmi $(sudo docker images -f "dangling=true" -q)
 ```
 
-# Bootstrapping of Docker container
+# Bootstrapping of Docker container and Host machine
+
+## Syncing script to public S3 Bucket
+
+You can sync new version of the `install.sh` or `setup.sh` script  with the `s3-push-bootstrapping.sh` script
+
+```bash
+# sync install.sh script to public S3 bucket
+./s3-push-bootstrapping.sh install.sh
+
+# sync setup.sh script to public S3 bucket
+./s3-push-bootstrapping.sh setup.sh
+```
+
+## Bootstrapping of Docker container
 
 for bootstrapping the installation process of the Docker container run this script
 
@@ -391,7 +407,7 @@ This will do the following
 * download the latest magic-mirror-photobooth Docker image
 * create a new container from it and start it
 
-# Bootstrapping of Host Ubuntu Machine
+## Bootstrapping of Host Ubuntu machine
 
 for bootstrapping the setup of the Ubuntu host machine run this script
 
