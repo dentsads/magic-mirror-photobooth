@@ -184,6 +184,7 @@ sudo -E docker run -d \
 -v $PHOTOS_DIR:/root/.magic-mirror-photobooth/photos \
 -v $EVENTS_DIR:/root/magic-mirror-photobooth/events \
 -v $CONFIG_DIR/config.json:/root/magic-mirror-photobooth/built/config.json \
+-v $CONFIG_DIR/config.json:/root/magic-mirror-photobooth/config.json \
 -v $LOGS_DIR:/root/magic-mirror-photobooth/logs \
 -v /run/udev:/run/udev:ro \
 -v /var/run/dbus:/var/run/dbus \
