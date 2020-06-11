@@ -13,8 +13,8 @@ const os = require('os')
 var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var assets_dir = config_dir + "/" + config.assets_sub_dir;
-var themes_dir = config_dir + "/" + config.themes_sub_dir;
-var event_dir = photos_dir + "/" + config.event_id;
+var events_dir = config_dir + "/" + config.events_sub_dir;
+var event_photos_dir = photos_dir + "/" + config.event_id;
 
 // create config home path if it does not exist
 if (!fs.existsSync(config_dir)){
@@ -27,8 +27,8 @@ if (!fs.existsSync(photos_dir)){
 }
 
 // create event photos path if it does not exist
-if (!fs.existsSync(event_dir)){
-  fs.mkdirSync(event_dir);
+if (!fs.existsSync(event_photos_dir)){
+  fs.mkdirSync(event_photos_dir);
 }
 
 // create assets home path if it does not exist
@@ -36,9 +36,9 @@ if (!fs.existsSync(assets_dir)){
   fs.mkdirSync(assets_dir);
 }
 
-// create themes home path if it does not exist
-if (!fs.existsSync(themes_dir)){
-  fs.mkdirSync(themes_dir);
+// create events home path if it does not exist
+if (!fs.existsSync(events_dir)){
+  fs.mkdirSync(events_dir);
 }
 
 const app = express();
@@ -116,8 +116,8 @@ app.get('/api/led/clear', (req, res) => {
 })
 
 app.get('/api/theme', (req, res) => {
-  let themeTempateFile:string = fs.readFileSync('./themes/' + config['current_theme'], 'utf8');
-  let assetsFile:string = fs.readFileSync('./themes/' + config['current_assets'], 'utf8');  
+  let themeTempateFile:string = fs.readFileSync('./events/' + config['event_id'] + '/theme.mustache', 'utf8');
+  let assetsFile:string = fs.readFileSync('./events/' + config['event_id'] + '/assets.json', 'utf8');  
   let renderedTheme = Mustache.render(themeTempateFile, Object.assign(JSON.parse(assetsFile), config));  
   res.status(200).send(JSON.parse(renderedTheme)).end()
 })

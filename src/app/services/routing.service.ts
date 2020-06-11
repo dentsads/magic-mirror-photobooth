@@ -26,7 +26,7 @@ export class RoutingService {
     private loggerService: LoggerService,
     private http: HttpClient
   ) {
-    this.createThemes();
+    this.createTheme();
   }
 
   handleEvent(eventId: string, options?: any): void {
@@ -57,7 +57,7 @@ export class RoutingService {
     return this.http.get("/api/theme");
   }
 
-  createThemes() {
+  createTheme() {
     this.fetchProfile().subscribe(data => {
       let profile = data;    
       const stateMachine = Machine(profile);

@@ -1,11 +1,9 @@
 {
-    "event_id": "H350yKOQ",
-    "current_theme": "wedding_01_theme.mustache",
-    "current_assets": "wedding_01_assets.json",
+    "event_id": "default",
     "config_dir": ".magic-mirror-photobooth",
     "photos_sub_dir": "photos",
     "assets_sub_dir": "assets",
-    "themes_sub_dir": "themes",
+    "events_sub_dir": "events",
     "printer_name": "DNP-DS620",
     "phone_number": "+49 176 62297047",
     "led_pin_size": 40,
