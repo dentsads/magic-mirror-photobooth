@@ -55,6 +55,6 @@ S3OBJECT="rendered-assets"
 DESTINATION_FOLDER_PATH="$1"
 
 echo 'Fetching magic-mirror-photobooth asset files from S3 bucket'
-s3cmd get s3://$S3BUCKET/$S3OBJECT/ --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY --no-ssl -P --no-mime-magic --skip-existing -r $DESTINATION_FOLDER_PATH && echo "Fetching was successful"
+s3cmd sync s3://$S3BUCKET/$S3OBJECT/ $DESTINATION_FOLDER_PATH --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY --no-ssl --no-mime-magic  && echo "Fetching was successful"
 
 exit $?

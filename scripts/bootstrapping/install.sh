@@ -163,10 +163,10 @@ print_status "Creating events directory $EVENTS_DIR..."
 exec_cmd_no_sudo "mkdir -p $EVENTS_DIR"
 
 print_status "Fetching assets from S3 bucket $S3BUCKET..."
-exec_cmd_no_sudo "s3cmd get s3://$S3BUCKET/rendered-assets/ --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl -P --no-mime-magic --skip-existing -r $ASSETS_DIR"
+exec_cmd_no_sudo "s3cmd sync s3://$S3BUCKET/rendered-assets/ $ASSETS_DIR --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl --no-mime-magic"
 
 print_status "Fetching event files from S3 bucket $S3BUCKET..."
-exec_cmd_no_sudo "s3cmd get s3://$S3BUCKET/events/ --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl -P --no-mime-magic --skip-existing -r $EVENTS_DIR"
+exec_cmd_no_sudo "s3cmd sync s3://$S3BUCKET/events/ $EVENTS_DIR --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl --no-mime-magic"
 
 print_status "pull magic-mirror-photobooth docker image from $DOCKER_REGISTRY..."
 exec_cmd "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"
