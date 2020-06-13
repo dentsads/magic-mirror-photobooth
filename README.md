@@ -11,60 +11,6 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
 
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-
-
-# LED ring setup
-
-The microcontroller used for controlling the LED ring is
-
-`ARDUINO MICRO, Code: A000053, ATmega32U4 microcontroller`
-
-Where to order:
-* https://www.amazon.com/-/de/gp/product/B00AFY2S56/ref=ppx_yo_dt_b_asin_image_o00_s00?ie=UTF8&psc=1
-* https://store.arduino.cc/arduino-micro
-
-## Flashing the Arduino
-
-### Install the Arduino IDE
-
-Install the IDE from [here](https://www.arduino.cc/en/main/software). For using Arduino IDE disable ModemManager in Linux otherwise it interferes with the Arduino I/O
-
-```bash
-systemctl status ModemManager.service
-systemctl disable ModemManager.service
-```
-
-## Install the Arduino CLI
-
-Alternatively you can use the [Arduino CLI](https://github.com/arduino/arduino-cli) to flash sketches on your Arduino.
-
-### Flash `FIRMATA` on Arduino
-
-You need to flash the `FIRMATA` library on the Arduino. You can find the source files [here](https://github.com/ajfisher/node-pixel/tree/v0.10.2/firmware/build/node_pixel_firmata)
-
 # Installation instructions
 
 ## Install global dependencies
@@ -105,9 +51,7 @@ sudo npm install concurrently -g
 sudo npm install canvas -g --unsafe-perm=true --allow-root
 ```
 
-
-## Install and run application
-
+## Build and run application
 
 ```bash
 npm install
@@ -122,6 +66,63 @@ rm -rf node_modules/node-pixel/.git
 # build and serve app
 npm run build && sudo -E npm run serve:dev
 ```
+Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+# Mocking the DSLR and Printer
+
+If you want to start testing without using a DSLR you can enable DSLR mocking mode with
+
+```bash
+export PHOTOBOOTH_CAMERA_MOCK=1
+```
+
+Please note: You need internet connectivity for this to work since the mocked photos will now be fetched at https://picsum.photos
+
+Likewise if you want to mock the printer you can use the CUPS PDF printer instead. As before you can enable mocking with
+
+```bash
+export PHOTOBOOTH_PRINTER_MOCK=1
+```
+
+Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to know exactly where they are put look for the `Out` config in `/etc/cups/cups-pdf.conf`
+
+
+# LED ring setup
+
+The microcontroller used for controlling the LED ring is
+
+`ARDUINO MICRO, Code: A000053, ATmega32U4 microcontroller`
+
+Where to order:
+* https://www.amazon.com/-/de/gp/product/B00AFY2S56/ref=ppx_yo_dt_b_asin_image_o00_s00?ie=UTF8&psc=1
+* https://store.arduino.cc/arduino-micro
+
+## Flashing the Arduino
+
+### Install the Arduino IDE
+
+Install the IDE from [here](https://www.arduino.cc/en/main/software). For using Arduino IDE disable ModemManager in Linux otherwise it interferes with the Arduino I/O
+
+```bash
+systemctl status ModemManager.service
+systemctl disable ModemManager.service
+```
+
+## Install the Arduino CLI
+
+Alternatively you can use the [Arduino CLI](https://github.com/arduino/arduino-cli) to flash sketches on your Arduino.
+
+### Flash `FIRMATA` on Arduino
+
+You need to flash the `FIRMATA` library on the Arduino. You can find the source files [here](https://github.com/ajfisher/node-pixel/tree/v0.10.2/firmware/build/node_pixel_firmata)
 
 # Check Licenses
 
@@ -234,24 +235,6 @@ Configuration steps on the TV
  * Disable automatic standby mode when idle. In the settings go to `Öko-Lösung` and set `Autom. Aussch.` to `Aus`
 
   <img src="docs/img/tv_automatic_disablement.jpeg" width="450"/>
-
-# Mocking the DSLR and Printer
-
-If you want to start testing without using a DSLR you can enable DSLR mocking mode with
-
-```bash
-export PHOTOBOOTH_CAMERA_MOCK=1
-```
-
-Please note: You need internet connectivity for this to work since the mocked photos will now be fetched at https://picsum.photos
-
-Likewise if you want to mock the printer you can use the CUPS PDF printer instead. As before you can enable mocking with
-
-```bash
-export PHOTOBOOTH_PRINTER_MOCK=1
-```
-
-Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to know exactly whre they are put look for the `Out` config in `/etc/cups/cups-pdf.conf`
 
 # Using the LED ring
 
