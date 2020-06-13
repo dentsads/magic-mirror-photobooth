@@ -1,5 +1,3 @@
-# Photobooth
-
 <div align="center">
   <a href="https://www.fotospiegelwelt.de/">
     <img
@@ -8,6 +6,8 @@
     />
   </a>
 </div>
+
+# Photobooth
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
 
