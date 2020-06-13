@@ -427,3 +427,17 @@ This will do the following
   * automatically loads the magic-mirror frontend URL
   * disables the session crashed popups
   * disables the "Tranlate UI" feature
+
+# Create photo gallery code brochure
+
+Install the `magick` package in Ubuntu 
+
+```bash
+sudo apt-get install imagemagick imagemagick-doc 
+```
+
+Then create the brochure like this
+
+```bash
+GALLERY_CODE="code"; magick convert \( -pointsize 250 -fill black -strokewidth 1 -annotate +630+2090 "$GALLERY_CODE" \) gallery_code_onepager_template.png output.pdf
+```
