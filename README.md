@@ -1,4 +1,12 @@
 # Photobooth
+<p align="center">
+  <a href="https://www.fotospiegelwelt.de/">
+    <img
+      alt="Node.js"
+      src="docs/img/fotospiegelwelt_logo_01_600x173.png"      
+    />
+  </a>
+</p>
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
 
@@ -203,8 +211,7 @@ sudo killall gvfs-gphoto2-volume-monitor
 sudo killall gvfsd-gphoto2
 ```
 
-
- ## Nikon D5200
+## Nikon D5200 setup
 
 Configuration steps on the camera for best results
 
@@ -218,7 +225,16 @@ Configuration steps on the camera for best results
 
 For a list of restrictions on the remote control capabilities of your camera see here: http://www.gphoto.org/doc/remote/
 
-## Mocking the DSLR and Printer
+# TV setup
+
+Configuration steps on the TV
+
+ * Increase brightness to maximum level
+ * Disable automatic standby mode when idle. In the settings go to `Öko-Lösung` and set `Autom. Aussch.` to `Aus`
+
+  <img src="docs/img/tv_automatic_disablement.jpeg" width="450"/>
+
+# Mocking the DSLR and Printer
 
 If you want to start testing without using a DSLR you can enable DSLR mocking mode with
 
@@ -238,7 +254,7 @@ Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to kn
 
 # Using the LED ring
 
-You can prepare the LED ring by using PIN 6 of the Arduino Nano for data input on the ring, plugging it into USB and starting the server 
+You can prepare the LED ring by using `PIN 6` of the Arduino Nano for data input on the ring, plugging it into USB and starting the server 
 
 ```bash
 npm run start:server
@@ -383,7 +399,7 @@ sudo docker rmi $(sudo docker images -f "dangling=true" -q)
 
 ## Syncing script to public S3 Bucket
 
-You can sync new version of the `install.sh` or `setup.sh` script  with the `s3-push-bootstrapping.sh` script
+You can sync a new version of the `install.sh` or `setup.sh` script  with the `s3-push-bootstrapping.sh` script
 
 ```bash
 # sync install.sh script to public S3 bucket
@@ -441,3 +457,5 @@ Then create the brochure like this
 ```bash
 GALLERY_CODE="code"; magick convert \( -pointsize 250 -fill black -strokewidth 1 -annotate +630+2090 "$GALLERY_CODE" \) gallery_code_onepager_template.png output.pdf
 ```
+
+`code` represents the password for the gallery login
