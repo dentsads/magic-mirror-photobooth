@@ -1,12 +1,13 @@
 # Photobooth
-<p align="center">
+
+<div align="center">
   <a href="https://www.fotospiegelwelt.de/">
     <img
       alt="Node.js"
       src="docs/img/fotospiegelwelt_logo_01_600x173.png"      
     />
   </a>
-</p>
+</div>
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
 
