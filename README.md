@@ -443,3 +443,7 @@ GALLERY_CODE="code"; magick convert \( -pointsize 250 -fill black -strokewidth 1
 ```
 
 `code` represents the password for the gallery login
+
+# Inventory List
+
+You can find a complete list inventory list of all items needed to create the magic-mirror-photobooth [here](https://docs.google.com/spreadsheets/d/11MaeAUPQGrgEVKsIesMfK1pldT3oxprGyHYFg9fhh0M/edit#gid=0)
