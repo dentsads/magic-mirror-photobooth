@@ -70,7 +70,7 @@ RUN npm install
 
 # patch the node-pixel library with `j5-firmata-upg` branch, otherwise you will get
 # NoWritablePortError: Node Pixel FIRMATA controller requires IO that can write out
-RUN git clone https://github.com/ajfisher/node-pixel.git ../node-pixel --branch j5-firmata-upg \
+RUN git clone https://github.com/ajfisher/node-pixel.git ../node-pixel --branch v0.10.5 \
 && rm -rf node_modules/node-pixel \
 && cp -r ../node-pixel/ node_modules/ \
 && rm -rf node_modules/node-pixel/.git
