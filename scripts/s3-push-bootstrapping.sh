@@ -35,19 +35,9 @@ fnExit() {
 
 [ $# -lt 1 ] && fnUsage
 
-if ! which s3cmd > /dev/null; then
-   echo "s3cmd package was not found. Please install it from here: https://s3tools.org/download"
+if ! which aws > /dev/null; then
+   echo "aws cli was not found. Please install it from here: https://aws.amazon.com/cli/?nc1=h_ls"
    exit 1
-fi
-
-if [ -z "$AWS_ACCESS_KEY" ]; then
-    echo "You need to set the AWS_ACCESS_KEY environment variable for the AWS access token"
-    exit 1
-fi
-
-if [ -z "$AWS_SECRET_KEY" ]; then
-    echo "You need to set the AWS_SECRET_KEY environment variable for the AWS secret token"
-    exit 1
 fi
 
 S3BUCKET="dentsads-public"
@@ -55,6 +45,6 @@ S3PREFIX="magic-mirror-photobooth/scripts"
 FILE="$1"
 
 echo 'Putting magic-mirror-photobooth asset files to S3 bucket'
-s3cmd put $FILE s3://$S3BUCKET/$S3PREFIX/ --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY --no-ssl -P && echo "Pushing was successful"
+aws s3 cp $FILE "s3://$S3BUCKET/$S3PREFIX/" --acl public-read && echo "Pushing was successful"
 
 exit $?
