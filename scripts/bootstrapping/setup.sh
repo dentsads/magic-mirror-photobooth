@@ -131,9 +131,12 @@ print_status "Enable automatic login to Ubuntu for current user ${SUDO_USER}..."
 exec_cmd "sed -ie 's/^.*AutomaticLoginEnable *= *.*$/AutomaticLoginEnable=true/g' /etc/gdm3/custom.conf"
 exec_cmd "sed -ie 's/^.*AutomaticLogin *= *.*$/AutomaticLogin='"${SUDO_USER}"'/g' /etc/gdm3/custom.conf"
 
-print_status "Ignore the laptop lid state, so the external monitor can stay in portrait mode when closing the laptop..."
+print_status "Ignore the laptop lid state, so the external monitor can stay in portrait mode when closing the laptop lid..."
 exec_cmd "sed -ie 's/^.*IgnoreLid *= *.*$/IgnoreLid=true/g' /etc/UPower/UPower.conf"
 exec_cmd 'systemctl restart upower.service'
+
+print_status "Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
+exec_cmd "sed -ie 's/^.*HandleLidSwitch *= *.*$/HandleLidSwitch=ignore/g' /etc/systemd/logind.conf"
 
 print_status "Purge all crash logs and disable apport to prevent system crash problem popups..."
 exec_cmd 'rm -rf /var/crash/*'
@@ -221,3 +224,6 @@ print_status "Start mkiosk systemd service..."
 exec_cmd 'systemctl daemon-reload'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable mkiosk'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start mkiosk'
+
+print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
+exec_cmd 'systemctl restart systemd-logind'
