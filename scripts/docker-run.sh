@@ -35,3 +35,9 @@ sudo -E docker run -d \
 -p :4200:4200 \
 -p :632:631 \
 magic-mirror-photobooth
+
+
+# This is a crazy hack in order to enable the mouse cursor in the browser while in mock mode, since it is disabled in production mode
+if [[ "$IS_MOCK_MODE" == "1" ]] ; then
+  sudo docker exec -it magic-mirror-photobooth sed -ie 's/cursor.*/cursor: auto;/g' src/production.styles.css
+fi
