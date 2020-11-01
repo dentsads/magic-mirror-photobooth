@@ -1,4 +1,4 @@
-FROM node:11.15.0
+FROM node:14.15.0
 
 USER root
 
@@ -33,6 +33,15 @@ COPY . $HOME/magic-mirror-photobooth
 
 RUN echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
 
+# install imagemagick for image compositing of printer templates
+# see here: https://imagemagick.org/index.php
+# 
+# install libgphoto2
+# see here: http://www.gphoto.org/
+#
+# install libcairo
+# libcairo for usage with https://www.npmjs.com/package/fabric
+# see here: https://www.cairographics.org/download/
 RUN apt-get update \
 && apt-get -y install \
 s3cmd \
@@ -40,20 +49,10 @@ build-essential \
 usbutils \
 udev \
 jq \
-
-# install imagemagick for image compositing of printer templates
-# see here: https://imagemagick.org/index.php
 imagemagick \
-
-# see here: http://www.gphoto.org/
 libgphoto2-dev \
 gphoto2 \
-
-# libcairo for usage with https://www.npmjs.com/package/fabric
-# see here: https://www.cairographics.org/download/
 libcairo2-dev \
-
-# install other global npm dependencies
 && npm install license-checker -g \
 && npm install @angular/cli -g \
 && npm install typescript -g \
@@ -67,13 +66,6 @@ libcairo2-dev \
 && npm install canvas -g --unsafe-perm=true --allow-root
 
 RUN npm install
-
-# patch the node-pixel library with `j5-firmata-upg` branch, otherwise you will get
-# NoWritablePortError: Node Pixel FIRMATA controller requires IO that can write out
-RUN git clone https://github.com/ajfisher/node-pixel.git ../node-pixel --branch v0.10.5 \
-&& rm -rf node_modules/node-pixel \
-&& cp -r ../node-pixel/ node_modules/ \
-&& rm -rf node_modules/node-pixel/.git
 
 RUN ls -la && pwd && npm run build:client -- --prod && npm run build:server
 
