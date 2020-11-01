@@ -15,12 +15,12 @@ interface PrinterOptions {
 }
 
 class Printer {
-    private readonly PRINTER:string = process.env.PHOTOBOOTH_PRINTER_MOCK ? 'PDF' : config.printer_name
+    private readonly PRINTER:string = process.env.PHOTOBOOTH_PRINTER_MOCK == '1' ? 'PDF' : config.printer_name
     private readonly PHOTOS_DIR:string = photos_dir;
 
   public constructor() {
     // if no printer is available then mock the printer by using the CUPS PDF printer
-    if (process.env.PHOTOBOOTH_PRINTER_MOCK)
+    if (process.env.PHOTOBOOTH_PRINTER_MOCK == '1')
       this.initializeMockPrinter()
         .then(() => {
         })
@@ -33,7 +33,7 @@ class Printer {
     let grepSpawnCode = spawnSync('grep', ['-i', 'direct gutenprint'], { input: lpinfoSpawn.stdout }).status;
     let printerStatusSpawnCode = spawnSync('lpstat', ['-p', this.PRINTER]).status;
 
-    if (!process.env.PHOTOBOOTH_PRINTER_MOCK && (grepSpawnCode !== 0 || printerStatusSpawnCode !== 0) ) {
+    if (!(process.env.PHOTOBOOTH_PRINTER_MOCK == '1') && (grepSpawnCode !== 0 || printerStatusSpawnCode !== 0) ) {
       return false;
     } else {
       return true;

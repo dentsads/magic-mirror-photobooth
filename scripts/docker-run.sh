@@ -1,9 +1,27 @@
 #!/bin/bash
 
+# if the script parameter -m or --mock is passed, then set and start the container in mock mode
+while test $# -ge 0; do
+  case "$1" in
+    -m|--mock)
+      echo "Starting container in mock mode"
+      IS_MOCK_MODE=1
+      break
+      ;;    
+    *)
+      echo "Starting container in production mode"
+      IS_MOCK_MODE=0
+      break
+      ;;
+  esac
+done
+
 sudo -E docker run -d \
 --restart unless-stopped \
 --privileged \
 --label autoheal=true \
+--env PHOTOBOOTH_CAMERA_MOCK=$IS_MOCK_MODE \
+--env PHOTOBOOTH_PRINTER_MOCK=$IS_MOCK_MODE \
 --name magic-mirror-photobooth \
 -v $HOME/.magic-mirror-photobooth/assets:/root/.magic-mirror-photobooth/assets \
 -v $HOME/.magic-mirror-photobooth/photos:/root/.magic-mirror-photobooth/photos \

@@ -42,7 +42,7 @@ class Photo {
   }
 
   public isHealthy(): boolean {
-    if (!process.env.PHOTOBOOTH_CAMERA_MOCK && this.camera == undefined) {
+    if (!( process.env.PHOTOBOOTH_CAMERA_MOCK == '1' )&& this.camera == undefined) {
       return false;
     } else {
       return true;
@@ -169,7 +169,7 @@ class Photo {
 
   public capturePhoto(options: PhotoOptions, cb: (stdout?: object, e?: object) => void): void {
     // if no DSLR is available then mock the camera by fetching pics from this.downloadImageTest
-    if (process.env.PHOTOBOOTH_CAMERA_MOCK) {
+    if (process.env.PHOTOBOOTH_CAMERA_MOCK == '1') {
       logger.log('info', 'DSLR camera mocking is enabled through env PHOTOBOOTH_CAMERA_MOCK=1');      
       this.captureFunction = this.downloadImageTest
     }      
@@ -181,7 +181,7 @@ class Photo {
     .catch((err) => {
 
       // Error when trying to find USB device.
-      if (err && !process.env.PHOTOBOOTH_CAMERA_MOCK) {
+      if (err && !(process.env.PHOTOBOOTH_CAMERA_MOCK == '1') ) {
         
         // try initalizing gphoto again, hoping the dslr reconnected
         this.initializeGphoto()
