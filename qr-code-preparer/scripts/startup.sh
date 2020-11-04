@@ -30,11 +30,9 @@ aws configure set default.region "eu-central-1"
 aws configure set aws_access_key_id "$AWS_ACCESS_KEY"
 aws configure set aws_secret_access_key "$AWS_SECRET_KEY"
 
-inotifywait -m -e create --format '%f' "$PHOTOS_PATH/${EVENT_ID}" | while read file; do
-    echo "{\"presigned_urls\":[]}" > $SCALED_PHOTOS_PATH/presigned-urls.json
+inotifywait -m -e create --format '%f' "$PHOTOS_PATH/${EVENT_ID}" | while read file; do    
     PRESIGNED_URL=$(aws s3 presign s3://magic-mirror-photobooth-gallery/$EVENT_ID/pics/$file --expires-in 604800)
-    PRESIGNED_URL_JSON=$(jq '.presigned_urls += [{"file": "'$file'", "presigned_url": "'$PRESIGNED_URL'"}]' $SCALED_PHOTOS_PATH/presigned-urls.json)
-    echo $PRESIGNED_URL_JSON > $SCALED_PHOTOS_PATH/presigned-urls.json
+    echo '{"file": "'$file'", "presigned_url": "'$PRESIGNED_URL'"}' > $SCALED_PHOTOS_PATH/presigned-urls.json
     bash $DIR_ROOT/scripts/resize-and-watermark-photo.sh "$PHOTOS_PATH/${EVENT_ID}/$file"
     bash $DIR_ROOT/scripts/upload-album-to-s3-gallery.sh $EVENT_ID $SCALED_PHOTOS_PATH
 done
