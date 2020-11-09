@@ -15,7 +15,6 @@ sudo -E docker run -d \
 --env AWS_ACCESS_KEY=$AWS_ACCESS_KEY \
 --env AWS_SECRET_KEY=$AWS_SECRET_KEY \
 --name magic-mirror-photobooth-qr \
--v /tmp/inotify-test:/tmp/inotify-test \
 -v $HOME/.magic-mirror-photobooth/assets:/root/.magic-mirror-photobooth/assets \
 -v $HOME/.magic-mirror-photobooth/photos:/root/.magic-mirror-photobooth/photos \
 -v $HOME/.magic-mirror-photobooth/events:/root/magic-mirror-photobooth/events \
