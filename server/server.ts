@@ -122,6 +122,18 @@ app.get('/api/theme', (req, res) => {
   res.status(200).send(JSON.parse(renderedTheme)).end()
 })
 
+app.get('/api/presigned_url', (req, res) => {
+  try {
+    let presignedUrlPath = photos_dir + '/' + config['event_id'] + '_scaled/presigned-urls.json';
+    let presignedUrlFile:string = fs.readFileSync(presignedUrlPath, 'utf8');
+    logger.log('info', "retrieving presigned URL file: " + presignedUrlPath);
+    res.status(200).send(JSON.parse(presignedUrlFile)).end()
+  } catch (err) {
+    logger.log('error', err);
+    res.status(404).send(err).end()
+  }  
+})
+
 app.post('/api/compositor/composite', (req, res, next) => {
   var jsonObj = req.body
 
