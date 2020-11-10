@@ -18,7 +18,9 @@ export class PhotoService {
 
   async getPresignedUrl(photoPath: string): Promise<AxiosResponse<any>> {
     axios.interceptors.response.use(function (response) {
-      if (response.data.file && response.data.presigned_url && !photoPath.includes(response.data.file)) {
+      console.log(response.data.file_uploaded)
+      console.log(response.data.file_uploaded == "false")
+      if (response.data.file && response.data.presigned_url && ( !photoPath.includes(response.data.file) || response.data.file_uploaded == "false" )) {
         throw new axios.Cancel(photoPath + " DOES NOT contain string " + response.data.file);
       } else {
         return response;

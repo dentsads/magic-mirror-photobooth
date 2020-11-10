@@ -29,7 +29,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
   ) {
 
     this.document = document;
-    this.MAX_RETRY = 10;
+    this.MAX_RETRY = 20;
     this.currentRetry = 0;
 
   }  

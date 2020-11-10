@@ -75,6 +75,4 @@ S3_BUCKET="magic-mirror-photobooth-gallery"
 
 print_status "sync photo folder $PHOTOS_PATH to s3 gallery bucket $S3_BUCKET/$EVENT_ID/pics/"
 aws s3 sync "$PHOTOS_PATH" "s3://$S3_BUCKET/$EVENT_ID/pics/" --no-guess-mime-type --sse AES256 --exclude "*.json"
-
-print_status "script successfully executed"
-exit 0
+exit $?
