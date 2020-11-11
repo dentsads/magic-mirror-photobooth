@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM alpine:3.12.0
 
 USER root
 
@@ -6,57 +6,35 @@ ENV HOME /root
 
 WORKDIR $HOME/magic-mirror-photobooth
 
-ARG IM_VERSION=7.0.10-30
-ARG LIB_HEIF_VERSION=1.9.1
-ARG LIB_AOM_VERSION=2.0.0
+RUN apk add --no-cache imagemagick ghostscript-fonts inotify-tools freetype-dev jq bash
 
-# install dependencies
-RUN apt-get update \
-&& apt-get -y install \
-inotify-tools \
-curl \
-unzip \
-jq
+ENV GLIBC_VER=2.31-r0
 
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-unzip awscliv2.zip -d . && \
-aws/install && \
-rm awscliv2.zip && \
-aws --version
-
-RUN apt-get -y update && \
-    apt-get -y upgrade && \
-    apt-get install -y git make gcc pkg-config autoconf curl g++ libfreetype6-dev \
-    # libaom
-    yasm cmake \
-    # libheif
-    libde265-0 libde265-dev libjpeg62-turbo libjpeg62-turbo-dev x265 libx265-dev libtool \
-    # IM
-    libpng16-16 libpng-dev libjpeg62-turbo libjpeg62-turbo-dev libwebp6 libwebp-dev libgomp1 libwebpmux3 libwebpdemux2 ghostscript && \
-    # Building libaom
-    git clone https://aomedia.googlesource.com/aom && \
-    cd aom && git checkout v${LIB_AOM_VERSION} && cd .. && \
-    mkdir build_aom && \
-    cd build_aom && \
-    cmake ../aom/ -DENABLE_TESTS=0 -DBUILD_SHARED_LIBS=1 && make && make install && \
-    ldconfig /usr/local/lib && \
-    cd .. && \
-    rm -rf aom && \
-    rm -rf build_aom && \
-    # Building libheif
-    curl -L https://github.com/strukturag/libheif/releases/download/v${LIB_HEIF_VERSION}/libheif-${LIB_HEIF_VERSION}.tar.gz -o libheif.tar.gz && \
-    tar -xzvf libheif.tar.gz && cd libheif-${LIB_HEIF_VERSION}/ && ./autogen.sh && ./configure && make && make install && cd .. && \
-    ldconfig /usr/local/lib && \
-    rm -rf libheif-${LIB_HEIF_VERSION} && rm libheif.tar.gz && \
-    # Building ImageMagick
-    git clone https://github.com/ImageMagick/ImageMagick.git && \
-    cd ImageMagick && git checkout ${IM_VERSION} && \
-    ./configure --without-magick-plus-plus --disable-docs --disable-static && \
-    make && make install && \
-    ldconfig /usr/local/lib && \
-    apt-get remove --autoremove --purge -y gcc make cmake curl g++ yasm git autoconf pkg-config libpng-dev libjpeg62-turbo-dev libwebp-dev libde265-dev libx265-dev && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /ImageMagick
+# install glibc compatibility for alpine
+RUN apk --no-cache add \
+        binutils \
+        curl \
+    && curl -sL https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub \
+    && curl -sLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-${GLIBC_VER}.apk \
+    && curl -sLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-bin-${GLIBC_VER}.apk \
+    && apk add --no-cache \
+        glibc-${GLIBC_VER}.apk \
+        glibc-bin-${GLIBC_VER}.apk \
+    && curl -sL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip \
+    && unzip awscliv2.zip \
+    && aws/install \
+    && rm -rf \
+        awscliv2.zip \
+        aws \
+        /usr/local/aws-cli/v2/*/dist/aws_completer \
+        /usr/local/aws-cli/v2/*/dist/awscli/data/ac.index \
+        /usr/local/aws-cli/v2/*/dist/awscli/examples \
+    && apk --no-cache del \
+        binutils \
+        curl \
+    && rm glibc-${GLIBC_VER}.apk \
+    && rm glibc-bin-${GLIBC_VER}.apk \
+    && rm -rf /var/cache/apk/*
 
 COPY . $HOME/magic-mirror-photobooth
 

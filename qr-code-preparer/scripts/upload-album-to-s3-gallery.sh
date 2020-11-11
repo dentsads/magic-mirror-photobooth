@@ -3,7 +3,7 @@
 set -e # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
 THIS_NAME="$(basename "${0}")"
-THIS_PATH="$(readlink -e "${0}")"
+THIS_PATH="$(readlink -f "${0}")"
 THIS_DIR="$(dirname "${THIS_PATH}")"
 DIR_ROOT="$(dirname "${THIS_DIR}")"
 
