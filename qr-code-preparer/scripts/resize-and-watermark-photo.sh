@@ -74,7 +74,7 @@ if ! which magick > /dev/null; then
 fi
 
 BASE_PATH="$HOME/.magic-mirror-photobooth"
-EVENT_ID=$(jq -r .event_id $DIR_ROOT/config.json)
+EVENT_ID=$(jq -r .event_id $BASE_PATH/config.json)
 PHOTOS_PATH="$BASE_PATH/photos"
 SCALED_PHOTOS_PATH="$PHOTOS_PATH/${EVENT_ID}_scaled"
 

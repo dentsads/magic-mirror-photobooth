@@ -5,4 +5,4 @@ THIS_PATH="$(readlink -e "${0}")"
 THIS_DIR="$(dirname "${THIS_PATH}")"
 DIR_ROOT="$(dirname "${THIS_DIR}")"
 
-sudo docker build --no-cache -t magic-mirror-photobooth-qr $DIR_ROOT/qr-code-preparer
+sudo docker build --no-cache -t magic-mirror-photobooth-upload $DIR_ROOT/qr-code-preparer

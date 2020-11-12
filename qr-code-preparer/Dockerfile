@@ -6,7 +6,7 @@ ENV HOME /root
 
 WORKDIR $HOME/magic-mirror-photobooth
 
-RUN apk add --no-cache imagemagick ghostscript-fonts inotify-tools freetype-dev jq bash
+RUN apk add --no-cache imagemagick ghostscript-fonts inotify-tools freetype-dev jq bash ncurses
 
 ENV GLIBC_VER=2.31-r0
 
