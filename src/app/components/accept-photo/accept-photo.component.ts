@@ -3,7 +3,9 @@ import { DOCUMENT } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../services/routing.service';
 import { PhotoService } from '../../services/photo.service';
-import { Subscription } from 'rxjs';
+import { of, Subject, Subscription } from 'rxjs';
+import { map, switchMap, takeUntil, repeat, delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import QRCode from 'qrcode';
 
 @Component({
@@ -17,27 +19,29 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
   componentData: any;
   presignedUrl: string;
   document;
-  MAX_RETRY: number;
-  currentRetry: number;
+
+  readonly MAX_RETRY:number=40;
+  readonly DELAY_IN_MS:number=100
 
   constructor(
     public router: Router,
     private activatedRoute: ActivatedRoute,
     private routingService: RoutingService,
     private photoService: PhotoService,
+    private http: HttpClient,
     @Inject(DOCUMENT) document
   ) {
 
     this.document = document;
-    this.MAX_RETRY = 20;
-    this.currentRetry = 0;
-
   }  
 
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
-      this.componentData = await this.routingService.getComponentData();      
-      this.getPresignedUrl()
+      this.componentData = await this.routingService.getComponentData();  
+      
+      if (this.componentData.context) {
+        this.getPresignedUrl(this.componentData.context.photoPath)
+      }        
     });    
     
   }
@@ -60,38 +64,44 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     await this.sleep(ms)
   }
 
-  getPresignedUrl() {
-    this.photoService.getPresignedUrl(this.componentData.context.photoPath)
-      .then( response => {
-        // handle success
-        let presignedUrlObject = response.data;
-        
-        this.presignedUrl = presignedUrlObject.presigned_url
-        console.log(presignedUrlObject.presigned_url);
+  getPresignedUrl(photoPath: string) {
+    const stopper = new Subject();
+    
+    of({})
+    .pipe(
+        switchMap(() => this.http.get('/api/presigned_url')),
+        map( (response: any) => {            
+            if (response.file && response.presigned_url && ( !photoPath.includes(response.file) || response.file_uploaded == "false" )) {    
+              return undefined;              
+            } else {
+              return response;
+            }
+        }),
+        delay(this.DELAY_IN_MS),
+        repeat(this.MAX_RETRY),
+        takeUntil(stopper)
+    )
+    .subscribe(response => {
+      if (!response) {
+        return
+      }
 
-        let canvas = this.document.getElementById('canvas');
+      let canvas = this.document.getElementById('canvas');
 
-        QRCode.toCanvas(canvas, this.presignedUrl, {
-          color: {
-            dark: '#FFFFFF',  // white dots
-            light: '#000000' // black background
-          }
-        }, function (error) {
-          if (error) console.error(error)
-          console.log('success!');
-        })
-                
-      })
-      .catch(async () => {
-        if (this.currentRetry < this.MAX_RETRY) {
-          this.currentRetry++;
-          console.log('Retrying...');
-          await this.wait(100);
-          this.getPresignedUrl();
-        } else {
-          console.log('Retried several times but still failed');
+      QRCode.toCanvas(canvas, response.presigned_url, {
+        color: {
+          dark: '#FFFFFF',  // white dots
+          light: '#000000' // black background
         }
+      }, function (error) {
+        if (error) 
+          console.error(error)
+        
+        console.log('QR code successfully generated.');
       })
+
+      stopper.next();
+    });
   }
 
   handleImage() {
