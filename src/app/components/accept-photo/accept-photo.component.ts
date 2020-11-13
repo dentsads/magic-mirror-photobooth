@@ -2,7 +2,6 @@ import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../services/routing.service';
-import { PhotoService } from '../../services/photo.service';
 import { of, Subject, Subscription } from 'rxjs';
 import { map, switchMap, takeUntil, repeat, delay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
@@ -27,7 +26,6 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     public router: Router,
     private activatedRoute: ActivatedRoute,
     private routingService: RoutingService,
-    private photoService: PhotoService,
     private http: HttpClient,
     @Inject(DOCUMENT) document
   ) {
@@ -40,6 +38,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
       this.componentData = await this.routingService.getComponentData();  
       
       if (this.componentData.context) {
+        console.log(this.componentData.context)
         this.getPresignedUrl(this.componentData.context.photoPath)
       }        
     });    
@@ -92,16 +91,25 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
         color: {
           dark: '#FFFFFF',  // white dots
           light: '#000000' // black background
-        }
-      }, function (error) {
+        },
+        margin: 1,
+        scale: 3        
+      }, (error) => {
         if (error) 
           console.error(error)
         
         console.log('QR code successfully generated.');
+        
+        this.handleCanvas();
       })
 
       stopper.next();
     });
+  }
+
+  handleCanvas() {
+    // fade in canvas
+    this.document.getElementById('canvas').style.opacity = '1';     
   }
 
   handleImage() {
