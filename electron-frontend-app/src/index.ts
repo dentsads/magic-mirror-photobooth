@@ -1,23 +1,26 @@
-const { app, BrowserWindow, ipcMain, nativeImage } = require('electron');
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-var sudo = require('sudo-prompt');
+import { app, BrowserWindow, ipcMain, nativeImage } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import sudo from 'sudo-prompt';
+declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
-const image = nativeImage.createFromPath(__dirname + '/../img/fotospiegelwelt_logo_02_140x149.png');
+const image = nativeImage.createFromPath(app.getAppPath() + '/src/img/fotospiegelwelt_logo_02_140x149.png');
+
 image.setTemplateImage(true);
 
 const basePath = os.homedir() + "/.magic-mirror-photobooth"
 const eventPath = basePath + "/events"
 
-let mainWindow;
+let mainWindow: BrowserWindow;
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = (): void => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
@@ -29,11 +32,11 @@ const createWindow = () => {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
-
+  mainWindow.webContents.openDevTools();
+  mainWindow.removeMenu();
   mainWindow.setBackgroundColor('light');
 };
 
@@ -44,13 +47,13 @@ app.on('ready', () => {
   createWindow();
 
   mainWindow.webContents.once('dom-ready', () => {
-    fs.readdir(eventPath, function (err, dir) {
+    fs.readdir(eventPath, function (err:any, dir:any) {
       //handling error
       if (err) {
           return console.log('Unable to scan directory: ' + err);
       }
       //listing all files using forEach
-      dir.forEach(function (subdir) {
+      dir.forEach(function (subdir:any) {
           let metadataPath = path.join( eventPath, subdir , '/metadata.json')
   
           console.log( metadataPath );
@@ -91,12 +94,12 @@ ipcMain.on('save-config', (event, eventId) => {
   config.event_id = eventId
   console.log(config)
 
-  fs.writeFile(basePath + "/config.json", JSON.stringify(config), function (err) {
+  fs.writeFile(basePath + "/config.json", JSON.stringify(config), function (err:any) {
     if (err) return console.log(err);
     console.log(basePath + "/config.json written successfully");
 
-    sudo.exec('docker restart magic-mirror-photobooth', { name: 'Electron'},
-      function(error, stdout, stderr) {
+    sudo.exec('docker restart magic-mirror-photobooth-upload', { name: 'Electron'},
+      function(error:any, stdout:any, stderr:any) {
         if (error) {
           event.reply('docker-restart-finished-failed')
         } else {

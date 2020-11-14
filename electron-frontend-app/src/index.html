@@ -2,11 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline">
     <title>Hello World!</title>
-    <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/font-awesome.min.css">
   </head>
   <body>
     <h1>💖 Hello World!</h1>
@@ -36,6 +34,5 @@
 
     <div id="lds-ring-wrapper"><div class="lds-ring"><div></div><div></div><div></div><div></div></div></div>
 
-    <script src="./renderer.js"></script>
   </body>
 </html>
