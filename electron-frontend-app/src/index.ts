@@ -21,11 +21,17 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 }
 
 const createWindow = (): void => {
-  // Create the browser window.
+  // Create the browser window. 
+  // See here: https://www.electronjs.org/docs/api/browser-window
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    center: true,    
+    kiosk: false,
     icon: image,
+    autoHideMenuBar: true,
+    backgroundColor: 'light',
+    fullscreenable: false,
     webPreferences: {
       nodeIntegration: true
     }
@@ -36,8 +42,6 @@ const createWindow = (): void => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-  mainWindow.removeMenu();
-  mainWindow.setBackgroundColor('light');
 };
 
 // This method will be called when Electron has finished
