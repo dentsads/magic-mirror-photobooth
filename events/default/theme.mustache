@@ -268,9 +268,23 @@
           },
           "anim_running": {
               "after": {
-                  "FINISH_ANIM": "#root.intro"
+                  "FINISH_ANIM": "#root.infoPage"
               }
           }
+      }
+    },
+    "infoPage": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/info",
+        "assets": { 
+            "assetButtonOkPath": "{{{assets.infoPage.assetButtonOkPath}}}",
+            "brochureImage": "{{{assets.infoPage.brochureImage}}}",
+            "galleryCode": "{{{event_id}}}"           
+        } 
+      },
+      "on": {
+        "event.info-page.01": "intro"
       }
     },
     "errorPage": {

@@ -45,6 +45,10 @@
         "mirrorWillPrintPhotos": "api/assets/wedding_01_mirrorwillprintphotos_01.mp4",
         "errorPage": { 
             "assetButtonHome": "api/assets/home-solid-240.png"       
+        },
+        "infoPage": {
+            "assetButtonOkPath": "api/assets/check-circle-solid-240.png",
+            "brochureImage": "api/assets/gallery_code_onepager.png"       
         }
     }
 }

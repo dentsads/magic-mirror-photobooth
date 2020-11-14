@@ -9,7 +9,8 @@ import { DrawingToolComponent } from './components/drawing-tool/drawing-tool.com
 import { AcceptPhotoComponent } from './components/accept-photo/accept-photo.component';
 import { SelectPrintPhotosComponent } from './components/select-print-photos/select-print-photos.component';
 import { ErrorPageComponent } from './components/error-page/error-page.component';
-import { HttpClientModule } from '@angular/common/http'; 
+import { InfoPageComponent } from './components/info-page/info-page.component'; 
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { HttpClientModule } from '@angular/common/http';
     DrawingToolComponent,
     AcceptPhotoComponent,
     SelectPrintPhotosComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    InfoPageComponent
   ],
   imports: [
     BrowserModule,
