@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import sudo from 'sudo-prompt';
+import { FormFields } from './renderer';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 const image = nativeImage.createFromPath(app.getAppPath() + '/src/img/fotospiegelwelt_logo_02_140x149.png');
@@ -24,8 +25,8 @@ const createWindow = (): void => {
   // Create the browser window. 
   // See here: https://www.electronjs.org/docs/api/browser-window
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1400,
+    height: 1200,
     center: true,    
     kiosk: false,
     icon: image,
@@ -50,6 +51,8 @@ const createWindow = (): void => {
 app.on('ready', () => {
   createWindow();
 
+  mainWindow.setTitle(app.getName() + ' - v' + app.getVersion());
+
   mainWindow.webContents.once('dom-ready', () => {
     fs.readdir(eventPath, function (err:any, dir:any) {
       //handling error
@@ -64,7 +67,7 @@ app.on('ready', () => {
   
           var metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
 
-          mainWindow.webContents.send('action', metadata)
+          mainWindow.webContents.send('populate-events-dropdown', metadata)
   
       });
     });
@@ -91,11 +94,14 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.on('save-config', (event, eventId) => {
-  console.log("backend " + eventId) // prints "ping"
+ipcMain.on('save-and-start', (event, formFields: FormFields) => {
+  let config = JSON.parse(fs.readFileSync(basePath + "/config.json", 'utf8'));
+  config.event_id = formFields.event_id;
+  config.maxNumberOfPhotos = formFields.maxNumberOfPhotos;
+  config.maxNumberOfPrints = formFields.maxNumberOfPrints;
+  config.phone_number = formFields.phone_number;
+  config.website = formFields.website;
 
-  var config = JSON.parse(fs.readFileSync(basePath + "/config.json", 'utf8'));
-  config.event_id = eventId
   console.log(config)
 
   fs.writeFile(basePath + "/config.json", JSON.stringify(config), function (err:any) {
@@ -112,4 +118,28 @@ ipcMain.on('save-config', (event, eventId) => {
       }
     );
   });
+})
+
+ipcMain.on('event-data-request', (event, eventId) => {
+  if (eventId == "select")
+    event.reply('event-data-response', "empty")
+
+  var config = JSON.parse(fs.readFileSync(basePath + "/config.json", 'utf8'));
+
+  fs.readdir(eventPath, function (err:any, dir:any) {
+    //handling error
+    if (err) {
+        return console.log('Unable to scan directory: ' + err);
+    }
+    //listing all files using forEach
+    dir.forEach(function (subdir:any) {
+        let metadataPath = path.join( eventPath, subdir , '/metadata.json')
+        var metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+
+        if (metadata.event_id == eventId)
+          event.reply('event-data-response', { "config": config, "metadata": metadata })
+
+    });
+  });
+  
 })

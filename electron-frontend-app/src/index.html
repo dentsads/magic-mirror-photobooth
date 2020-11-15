@@ -4,32 +4,98 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline">
-    <title>Hello World!</title>
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <div class="d-flex justify-content-center margin-bottom"><img src="/img/fotospiegelwelt_logo_01_600x173.png" class="align-middle" alt=""></div>    
+    <br>
 
-    <select id="cars">
-      <option value="select" selected>Wählen Sie aus</option>
-    </select>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Events</a>
+        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Allgemeine Einstellungen</a>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        
+        <div class="container">
+          <div class="row mt-4">
+            
+            <form>
+              <div class="form-group row">
+                <label for="mirrorEventLabel" class="col-sm-2 col-form-label col-form-label-lg">Event auswählen</label>
+                <div class="col-sm-10">
+                  <select id="mirrorEvents" class="form-control form-control-lg">
+                    <option value="select" selected>Wählen Sie ein Event aus</option>
+                  </select> 
+                  <small id="mirrorEventHelp" class="form-text text-muted">Hier können Sie ein bestimmtes Event auswählen um den Fotospiegel dafür zu konfigurieren</small>
+                </div>        
+              </div>
+              <div class="form-group row">
+                <label for=galleryCodeLabel" class="col-sm-2 col-form-label col-form-label-lg">Code</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control form-control-lg" id="galleryCode" placeholder="Galerie Gästekennwort">
+                  <small id="galleryCodeHelp" class="form-text text-muted">Das Gästekennwort für die Online Galerie</small>
+                </div>        
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+        <div class="container">
+          <div class="row mt-4">
+            
+            <form>
+              <div class="form-group row">
+                <label for="maxNumberOfPhotosLabel" class="col-sm-2 col-form-label col-form-label-lg">Fotos</label>
+                <div class="col-sm-10">
+                  <select id="maxNumberOfPhotos" class="form-control form-control-lg">
+                    <option value="select" selected>Anzahl der Fotos</option>
+                  </select> 
+                  <small id="maxNumberOfPhotosHelp" class="form-text text-muted">Wieviele Fotos sollen pro Durchlauf geschossen werden?</small>
+                </div>        
+              </div>
+              <div class="form-group row">
+                <label for=maxNumberOfPrintsLabel" class="col-sm-2 col-form-label col-form-label-lg">Ausdrucke</label>
+                <div class="col-sm-10">
+                  <select id="maxNumberOfPrints" class="form-control form-control-lg">
+                    <option value="select" selected>Anzahl der Ausdrucke</option>
+                  </select> 
+                  <small id="maxNumberOfPrintsHelp" class="form-text text-muted">Wieviele Foto-Ausdrucke sollen maximal gestattet sein?</small>
+                </div>        
+              </div>
+              <div class="form-group row">
+                <label for=phoneNumberLabel" class="col-sm-2 col-form-label col-form-label-lg">Tel. Nummer</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control form-control-lg" id="phoneNumber" placeholder="+49 176 XXXXXXXX">
+                  <small id="phoneNumberHelp" class="form-text text-muted">Die Notfall Telefonnummer, unter der Probleme während der Veranstaltung gemeldet werden können</small>
+                </div>        
+              </div>
+              <div class="form-group row">
+                <label for=websiteLabel" class="col-sm-2 col-form-label col-form-label-lg">Webseite</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control form-control-lg" id="website" placeholder="Webseite, z.B. www.fotospiegelwelt.de">
+                  <small id="websiteHelp" class="form-text text-muted">Die Webseite, die auf der ersten Animation gezeigt wird</small>
+                </div>        
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>      
+    </div>    
 
 
-    <button id="button">Submit</button>
-
-    <button class="buttonload">
-      <i class="fa fa-spinner fa-spin"></i>Loading
+    <button id="mirrorEventButton" type="button" class="btn btn-primary btn-lg" disabled>
+      <span id="mirrorEventButtonSpinner" class="spinner-border spinner-border-sm sr-only" role="status" aria-hidden="true"></span>
+      Speichern
     </button>
-    
-    <button class="buttonload">
-      <i class="fa fa-circle-o-notch fa-spin"></i>Loading
-    </button>
-    
-    <button class="buttonload">
-      <i class="fa fa-refresh fa-spin"></i>Loading
-    </button>
-
-    <div id="lds-ring-wrapper"><div class="lds-ring"><div></div><div></div><div></div><div></div></div></div>
 
   </body>
 </html>
