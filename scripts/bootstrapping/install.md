@@ -32,3 +32,5 @@ This will do the following
   * automatically loads the magic-mirror frontend URL
   * disables the session crashed popups
   * disables the "Translate UI" feature
+* add current user to docker group
+* install electron frontend app .deb file

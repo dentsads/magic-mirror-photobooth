@@ -2,3 +2,5 @@ node_modules
 .git
 .gitignore
 logs
+qr-code-preparer
+electron-frontend-app

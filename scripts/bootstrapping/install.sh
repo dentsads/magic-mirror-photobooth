@@ -170,9 +170,11 @@ exec_cmd_no_sudo "s3cmd sync s3://$S3BUCKET/events/ "$EVENTS_DIR/" --access_key=
 
 print_status "pull magic-mirror-photobooth docker image from $DOCKER_REGISTRY..."
 exec_cmd "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"
-exec_cmd "docker pull $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth:latest"
+exec_cmd "docker pull $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth/magic-mirror-photobooth:latest"
+exec_cmd "docker pull $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth/magic-mirror-photobooth-upload:latest"
 exec_cmd "docker logout $DOCKER_REGISTRY"
-exec_cmd "docker tag $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth magic-mirror-photobooth"
+exec_cmd "docker tag $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth/magic-mirror-photobooth magic-mirror-photobooth"
+exec_cmd "docker tag $DOCKER_REGISTRY/magic-mirror-photobooth/magic-mirror-photobooth/magic-mirror-photobooth-upload magic-mirror-photobooth-upload"
 
 print_status "run the magic-mirror-photobooth container..."
 sudo -E docker run -d \
@@ -192,3 +194,12 @@ sudo -E docker run -d \
 -p :4200:4200 \
 -p :632:631 \
 magic-mirror-photobooth
+
+print_status "run the magic-mirror-photobooth-upload container..."
+sudo -E docker run -d \
+--restart unless-stopped \
+--env AWS_ACCESS_KEY=$AWS_ACCESS_KEY \
+--env AWS_SECRET_KEY=$AWS_SECRET_KEY \
+--name magic-mirror-photobooth-upload \
+-v $CONFIG_DIR:/root/.magic-mirror-photobooth/ \
+magic-mirror-photobooth-upload
