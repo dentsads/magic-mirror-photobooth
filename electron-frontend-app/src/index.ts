@@ -4,6 +4,7 @@ import path from 'path';
 import os from 'os';
 import sudo from 'sudo-prompt';
 import { FormFields } from './renderer';
+var exec = require('child_process').exec
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 const image = nativeImage.createFromPath(app.getAppPath() + '/src/img/fotospiegelwelt_logo_02_140x149.png');
@@ -42,7 +43,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -108,6 +109,7 @@ ipcMain.on('save-and-start', (event, formFields: FormFields) => {
     if (err) return console.log(err);
     console.log(basePath + "/config.json written successfully");
 
+    /*
     sudo.exec('docker restart magic-mirror-photobooth-upload', { name: 'Electron'},
       function(error:any, stdout:any, stderr:any) {
         if (error) {
@@ -117,6 +119,14 @@ ipcMain.on('save-and-start', (event, formFields: FormFields) => {
         }        
       }
     );
+    */
+    exec('docker restart magic-mirror-photobooth-upload', (error:any, stdout:any, stderr:any) => {
+      if (error) {
+        event.reply('docker-restart-finished-failed')
+      } else {
+        event.reply('docker-restart-finished-success')
+      }
+    });
   });
 })
 

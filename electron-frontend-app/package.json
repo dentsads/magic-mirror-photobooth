@@ -1,6 +1,6 @@
 {
   "name": "electron-frontend-app",
-  "productName": "Magic Mirror Photobooth Frontend",
+  "productName": "electron-frontend-app",
   "version": "1.0.0",
   "description": "Magic Mirror Photobooth Frontend",
   "main": ".webpack/main",
