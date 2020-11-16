@@ -64,53 +64,92 @@ ipcRenderer.on('populate-events-dropdown', (event, metadata) => {
 });
 
 ipcRenderer.on('docker-restart-finished-success', (event) => {
-    console.log("finished docker restart successfully") // prints "pong"
-    enableButton("mirrorEventButton");
-    document.getElementById("mirrorEventButtonSpinner").classList.add("sr-only");
+    console.log("finished docker restart successfully");
+    enableButton("mirrorEventButtonStart");
+    enableButton("mirrorEventButtonStop");
+    document.getElementById("mirrorEventButtonStartSpinner").classList.add("sr-only");
+
+    showAlert(AlertType.success, "Event-Lauf wurde erfolgreich gestartet." , 3);
 })
 
-ipcRenderer.on('docker-restart-finished-failed', (event) => {
-    console.log("finished docker restart unsuccessfully") // prints "pong"
-    enableButton("mirrorEventButton");
-    document.getElementById("mirrorEventButtonSpinner").classList.add("sr-only");
+ipcRenderer.on('stop-finished-success', (event) => {
+    console.log("finished stopping mkiosk systemd service successfully");
+    enableButton("mirrorEventButtonStart");
+    enableButton("mirrorEventButtonStop");
+    document.getElementById("mirrorEventButtonStopSpinner").classList.add("sr-only");
+
+    showAlert(AlertType.success, "Event-Lauf wurde erfolgreich gestoppt." , 3);
+})
+
+ipcRenderer.on('docker-restart-finished-failed', (event, error) => {
+    console.log("finished docker restart unsuccessfully");
+    enableButton("mirrorEventButtonStart");    
+    document.getElementById("mirrorEventButtonStartSpinner").classList.add("sr-only");   
+    
+    showAlert(AlertType.danger, error);
+})
+
+ipcRenderer.on('saving-config-finished-failed', (event, error) => {
+    console.log("saving config file failed");
+    enableButton("mirrorEventButtonStart");    
+    document.getElementById("mirrorEventButtonStartSpinner").classList.add("sr-only");   
+    
+    showAlert(AlertType.danger, error);
+})
+
+ipcRenderer.on('stop-finished-failed', (event, error) => {
+    console.log("stopping mkiosk systemd service unsuccessful");
+    enableButton("mirrorEventButtonStart");
+    enableButton("mirrorEventButtonStop");    
+    document.getElementById("mirrorEventButtonStopSpinner").classList.add("sr-only");   
+    
+    showAlert(AlertType.danger, error);
 })
 
 ipcRenderer.on('event-data-response', (event, data) => {
     if (data == "empty") {
-        setFormFiels({
+        setFormFields({
             event_id: "",
             maxNumberOfPhotos: "select",
             maxNumberOfPrints: "select",
             phone_number: "",
             website: ""
         });
-        disableButton("mirrorEventButton");
+        disableButton("mirrorEventButtonStart");
     } else {
-        setFormFiels({
+        setFormFields({
             event_id: data.metadata.event_id,
             maxNumberOfPhotos: data.config.maxNumberOfPhotos,
             maxNumberOfPrints: data.config.maxNumberOfPrints,
             phone_number: data.config.phone_number,
             website: data.config.website
         });
-        enableButton("mirrorEventButton");
+        enableButton("mirrorEventButtonStart");
     }        
     
 })
 
-document.getElementById('mirrorEventButton').addEventListener('click', () => {
-    disableButton("mirrorEventButton");
-    document.getElementById("mirrorEventButtonSpinner").classList.remove("sr-only");
-    saveConfigFile()
+document.getElementById('mirrorEventButtonStart').addEventListener('click', () => {
+    disableButton("mirrorEventButtonStart");
+    disableButton("mirrorEventButtonStop");
+    document.getElementById("mirrorEventButtonStartSpinner").classList.remove("sr-only");
+    
+    showAlert(AlertType.primary, "Event-Lauf wird gestartet. Dies kann einige Sekunden dauern. Bitte haben Sie Geduld." , 5);
+    ipcRenderer.send('save-and-start', getFormFields());
+})
+
+document.getElementById('mirrorEventButtonStop').addEventListener('click', () => {
+    disableButton("mirrorEventButtonStart");
+    disableButton("mirrorEventButtonStop");
+    document.getElementById("mirrorEventButtonStopSpinner").classList.remove("sr-only");
+    
+    showAlert(AlertType.primary, "Event-Lauf wird gestoppt." , 3);
+    ipcRenderer.send('stop');
 })
 
 document.getElementById("mirrorEvents").onchange = function(evt:any){
     ipcRenderer.send('event-data-request', evt.target.value)
 };
-
-function saveConfigFile() {    
-    ipcRenderer.send('save-and-start', getFormFiels())
-}
 
 function enableButton(buttonId: string) {
     document.getElementById(buttonId).removeAttribute("disabled");
@@ -120,7 +159,21 @@ function disableButton(buttonId: string) {
     document.getElementById(buttonId).setAttribute("disabled", "true");
 }
 
-function setFormFiels(fieldValues: FormFields) {
+function showAlert(type: AlertType, message: string, timeout?: number) {
+    console.log('alert-' + AlertType[type]);
+    let alertEl = document.getElementById('alert-' + AlertType[type]);
+
+    alertEl.classList.remove("sr-only");   
+    alertEl.getElementsByTagName('div').item(0).textContent = message;
+
+    let timeoutInSecs = timeout ? timeout : 60;
+
+    setTimeout(function(){
+        alertEl.classList.add("sr-only");
+    }, 1000*timeoutInSecs);
+}
+
+function setFormFields(fieldValues: FormFields) {
     let maxNumberOfPhotosEl:HTMLSelectElement = (document.getElementById('maxNumberOfPhotos') as HTMLSelectElement);
     let maxNumberOfPrintsEl:HTMLSelectElement = (document.getElementById('maxNumberOfPrints') as HTMLSelectElement);    
     let galleryCodeEl:HTMLTextAreaElement = (document.getElementById("galleryCode") as HTMLTextAreaElement);
@@ -134,7 +187,7 @@ function setFormFiels(fieldValues: FormFields) {
     websiteEl.value = fieldValues.website;
 }
 
-function getFormFiels(): FormFields {    
+function getFormFields(): FormFields {    
     let maxNumberOfPhotosEl:HTMLSelectElement = (document.getElementById('maxNumberOfPhotos') as HTMLSelectElement);
     let maxNumberOfPrintsEl:HTMLSelectElement = (document.getElementById('maxNumberOfPrints') as HTMLSelectElement);    
     let galleryCodeEl:HTMLTextAreaElement = (document.getElementById("galleryCode") as HTMLTextAreaElement);
@@ -157,3 +210,10 @@ export interface FormFields {
     phone_number: string;
     website: string;
 }
+
+enum AlertType {
+    danger, // red
+    primary, // blue
+    success, // green
+    warning // yellow
+  }

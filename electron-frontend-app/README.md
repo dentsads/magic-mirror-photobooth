@@ -1,5 +1,17 @@
 # electron-frontend-app
 
+## Build and publish .deb to S3
+
+Build and publish application like this
+
+```bash
+# build
+npm run make
+
+# publish
+npm run publish
+```
+
 ## Important steps (List not exhaustive)
 
 Add your user `$USER` to the `docker` group in order to avoid having to face an administrator prompt when executing docker restarts through this app.

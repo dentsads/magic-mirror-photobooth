@@ -2,7 +2,6 @@ import { app, BrowserWindow, ipcMain, nativeImage } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import sudo from 'sudo-prompt';
 import { FormFields } from './renderer';
 var exec = require('child_process').exec
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
@@ -43,7 +42,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -92,9 +91,6 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
-
 ipcMain.on('save-and-start', (event, formFields: FormFields) => {
   let config = JSON.parse(fs.readFileSync(basePath + "/config.json", 'utf8'));
   config.event_id = formFields.event_id;
@@ -106,28 +102,43 @@ ipcMain.on('save-and-start', (event, formFields: FormFields) => {
   console.log(config)
 
   fs.writeFile(basePath + "/config.json", JSON.stringify(config), function (err:any) {
-    if (err) return console.log(err);
+    if (err) {
+      console.log(err);
+      return event.reply('saving-config-finished-failed', err)
+    }
     console.log(basePath + "/config.json written successfully");
 
-    /*
-    sudo.exec('docker restart magic-mirror-photobooth-upload', { name: 'Electron'},
-      function(error:any, stdout:any, stderr:any) {
-        if (error) {
-          event.reply('docker-restart-finished-failed')
-        } else {
-          event.reply('docker-restart-finished-success')
-        }        
-      }
-    );
-    */
-    exec('docker restart magic-mirror-photobooth-upload', (error:any, stdout:any, stderr:any) => {
+    exec('docker restart magic-mirror-photobooth', (error:any, stdout:any, stderr:any) => {
       if (error) {
-        event.reply('docker-restart-finished-failed')
+        event.reply('docker-restart-finished-failed', error)
       } else {
-        event.reply('docker-restart-finished-success')
+        exec('docker restart magic-mirror-photobooth-upload', (error:any, stdout:any, stderr:any) => {
+          if (error) {
+            event.reply('docker-restart-finished-failed', error)
+          } else {
+            // first stop all running mkiosk instances and then restart mkiosk, otherwise it opens up a new session every time
+            exec('systemctl --user stop mkiosk && systemctl --user start mkiosk', (error:any, stdout:any, stderr:any) => {
+              if (error) {
+                event.reply('docker-restart-finished-failed', error)
+              } else {
+                event.reply('docker-restart-finished-success')
+              }
+            }); 
+          }
+        });        
       }
     });
   });
+})
+
+ipcMain.on('stop', (event) => {
+  exec('systemctl --user stop mkiosk', (error:any, stdout:any, stderr:any) => {
+    if (error) {
+      event.reply('stop-finished-failed', error)
+    } else {
+      event.reply('stop-finished-success')
+    }
+  }); 
 })
 
 ipcMain.on('event-data-request', (event, eventId) => {
