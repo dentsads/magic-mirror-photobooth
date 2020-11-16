@@ -2,5 +2,9 @@ node_modules
 .git
 .gitignore
 logs
+scripts
+built
+dist
+e2e
 qr-code-preparer
 electron-frontend-app
