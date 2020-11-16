@@ -5,9 +5,9 @@
 #
 # Run like this:
 #
-# curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E bash -
+# curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E -u $USER bash -
 #   or
-# wget -qO- https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E bash -
+# wget -qO- https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E -u $USER bash -
 #
 # Copyright 2020 Dimitrios Dentsas
 
@@ -167,6 +167,23 @@ exec_cmd_no_sudo "s3cmd sync s3://$S3BUCKET/rendered-assets/ "$ASSETS_DIR/" --ac
 
 print_status "Fetching event files from S3 bucket $S3BUCKET..."
 exec_cmd_no_sudo "s3cmd sync s3://$S3BUCKET/events/ "$EVENTS_DIR/" --access_key=\"$AWS_ACCESS_KEY\" --secret_key=\"$AWS_SECRET_KEY\" --no-ssl --no-mime-magic"
+
+print_status "Add current user ${USER} to docker group..."
+exec_cmd "groupadd docker -f"
+sudo_exec_cmd_nobail "usermod -aG docker ${USER}"
+
+print_status "Log into docker group and switch back to original group in order to apply group changes without logout/login..."
+# todo: fix this, since otherwise on fresh installations the electron frontend won't be able to restart docker until the machine was rebooted once
+# exec_cmd_no_sudo 'exec sg docker "newgrp `id -gn`"' 
+sudo_exec_cmd_nobail "chown ${USER}:${USER} /home/${USER}/.docker -R"
+sudo_exec_cmd_nobail "chmod g+rwx /home/${USER}/.docker -R"
+
+print_status "Install electron frontend app .deb file..."
+sudo_exec_cmd_nobail "dpkg --purge electron-frontend-app"
+export TEMP_DEB=$(mktemp)
+exec_cmd "wget -O $TEMP_DEB 'https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/electron-frontend-app/electron-frontend-app_1.0.0_amd64.deb'"
+sudo_exec_cmd_nobail "dpkg -i $TEMP_DEB"
+exec_cmd "rm -f $TEMP_DEB"
 
 print_status "pull magic-mirror-photobooth docker image from $DOCKER_REGISTRY..."
 exec_cmd "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"

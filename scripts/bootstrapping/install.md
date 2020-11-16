@@ -3,7 +3,7 @@
 for bootstrapping the installation process of the Docker container run this script
 
 ```bash
-curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E bash -
+curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E -u $USER bash -
 ```
 
 This will do the following

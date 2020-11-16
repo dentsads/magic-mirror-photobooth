@@ -220,25 +220,18 @@ ExecStart=/bin/bash -e /opt/mkiosk.sh
 WantedBy=graphical.target
 EOT'
 
-print_status "Start mkiosk systemd service..."
-exec_cmd 'systemctl daemon-reload'
-exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable mkiosk'
-exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start mkiosk'
+print_status "Creating xinput shell script for udev rules in order to map the touchframe to the right output when the USB is plugged in..."
+exec_cmd "cat <<EOT > /opt/xinput_touchframe.sh
+#!/bin/sh
+
+# map touch frame input to monitor output
+xinput --map-to-output \"\$(xinput list --name-only | grep '^Touchscreen small size$')\" HDMI-1
+EOT"
+exec_cmd 'chmod +x /opt/xinput_touchframe.sh'
 
 print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
 exec_cmd 'systemctl restart systemd-logind'
 
-print_status "Add current user ${USER} to docker group..."
-exec_cmd "groupadd docker"
-exec_cmd "usermod -aG docker ${USER}"
-
-print_status "Log into docker group and switch back to original group in order to apply group changes without logout/login..."
-exec_cmd_no_sudo 'exec sg docker "newgrp `id -gn`"'
-exec_cmd "chown ${USER}:${USER} /home/${USER}/.docker -R"
-exec_cmd "chmod g+rwx ${USER}/.docker -R"
-
-print_status "Install electron frontend app .deb file..."
-exec_cmd_no_sudo "TEMP_DEB=$(mktemp)"
-exec_cmd_no_sudo "wget -O $TEMP_DEB 'https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/electron-frontend-app/electron-frontend-app_1.0.0_amd64.deb'"
-exec_cmd_no_sudo "sudo dpkg -i $TEMP_DEB"
-exec_cmd_no_sudo "rm -f $TEMP_DEB"
+print_status "Start mkiosk systemd service..."
+exec_cmd 'systemctl daemon-reload'
+exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable mkiosk'
