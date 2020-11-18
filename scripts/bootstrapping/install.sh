@@ -178,12 +178,16 @@ print_status "Log into docker group and switch back to original group in order t
 sudo_exec_cmd_nobail "chown ${USER}:${USER} /home/${USER}/.docker -R"
 sudo_exec_cmd_nobail "chmod g+rwx /home/${USER}/.docker -R"
 
-print_status "Install electron frontend app .deb file..."
-sudo_exec_cmd_nobail "dpkg --purge electron-frontend-app"
-export TEMP_DEB=$(mktemp)
-exec_cmd "wget -O $TEMP_DEB 'https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/electron-frontend-app/electron-frontend-app_1.0.0_amd64.deb'"
-sudo_exec_cmd_nobail "dpkg -i $TEMP_DEB"
-exec_cmd "rm -f $TEMP_DEB"
+print_status "Install electron frontend app .deb file, if it is not already installed..."
+sudo_exec_cmd_nobail 'dpkg -s electron-frontend-app 1>/dev/null 2>/dev/null'
+if [ $? -ne 0 ]; then
+    export TEMP_DEB=$(mktemp)
+    exec_cmd "wget -O $TEMP_DEB 'https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/electron-frontend-app/electron-frontend-app_1.0.0_amd64.deb'"
+    sudo_exec_cmd_nobail "dpkg -i $TEMP_DEB"
+    exec_cmd "rm -f $TEMP_DEB"
+else
+    print_status "electron frontend app already exists. You can purge it first with 'dpkg --purge electron-frontend-app'"
+fi
 
 print_status "pull magic-mirror-photobooth docker image from $DOCKER_REGISTRY..."
 exec_cmd "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY"
