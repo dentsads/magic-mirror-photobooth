@@ -11,7 +11,7 @@ This will do the following
 * download all relevant assets (images, movies) onto the host machine
 * download the latest magic-mirror-photobooth Docker image
 * download the latest magic-mirror-photobooth-upload Docker image
-* create new containers from both Docke images and start them
+* create new containers from both Docker images and start them
 
 # Bootstrapping of Host Ubuntu Machine
 

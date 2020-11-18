@@ -141,7 +141,7 @@ sudo echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
 
 # Composite images over each other
 
-With imagemagick's `composite` or `convert` cli tools you can composite images one over another for rendering the print templates
+With imagemagick's `composite` or `convert` (still using Imagemagick 6.x) cli tools you can composite images one over another for rendering the print templates
 
 ```bash
 convert -size 1795x1205 xc:none \
@@ -156,6 +156,18 @@ convert built/photos.png built/christmas_01_overlay_base_03.png -compose over -c
 identify -format "%[fx:w]x%[fx:h]" built/02.jpg
 ```
 
+# Test composition layouts
+
+You can also test out composition layouts, e.g. the positioning of the logo and text you want to overlay
+
+```bash
+magick convert -size 1795x1205 xc:none \
+./built/tmp.png \
+-composite /home/dentsads/.magic-mirror-photobooth/assets/wedding_01_overlay_base_03_01.png \
+-composite \( /home/dentsads/.magic-mirror-photobooth/assets/fotospiegelwelt_logo2_scaled.png -resize 80 \) \-geometry +30+1065 \
+\( -pointsize 30 -annotate +110+1120 'www.fotospiegelwelt.de' \) \
+-composite /tmp/65a0e686-424b-4c91-bda6-7241bb2d7fe2_collage.png
+```
 # PM2 process management
 
 ## Install pm2 startup script for systemd
