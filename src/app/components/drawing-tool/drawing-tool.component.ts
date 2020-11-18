@@ -34,7 +34,7 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
       this.componentData = await this.routingService.getComponentData();
     });
 
-    this.canvas = new fabric.Canvas('canvas', { isDrawingMode: true });
+    this.canvas = new fabric.Canvas('canvas-drawing', { isDrawingMode: true });
 
     this.canvas.freeDrawingBrush =  new fabric.PencilBrush(this.canvas);
     this.canvas.freeDrawingBrush.shadow =  new fabric.Shadow();

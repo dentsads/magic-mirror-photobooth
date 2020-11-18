@@ -1,6 +1,6 @@
 @import "~@simonwep/pickr/dist/themes/nano.min.css";
 
-#canvas {
+#canvas-drawing {
     border: 1px solid rgb(170, 170, 170);
 }
 

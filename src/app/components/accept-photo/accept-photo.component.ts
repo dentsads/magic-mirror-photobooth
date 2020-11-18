@@ -85,7 +85,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
         return
       }
 
-      let canvas = this.document.getElementById('canvas');
+      let canvas = this.document.getElementById('canvas-qr');
 
       QRCode.toCanvas(canvas, response.presigned_url, {
         color: {
@@ -109,7 +109,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   handleCanvas() {
     // fade in canvas
-    this.document.getElementById('canvas').style.opacity = '1';     
+    this.document.getElementById('canvas-qr').style.opacity = '1';     
   }
 
   handleImage() {
