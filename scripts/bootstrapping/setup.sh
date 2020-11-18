@@ -174,10 +174,6 @@ exec_cmd "chmod 755 ~/.local/share/gnome-shell/extensions/disable-gestures@dents
 print_status "Enable the gnome shell extension..."
 exec_cmd 'gnome-shell-extension-tool -e disable-gestures@dentsads || echo 0'
 
-print_status "Restart gnome shell..."
-exec_cmd 'killall -3 gnome-shell'
-
-sleep 2
 
 print_status "Create ~/.config/systemd/user if it does not exist already..."
 exec_cmd_no_sudo 'mkdir -p ~/.config/systemd/user'
@@ -187,7 +183,8 @@ exec_cmd "cat <<EOT > /opt/mkiosk.sh
 #!/bin/bash
 
 # map touch frame input to monitor output
-xinput --map-to-output \"\$(xinput list --name-only | grep '^Touchscreen small size$')\" HDMI-1
+xinput --map-to-output \"Touchscreen small size\" HDMI-1 || true
+xinput --map-to-output \"Touchscreen small size\" VGA-1 || true
 
 # clean config and cache and start chrome in kiosk mode
 rm -rf ~/.{config,cache}/google-chrome/
@@ -220,14 +217,23 @@ ExecStart=/bin/bash -e /opt/mkiosk.sh
 WantedBy=graphical.target
 EOT'
 
-print_status "Creating xinput shell script for udev rules in order to map the touchframe to the right output when the USB is plugged in..."
+print_status "Creating xinput shell script for udev rules in order to map the touchframe to the right output screen when the USB is plugged in..."
 exec_cmd "cat <<EOT > /opt/xinput_touchframe.sh
-#!/bin/sh
+#!/bin/bash
+
+# wait a little for the device to appear in th device list
+sleep 6
 
 # map touch frame input to monitor output
-xinput --map-to-output \"\$(xinput list --name-only | grep '^Touchscreen small size$')\" HDMI-1
+xinput --map-to-output \"Touchscreen small size\" HDMI-1 || true
+xinput --map-to-output \"Touchscreen small size\" VGA-1 || true
 EOT"
 exec_cmd 'chmod +x /opt/xinput_touchframe.sh'
+
+print_status "Creating udev rules in order to map the touchframe to the right output screen when the USB is plugged in..."
+exec_cmd "cat <<EOT > /etc/udev/rules.d/99-xinput-touchframe.rules
+ACTION==\"add\", ATTRS{idVendor}==\"1ff7\", ATTRS{idProduct}==\"0013\", ATTRS{manufacturer}==\"Touchscreen small size\", ENV{DEVNAME}==\"/dev/usb/hiddev0\", ENV{XAUTHORITY}=\"${XAUTHORITY}\", ENV{DISPLAY}=\"${DISPLAY}\", RUN+=\"/bin/su ${SUDO_USER} -c /opt/xinput_touchframe.sh\"
+EOT"
 
 print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
 exec_cmd 'systemctl restart systemd-logind'
@@ -235,3 +241,6 @@ exec_cmd 'systemctl restart systemd-logind'
 print_status "Start mkiosk systemd service..."
 exec_cmd 'systemctl daemon-reload'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable mkiosk'
+
+print_status "Restart gnome shell..."
+exec_cmd 'killall -3 gnome-shell'

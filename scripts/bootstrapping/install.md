@@ -10,7 +10,8 @@ This will do the following
 
 * download all relevant assets (images, movies) onto the host machine
 * download the latest magic-mirror-photobooth Docker image
-* create a new container from it and start it
+* download the latest magic-mirror-photobooth-upload Docker image
+* create new containers from both Docke images and start them
 
 # Bootstrapping of Host Ubuntu Machine
 
@@ -34,3 +35,4 @@ This will do the following
   * disables the "Translate UI" feature
 * add current user to docker group
 * install electron frontend app .deb file
+* add udev rules in order to map the touchframe to the right output screen when the USB is plugged in
