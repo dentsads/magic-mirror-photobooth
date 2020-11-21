@@ -38,7 +38,6 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
       this.componentData = await this.routingService.getComponentData();  
       
       if (this.componentData.context) {
-        console.log(this.componentData.context)
         this.getPresignedUrl(this.componentData.context.photoPath)
       }        
     });    

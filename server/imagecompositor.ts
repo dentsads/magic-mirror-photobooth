@@ -46,8 +46,6 @@ class ImageCompositor {
   private readonly IMAGE_HEIGHT:number = 1205
   private readonly DRAWING_WIDTH:number = 200
   private readonly DRAWING_HEIGHT:number = 200
-  private readonly TMP_DIR:string = "./built"
-  private readonly TMP_FILE:string = this.TMP_DIR + "/tmp.png"  
   private readonly PHOTOS_PATH:string = 'api/photos/' + config.event_id + '/'
   private readonly PHOTOS_DIR:string = photos_dir
   private readonly EVENT_PHOTOS_DIR:string = event_photos_dir
@@ -65,7 +63,15 @@ class ImageCompositor {
     let compositeArgs = [
       '-size', `${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT}`,
       'xc:none'
-    ]         
+    ]
+
+    let uuidFileName = uuidv4() + '_collage.png'
+    let logoImage = options.logoImage == undefined ? undefined : this.ASSETS_DIR + '/' + options.logoImage;
+    let logoImageSize: string = options.logoImageSize ? options.logoImageSize : '200';
+    let overlayLogoImgOffset: string = options.logoImageOffset ? options.logoImageOffset : '+10+10';
+    let overlayText: string = options.overlayText ? options.overlayText : '';
+    let overlayTextSize: string = options.overlayTextSize;
+    let overlayTextOffset: string = options.overlayTextOffset;
 
     options.imgSrcList.forEach( (img, imgIndex)  => {
       compositeArgs.push('\\(')
@@ -96,41 +102,17 @@ class ImageCompositor {
       compositeArgs.push('\\)')
     }       
 
-    compositeArgs.push('-layers', 'flatten')
-    compositeArgs.push(this.TMP_FILE)
-
-    logger.log('info', 'convert ' + compositeArgs.join(' '))
-
-    exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
-      if (err) return cb(null, ErrorHandler.createError("1",err))
-
-      let logoImage = options.logoImage == undefined ? undefined : this.ASSETS_DIR + '/' + options.logoImage
-      this.compose(this.TMP_FILE, this.ASSETS_DIR + '/' + options.overlayImage, logoImage, options.logoImageOffset, options.logoImageSize, options.overlayText, options.overlayTextSize, options.overlayTextOffset, cb)
-    });
-
-  }
-
-  public compose(img: string = '', overlayImage: string = '', overlayLogoImg: string = '', overlayLogoImgOffset: string = '+10+10', logoImageSize: string = '200', overlayText: string = '', overlayTextSize: string, overlayTextOffset: string, cb: (stdout?: object, e?: Error) => void): void {
-    let uuidFileName = uuidv4() + '_collage.png'
-
-    let compositeArgs = [
-      '-size', `${this.IMAGE_WIDTH}x${this.IMAGE_HEIGHT}`,
-      'xc:none'
-    ]
-
-    compositeArgs.push(img)
-    compositeArgs.push('-composite')
-    compositeArgs.push(`${overlayImage}`)
-    compositeArgs.push('-composite')
+    compositeArgs.push('\\(')
+    compositeArgs.push(this.ASSETS_DIR + '/' + options.overlayImage)         
+    compositeArgs.push('\\)')    
 
     // Overlay logo (if available)
-    if (overlayLogoImg !== ''&& fs.existsSync(overlayLogoImg)) {
+    if (logoImage !== ''&& fs.existsSync(logoImage)) {
       compositeArgs.push('\\(')
-      compositeArgs.push(overlayLogoImg)
+      compositeArgs.push(logoImage)
       compositeArgs.push(`-resize ${logoImageSize}`)               
-      compositeArgs.push('\\)')
-      compositeArgs.push(`-geometry ${overlayLogoImgOffset}`)
-      compositeArgs.push('-composite')
+      compositeArgs.push(`-repage ${overlayLogoImgOffset}`)
+      compositeArgs.push('\\)')      
     }
 
     // Overlay text (usually the componay URL)
@@ -142,19 +124,24 @@ class ImageCompositor {
       compositeArgs.push('\\)')
     }
 
+    compositeArgs.push('-layers', 'flatten')
     compositeArgs.push(this.EVENT_PHOTOS_DIR + '/' + uuidFileName)
 
     logger.log('info', 'convert ' + compositeArgs.join(' '))
 
     exec('convert ' + compositeArgs.join(' '), (err, stdout, stderr) => { 
-      exec('convert ' + this.EVENT_PHOTOS_DIR + '/' + uuidFileName + ' -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 ' + this.PHOTOS_DIR + '/printable_result.png', (err, stdout, stderr) => { 
-        if (err) {
-          return cb(null, ErrorHandler.createError("1",err))
-        } else {
-          return cb({ "result" : this.PHOTOS_PATH + uuidFileName });
-        }      
-      });       
-    });    
+      if (err) {
+        return cb(null, ErrorHandler.createError("1",err))
+      } else {
+        exec('convert ' + this.EVENT_PHOTOS_DIR + '/' + uuidFileName + ' -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 ' + this.PHOTOS_DIR + '/printable_result.png', (err, stdout, stderr) => { 
+          if (err) {
+            logger.log('error', ErrorHandler.createError("1",err))
+          }      
+        }); 
+        return cb({ "result" : this.PHOTOS_PATH + uuidFileName });
+      }  
+    });
+
   }
 
 }
