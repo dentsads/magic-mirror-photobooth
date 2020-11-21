@@ -11,7 +11,7 @@
     transition: opacity 0.25s ease-in;
 }
 
-#canvas-qr {
+#canvas-qr-div {
     /* needed for smooth fading in animation */
     opacity: 0;
     -webkit-transition: opacity 0.25s ease-in;
@@ -52,4 +52,9 @@
 .image {
     max-width: 800px;
     position: relative;
+}
+
+.text-subsubheader {
+    text-align: center;
+    font-size: 40px;    
 }

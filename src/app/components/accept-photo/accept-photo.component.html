@@ -1,6 +1,9 @@
 <div *ngIf="componentData" id="overlay-outer">    
     <img (load)="handleImage()" class="image" src="{{componentData.context.photoPath}}" />
     <div (click)="handleEvent('event.accept-photo.01')" class="overlay-right"><img src="{{componentData.assetButtonOkPath}}"></div>
-    <div (click)="handleEvent('event.accept-photo.02')" class="overlay-left"><img src="{{componentData.assetButtonNokPath}}"></div>
-    <div style="text-align: center;"><div class="overlay-bottom"><canvas id="canvas-qr"></canvas></div></div>
+    <div (click)="handleEvent('event.accept-photo.02')" class="overlay-left"><img src="{{componentData.assetButtonNokPath}}"></div>    
+</div>
+<div id="canvas-qr-div">
+    <div><p class="text-subsubheader">Lade dein Bild herunter.</p></div>
+    <div style="text-align: center;"><div><canvas id="canvas-qr"></canvas></div></div>
 </div>

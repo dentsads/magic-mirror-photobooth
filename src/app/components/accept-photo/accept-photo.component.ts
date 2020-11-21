@@ -16,10 +16,9 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
   componentData: any;
-  presignedUrl: string;
   document;
 
-  readonly MAX_RETRY:number=40;
+  readonly MAX_RETRY:number=60;
   readonly DELAY_IN_MS:number=100
 
   constructor(
@@ -108,7 +107,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   handleCanvas() {
     // fade in canvas
-    this.document.getElementById('canvas-qr').style.opacity = '1';     
+    this.document.getElementById('canvas-qr-div').style.opacity = '1';     
   }
 
   handleImage() {
