@@ -6,9 +6,9 @@ var exec = require('child_process').exec
 
 const gphoto2 = require('gphoto2');
 const fs = require('fs')  
-const Path = require('path')  
+const Path = require('path')
 const Axios = require('axios')
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid')
 const os = require('os')
 
 var config_dir = os.homedir() + "/" + config.config_dir;

@@ -5,7 +5,7 @@ var exec = require('child_process').exec
 
 const fs = require('fs')  
 const os = require('os')
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 
 var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
