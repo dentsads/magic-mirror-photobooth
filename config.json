@@ -9,5 +9,10 @@
     "led_pin_size": 40,
     "maxNumberOfPhotos": 3,
     "maxNumberOfPrints": 1,
-    "website": "www.fotospiegelwelt.de"
+    "website": "www.fotospiegelwelt.de",
+    "alerting": {
+        "discord": {
+            "channelId": "791375015294664744"
+        }
+    }
 }

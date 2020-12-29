@@ -51,17 +51,21 @@ sudo npm install concurrently -g
 sudo npm install canvas -g --unsafe-perm=true --allow-root
 ```
 
+### What to do if you use NVM for nodejs
+
+Please note that if you use NVM for node and npm you must not install nodejs through `apt-get`, otherwise you are intermixing different nodejs installations on your system.
+Also create symlinks to `/usr/local/bin` otherwise you won't have `node` and `npm` available with `sudo`. Create the links like this:
+
+```
+sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
+sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
+```
+
 ## Build and run application
 
 ```bash
+# install all node dependencies
 npm install
-
-# patch the node-pixel library with `j5-firmata-upg` branch, otherwise you will get
-# NoWritablePortError: Node Pixel FIRMATA controller requires IO that can write out
-git clone https://github.com/ajfisher/node-pixel.git ../node-pixel --branch j5-firmata-upg
-rm -rf node_modules/node-pixel
-cp -r ../node-pixel/ node_modules/
-rm -rf node_modules/node-pixel/.git
 
 # build and serve app
 npm run build && sudo -E npm run serve:dev
@@ -75,6 +79,10 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 ## Running end-to-end tests
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+## Updating all node dependencies to their latest version
+
+See this article: https://flaviocopes.com/update-npm-dependencies/
 
 # Mocking the DSLR and Printer
 
@@ -94,6 +102,25 @@ export PHOTOBOOTH_PRINTER_MOCK=1
 
 Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to know exactly where they are put look for the `Out` config in `/etc/cups/cups-pdf.conf`
 
+# Setting up Discord bot for alerting
+
+We are using a [Discord](https://discord.com) bot for alerting purposes. The bot has to be passed a token at initializiation time, otherwise it will not be active during runtime.
+
+You can set the token with
+
+```bash
+export DISCORD_BOT_TOKEN="<token>"
+```
+
+You can configure the Discord channel to which the bot will send alerts to. For this just add the channel ID in the `config.json` like this
+
+```
+"alerting": {
+  "discord": {
+    "channelId": "<channel_id>"
+  }
+}
+```
 
 # LED ring setup
 

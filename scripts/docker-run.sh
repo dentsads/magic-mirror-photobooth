@@ -16,12 +16,18 @@ while test $# -ge 0; do
   esac
 done
 
+if [ -z "$DISCORD_BOT_TOKEN" ]; then
+    echo "You need to set the DISCORD_BOT_TOKEN environment variable for the Discord bot"
+    exit 1
+fi
+
 sudo -E docker run -d \
 --restart unless-stopped \
 --privileged \
 --label autoheal=true \
 --env PHOTOBOOTH_CAMERA_MOCK=$IS_MOCK_MODE \
 --env PHOTOBOOTH_PRINTER_MOCK=$IS_MOCK_MODE \
+--env DISCORD_BOT_TOKEN=$DISCORD_BOT_TOKEN \
 --name magic-mirror-photobooth \
 -v $HOME/.magic-mirror-photobooth/assets:/root/.magic-mirror-photobooth/assets \
 -v $HOME/.magic-mirror-photobooth/photos:/root/.magic-mirror-photobooth/photos \
