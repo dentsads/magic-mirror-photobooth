@@ -7,6 +7,7 @@ var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 
 var exec = require('child_process').exec
+var execSync = require('child_process').execSync
 var spawnSync = require('child_process').spawnSync
 
 interface PrinterOptions {
@@ -40,6 +41,31 @@ class Printer {
     }   
   }
 
+  public getPrinterInfo(): object { 
+    let gutenprintStatusSpawn = spawnSync('/usr/lib/cups/backend/gutenprint52+usb', ['-s'], {env: {BACKEND: 'dnpds40'}});
+    let gutenprintStatusMessageGrepSpawn = spawnSync('grep', ['-oP', 'Printer Status: \\K.*(?= \\(.*\\))'], { input: gutenprintStatusSpawn.stderr }).stdout;
+    let gutenprintStatusCodeGrepSpawn = spawnSync('grep', ['-oP', 'Printer Status:.*\\(\\K.*(?=\\))'], { input: gutenprintStatusSpawn.stderr }).stdout;
+    
+    let gutenprintMediaTotalGrepSpawn = spawnSync('grep', ['-oP', 'Native Prints Available on New Media: \\K.*'], { input: gutenprintStatusSpawn.stderr }).stdout;
+    let gutenprintMediaRemainingGrepSpawn = spawnSync('grep', ['-oP', 'Native Prints Remaining on Media: \\K.*'], { input: gutenprintStatusSpawn.stderr }).stdout;
+
+    let mediaTotal: number = Number(gutenprintMediaTotalGrepSpawn.toString().trim())
+    let mediaRemaining: number = Number(gutenprintMediaRemainingGrepSpawn.toString().trim())
+    let mediaRemainingPercentage: number = 0;
+
+    if (!isNaN(mediaTotal) && !isNaN(mediaRemaining))
+      mediaRemainingPercentage = mediaRemaining / mediaTotal * 100;
+
+    return { 
+      statusMessage: gutenprintStatusMessageGrepSpawn.toString().trim(),
+      statusCode: gutenprintStatusCodeGrepSpawn.toString().trim(),
+      mediaTotal: mediaTotal,
+      mediaRemaining: mediaRemaining,
+      mediaRemainingPercentage: mediaRemainingPercentage
+    };
+
+  }
+
   private initializeMockPrinter() {
     let printerArgs = [
         '-p', 'PDF',
@@ -64,7 +90,7 @@ class Printer {
 
   public print(options: PrinterOptions, cb: (stdout?: object, e?: Error) => void): void {
     if (options.numberOfCopies < 1) {
-      logger.log('info', 'Skipping image printing, since less than 0 copies have been requested');  
+      logger.log('info', 'Skipping image printing, since 0 copies have been requested');  
       return cb({ "status" : "success" });
     }
 
@@ -74,9 +100,11 @@ class Printer {
     logger.log('info', 'Printing image %s with printer', options.img, printer);      
     logger.log('info', 'lp ' + printArgs)
 
+    // TODO: stderr is logged but is always empty, even if the printer fails. Is err maybe the right one?
     exec('lp ' + printArgs, (err, stdout, stderr) => {
       logger.log('info', '%s', stdout);
       logger.log('error', '%s', stderr);
+
       if (err) {
         return cb(null, ErrorHandler.createError("55",err))
       } else {

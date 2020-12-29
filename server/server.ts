@@ -4,6 +4,7 @@ import { ImageCompositor } from './imagecompositor' ;
 import { Photo } from './photo';
 import { logger } from './logger';
 import { Printer } from './printer';
+import { DiscordAlerter } from './discord';
 import * as Mustache from 'mustache';
 import config from '../config.json'
 
@@ -46,6 +47,7 @@ const led = new Led();
 const compositor = new ImageCompositor();
 const photo = new Photo();
 const printer = new Printer();
+const alerter = new DiscordAlerter();
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
@@ -59,6 +61,7 @@ app.get('/api/health', (req, res) => {
     printer.isHealthy();
 
   let isHealthyString = (isHealthy:boolean):string => isHealthy ? 'healthy' : 'unhealthy';
+  alerter.alert('Fotospiegel health status: ' + isHealthyString(isHealthyOverall));
   let resultHealthJson: object = {
     status: isHealthyString(isHealthyOverall),
     components: [
@@ -82,6 +85,19 @@ app.get('/api/health', (req, res) => {
   } else {
     res.status(500).send(resultHealthJson).end()
   }
+  
+})
+
+app.get('/metrics', (req, res) => { 
+  let printerInfo: any = printer.getPrinterInfo();
+
+  let prometheusMetricsExporterJson: string = `
+drucker_status{status_message="${printerInfo.statusMessage}",status_code="${printerInfo.statusCode}"}
+drucker_verbleibendes_papier_prozent{media_total="${printerInfo.mediaTotal}",media_remaining="${printerInfo.mediaRemaining}"} ${printerInfo.mediaRemainingPercentage}
+up 1
+  `;
+  res.setHeader('content-type', 'text/plain');
+  res.status(200).send(prometheusMetricsExporterJson).end()
   
 })
 
