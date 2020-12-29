@@ -4,7 +4,6 @@ import { ImageCompositor } from './imagecompositor' ;
 import { Photo } from './photo';
 import { logger } from './logger';
 import { Printer } from './printer';
-import { DiscordAlerter } from './discord';
 import * as Mustache from 'mustache';
 import config from '../config.json'
 
@@ -47,7 +46,6 @@ const led = new Led();
 const compositor = new ImageCompositor();
 const photo = new Photo();
 const printer = new Printer();
-const alerter = new DiscordAlerter();
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
@@ -61,7 +59,6 @@ app.get('/api/health', (req, res) => {
     printer.isHealthy();
 
   let isHealthyString = (isHealthy:boolean):string => isHealthy ? 'healthy' : 'unhealthy';
-  alerter.alert('Fotospiegel health status: ' + isHealthyString(isHealthyOverall));
   let resultHealthJson: object = {
     status: isHealthyString(isHealthyOverall),
     components: [
