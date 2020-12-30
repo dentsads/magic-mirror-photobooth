@@ -102,26 +102,6 @@ export PHOTOBOOTH_PRINTER_MOCK=1
 
 Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to know exactly where they are put look for the `Out` config in `/etc/cups/cups-pdf.conf`
 
-# Setting up Discord bot for alerting
-
-We are using a [Discord](https://discord.com) bot for alerting purposes. The bot has to be passed a token at initializiation time, otherwise it will not be active during runtime.
-
-You can set the token with
-
-```bash
-export DISCORD_BOT_TOKEN="<token>"
-```
-
-You can configure the Discord channel to which the bot will send alerts to. For this just add the channel ID in the `config.json` like this
-
-```
-"alerting": {
-  "discord": {
-    "channelId": "<channel_id>"
-  }
-}
-```
-
 # LED ring setup
 
 The microcontroller used for controlling the LED ring is
