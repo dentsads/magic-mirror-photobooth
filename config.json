@@ -10,9 +10,5 @@
     "maxNumberOfPhotos": 3,
     "maxNumberOfPrints": 1,
     "website": "www.fotospiegelwelt.de",
-    "alerting": {
-        "discord": {
-            "channelId": "791375015294664744"
-        }
-    }
+    "device_id": "fotospiegel1"
 }
