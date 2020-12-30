@@ -12,6 +12,8 @@ This will do the following
 * download the latest magic-mirror-photobooth Docker image
 * download the latest magic-mirror-photobooth-upload Docker image
 * create new containers from both Docker images and start them
+* download a specified version of the magic-mirror-photobooth-monitoring repo
+* create new prometheus and alertmanager containers in magic-mirror-photobooth-monitoring with docker-compose
 
 # Bootstrapping of Host Ubuntu Machine
 

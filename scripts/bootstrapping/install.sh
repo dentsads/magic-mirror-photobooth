@@ -166,7 +166,7 @@ LOGS_DIR="$CONFIG_DIR/logs"
 DOCKER_REGISTRY="registry.gitlab.com"
 S3BUCKET="magic-mirror-photobooth-assets"
 MONITORING_REPO_PATH="/tmp/magic-mirror-photobooth-monitoring"
-MONITORING_REPO_VERSION="v0.1"
+MONITORING_REPO_VERSION="v0.3"
 
 print_status "Creating asset directory $ASSETS_DIR..."
 exec_cmd_no_sudo "mkdir -p $ASSETS_DIR"
@@ -240,9 +240,9 @@ magic-mirror-photobooth-upload
 
 print_status "download and extract magic-mirror-photobooth-monitoring repository .zip from Gitlab..."
 exec_cmd "curl -s  --header 'PRIVATE-TOKEN: $DOCKER_PASSWORD' 'https://gitlab.com/api/v4/projects/23382176/repository/archive.tar.gz?sha=$MONITORING_REPO_VERSION' -o /tmp/archive.tar.gz"
-exec_cmd "mkdir $MONITORING_REPO_PATH"
+exec_cmd "mkdir -p $MONITORING_REPO_PATH"
 exec_cmd "tar -xzvf /tmp/archive.tar.gz -C $MONITORING_REPO_PATH --strip-components 1"
 exec_cmd "echo 'DISCORD_WEBHOOK=$DISCORD_WEBHOOK' > $MONITORING_REPO_PATH/.env"
 
 print_status "start up monitoring with 'docker-compose up -d'"
-sudo_exec_cmd "docker-compose up -f $MONITORING_REPO_PATH/docker-compose.yml -d"
+sudo_exec_cmd "docker-compose -f $MONITORING_REPO_PATH/docker-compose.yml up -d"
