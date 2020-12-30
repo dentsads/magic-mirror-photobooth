@@ -119,6 +119,11 @@ if [ -z "$HOME" ]; then
     exit 1
 fi
 
+if [ -z "$DISCORD_WEBHOOK" ]; then
+    echo "You need to set the DISCORD_WEBHOOK environment variable"
+    exit 1
+fi
+
 if ! which docker > /dev/null; then
    echo "docker was not found. Please install it. See here: https://docs.docker.com/install/linux/docker-ce/ubuntu/"
    exit 1
@@ -131,6 +136,11 @@ fi
 
 if ! which s3cmd > /dev/null; then
    echo "s3cmd was not found. Please install it. See here: https://s3tools.org/download"
+   exit 1
+fi
+
+if ! which curl > /dev/null; then
+   echo "curl was not found. Please install it, e.g. with 'apt-get install curl'"
    exit 1
 fi
 
@@ -155,6 +165,8 @@ EVENTS_DIR="$CONFIG_DIR/events"
 LOGS_DIR="$CONFIG_DIR/logs"
 DOCKER_REGISTRY="registry.gitlab.com"
 S3BUCKET="magic-mirror-photobooth-assets"
+MONITORING_REPO_PATH="/tmp/magic-mirror-photobooth-monitoring"
+MONITORING_REPO_VERSION="v0.1"
 
 print_status "Creating asset directory $ASSETS_DIR..."
 exec_cmd_no_sudo "mkdir -p $ASSETS_DIR"
@@ -224,3 +236,13 @@ sudo -E docker run -d \
 --name magic-mirror-photobooth-upload \
 -v $CONFIG_DIR:/root/.magic-mirror-photobooth/ \
 magic-mirror-photobooth-upload
+
+
+print_status "download and extract magic-mirror-photobooth-monitoring repository .zip from Gitlab..."
+exec_cmd "curl -s  --header 'PRIVATE-TOKEN: $DOCKER_PASSWORD' 'https://gitlab.com/api/v4/projects/23382176/repository/archive.tar.gz?sha=$MONITORING_REPO_VERSION' -o /tmp/archive.tar.gz"
+exec_cmd "mkdir $MONITORING_REPO_PATH"
+exec_cmd "tar -xzvf /tmp/archive.tar.gz -C $MONITORING_REPO_PATH --strip-components 1"
+exec_cmd "echo 'DISCORD_WEBHOOK=$DISCORD_WEBHOOK' > $MONITORING_REPO_PATH/.env"
+
+print_status "start up monitoring with 'docker-compose up -d'"
+sudo_exec_cmd "docker-compose up -f $MONITORING_REPO_PATH/docker-compose.yml -d"
