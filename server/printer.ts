@@ -7,8 +7,35 @@ var config_dir = os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 
 var exec = require('child_process').exec
-var execSync = require('child_process').execSync
 var spawnSync = require('child_process').spawnSync
+
+const printerStatusCodesḾessages: Record<number, string> = {
+  "0": "", /*Idle*/
+  "1": "", /*Printing*/
+  "500": "Der Druckerkopf wirkd gekühlt.", /*Cooling Print Head*/
+  "510": "Der Papiermotor wird gekühlt.", /*Cooling Paper Motor*/
+  "900": "Der Drucker scheint sich im Standby Modus zu befinden.", /*Standby Mode*/
+  "1000": "Die Druckertür scheint geöffnet zu sein.", /*Cover Open*/
+  "1010": "Die Schnippselbox scheint am Drucker zu fehlen.", /*No Scrap Box*/
+  "1100": "Die Papierrolle ist nicht richtig eingelegt, oder das Papier ist aufgebraucht.", /*Paper End*/
+  "1200": "Das Farbband ist nicht richtig eingelegt, oder das Farbband ist aufgebraucht.", /*Ribbon End*/
+  "1300": "Die Papierrolle scheint einen Papierstau ausgelöst zu haben.", /*Paper Jam*/
+  "1400": "Es scheint ein unspezfisches Problem mit dem Farbband zu geben.", /*Ribbon Error*/
+  "1500": "Es scheint ein unspezfisches Problem mit der Papierrolle zu geben.", /*Paper Definition Error*/
+  "1600": "Es scheint ein unspezfisches Datenproblem zu geben.", /*Data Error*/
+  "2000": "Es scheint ein Stromproblem mit dem Druckerkopf zu geben.", /*Head Voltage Error*/
+  "2010": "Es scheint ein Stromproblem mit dem Druckerkopf zu geben.", /*USB Power Supply Error*/
+  "2100": "Es scheint ein Problem mit der Position des Druckerkopfs zu geben.", /*Head Position Error*/
+  "2200": "Es scheint ein Problem mit dem Ventilator des eingebauten Netzteils zu geben.", /*Power Supply Fan Error*/
+  "2300": "Es scheint ein Problem mit dem Papierschneider zu geben.", /*Cutter Error*/
+  "2400": "", /*Pinch Roller Error*/
+  "2500": "Es scheint ein Temperaturproblem am Druckerkopf zu geben.", /*Abnormal Head Temperature*/
+  "2600": "Es scheint ein Temperaturproblem am Papier zu geben.", /*Abnormal Media Temperature*/
+  "2610": "Es scheint ein Temperaturproblem am Papiermotor zu geben.", /*Abnormal Paper Motor Temperature*/
+  "2700": "Es scheint ein Problem mit der Spannung des Farbbands zu geben. Entweder die Spannung ist zu groß, oder zu gering.", /*Ribbon Tension Error*/
+  "2800": "Es scheint ein RF-ID Modulproblem zu geben.", /*RF-ID Module Error*/
+  "3000": "Es scheint ein unspezfisches Systemproblem zu geben." /*System Error*/
+};
 
 interface PrinterOptions {
     img: string;
@@ -29,7 +56,14 @@ class Printer {
         })
   }
 
-  public isHealthy(): boolean { 
+  public isHealthy(): boolean {
+    /*
+    let gutenprintStatusSpawn = spawnSync('/usr/lib/cups/backend/gutenprint52+usb', ['-s'], {env: {BACKEND: 'dnpds40'}});
+    let gutenprintStatusCodeGrepSpawn = spawnSync('grep', ['-oP', 'Printer Status:.*\\(\\K.*(?=\\))'], { input: gutenprintStatusSpawn.stderr }).stdout;
+    let statusCode: string = gutenprintStatusCodeGrepSpawn.toString().trim();
+    let isPrinterUp = statusCode === "0" || statusCode === "1";
+    */
+
     let lpinfoSpawn = spawnSync('lpinfo', ['-v']);
     let grepSpawnCode = spawnSync('grep', ['-i', 'direct gutenprint'], { input: lpinfoSpawn.stdout }).status;
     let printerStatusSpawnCode = spawnSync('lpstat', ['-p', this.PRINTER]).status;
@@ -49,19 +83,24 @@ class Printer {
     let gutenprintMediaTotalGrepSpawn = spawnSync('grep', ['-oP', 'Native Prints Available on New Media: \\K.*'], { input: gutenprintStatusSpawn.stderr }).stdout;
     let gutenprintMediaRemainingGrepSpawn = spawnSync('grep', ['-oP', 'Native Prints Remaining on Media: \\K.*'], { input: gutenprintStatusSpawn.stderr }).stdout;
 
-    let mediaTotal: number = Number(gutenprintMediaTotalGrepSpawn.toString().trim())
-    let mediaRemaining: number = Number(gutenprintMediaRemainingGrepSpawn.toString().trim())
+    let mediaTotal: number = Number(gutenprintMediaTotalGrepSpawn.toString().trim());
+    let mediaRemaining: number = Number(gutenprintMediaRemainingGrepSpawn.toString().trim());
     let mediaRemainingPercentage: number = 0;
+
+    let statusMessage: string = gutenprintStatusMessageGrepSpawn.toString().trim();
+    let statusCode: string = gutenprintStatusCodeGrepSpawn.toString().trim();
 
     if (!isNaN(mediaTotal) && !isNaN(mediaRemaining))
       mediaRemainingPercentage = mediaRemaining / mediaTotal * 100;
 
     return { 
-      statusMessage: gutenprintStatusMessageGrepSpawn.toString().trim(),
-      statusCode: gutenprintStatusCodeGrepSpawn.toString().trim(),
+      statusMessage: statusMessage,
+      statusCode: statusCode,
+      statusAlertMessage: statusCode === "" ? "Der Drucker scheint nicht angeschlossen zu sein. Vielleicht ist es ein Stromkabel- oder USB-Problem." : printerStatusCodesḾessages[statusCode],
       mediaTotal: mediaTotal,
       mediaRemaining: mediaRemaining,
-      mediaRemainingPercentage: mediaRemainingPercentage
+      mediaRemainingPercentage: mediaRemainingPercentage,
+      isPrinterUp: statusCode === "0" || statusCode === "1"
     };
 
   }

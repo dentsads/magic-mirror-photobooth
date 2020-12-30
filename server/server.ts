@@ -89,8 +89,8 @@ app.get('/metrics', (req, res) => {
   let printerInfo: any = printer.getPrinterInfo();
 
   let prometheusMetricsExporterJson: string = `
-drucker_status{status_message="${printerInfo.statusMessage}",status_code="${printerInfo.statusCode}"}
-drucker_verbleibendes_papier_prozent{media_total="${printerInfo.mediaTotal}",media_remaining="${printerInfo.mediaRemaining}"} ${printerInfo.mediaRemainingPercentage}
+drucker_verfuegbarkeit{status_message="${printerInfo.statusMessage}",status_code="${printerInfo.statusCode}",status_alert_message="${printerInfo.statusAlertMessage}",device_id="${config.device_id}"} ${printerInfo.isPrinterUp ? 0 : 1}
+drucker_verbleibendes_papier_prozent{media_total="${printerInfo.mediaTotal}",media_remaining="${printerInfo.mediaRemaining}",device_id="${config.device_id}"} ${printerInfo.mediaRemainingPercentage}
 up 1
   `;
   res.setHeader('content-type', 'text/plain');
