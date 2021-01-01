@@ -14,6 +14,7 @@ This will do the following
 * create new containers from both Docker images and start them
 * download a specified version of the magic-mirror-photobooth-monitoring repo
 * create new prometheus and alertmanager containers in magic-mirror-photobooth-monitoring with docker-compose
+* create test alert cron job to trigger hourly
 
 # Bootstrapping of Host Ubuntu Machine
 
