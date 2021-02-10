@@ -417,15 +417,18 @@ You can sync a new version of the `install.sh` or `setup.sh` script  with the `s
 for bootstrapping the installation process of the Docker container run this script
 
 ```bash
-curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E bash -
+curl -sL https://dentsads-public.s3.eu-central-1.amazonaws.com/magic-mirror-photobooth/scripts/install.sh | sudo -E -u $USER bash -
 ```
 
 This will do the following
 
 * download all relevant assets (images, movies) onto the host machine
 * download the latest magic-mirror-photobooth Docker image
-* create a new container from it and start it
-
+* download the latest magic-mirror-photobooth-upload Docker image
+* create new containers from both Docker images and start them
+* download a specified version of the magic-mirror-photobooth-monitoring repo
+* create new prometheus and alertmanager containers in magic-mirror-photobooth-monitoring with docker-compose
+* create test alert cron job to trigger hourly
 ## Bootstrapping of Host Ubuntu machine
 
 for bootstrapping the setup of the Ubuntu host machine run this script
@@ -446,6 +449,9 @@ This will do the following
   * automatically loads the magic-mirror frontend URL
   * disables the session crashed popups
   * disables the "Tranlate UI" feature
+* add current user to docker group
+* install electron frontend app .deb file
+* add udev rules in order to map the touchframe to the right output screen when the USB is plugged in
 
 # Create photo gallery code brochure
 
