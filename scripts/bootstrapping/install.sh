@@ -170,7 +170,7 @@ EVENTS_DIR="$CONFIG_DIR/events"
 LOGS_DIR="$CONFIG_DIR/logs"
 DOCKER_REGISTRY="registry.gitlab.com"
 S3BUCKET="magic-mirror-photobooth-assets"
-MONITORING_REPO_PATH="/tmp/magic-mirror-photobooth-monitoring"
+MONITORING_REPO_PATH="$CONFIG_DIR/monitoring"
 MONITORING_REPO_VERSION="v0.4"
 
 print_status "Creating asset directory $ASSETS_DIR..."
@@ -245,11 +245,13 @@ magic-mirror-photobooth-upload
 
 print_status "download and extract magic-mirror-photobooth-monitoring repository tarball from Gitlab..."
 exec_cmd "curl -s  --header 'PRIVATE-TOKEN: $DOCKER_PASSWORD' 'https://gitlab.com/api/v4/projects/23382176/repository/archive.tar.gz?sha=$MONITORING_REPO_VERSION' -o /tmp/archive.tar.gz"
+exec_cmd "rm -rf $MONITORING_REPO_PATH"
 exec_cmd "mkdir -p $MONITORING_REPO_PATH"
-sudo_exec_cmd "tar -xzvf /tmp/archive.tar.gz -C $MONITORING_REPO_PATH --strip-components 1"
-sudo_exec_cmd "echo 'DISCORD_WEBHOOK=$DISCORD_WEBHOOK' > $MONITORING_REPO_PATH/.env"
+exec_cmd "tar -xzvf /tmp/archive.tar.gz -C $MONITORING_REPO_PATH --strip-components 1"
+exec_cmd "echo 'DISCORD_WEBHOOK=$DISCORD_WEBHOOK' > $MONITORING_REPO_PATH/.env"
 
 print_status "start up monitoring with 'docker-compose up -d'"
+sudo_exec_cmd "docker-compose -f $MONITORING_REPO_PATH/docker-compose.yml down"
 sudo_exec_cmd "docker-compose -f $MONITORING_REPO_PATH/docker-compose.yml up -d"
 
 print_status "add test alert cron job to trigger hourly"
