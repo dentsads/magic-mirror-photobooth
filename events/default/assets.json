@@ -12,6 +12,7 @@
             }            
         },
         "acceptPhoto": { 
+            "assetButtonClear": "api/assets/undo-regular-240.png", 
             "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
             "assetButtonNokPath": "api/assets/x-circle-solid-240.png"
         },

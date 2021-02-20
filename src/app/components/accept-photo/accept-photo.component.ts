@@ -2,10 +2,12 @@ import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../services/routing.service';
+import { fabric } from 'fabric';
 import { of, Subject, Subscription } from 'rxjs';
 import { map, switchMap, takeUntil, repeat, delay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import QRCode from 'qrcode';
+import MicroModal from 'micromodal';
 
 @Component({
   selector: 'app-accept-photo',
@@ -16,6 +18,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
   componentData: any;
+  canvas: any;
   document;
 
   readonly MAX_RETRY:number=60;
@@ -37,9 +40,34 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
       this.componentData = await this.routingService.getComponentData();  
       
       if (this.componentData.context) {
-        this.getPresignedUrl(this.componentData.context.photoPath)
-      }        
-    });    
+        this.getPresignedUrl(this.componentData.context.photoPath)        
+        
+        this.canvas = new fabric.Canvas('canvas-image');
+        fabric.Image.fromURL("http://localhost:4200/api/photos/default/a75qma_random.jpg", (img) => {
+          // add background image
+
+          this.canvas.setHeight(img.height);
+          this.canvas.setWidth(img.width);
+          this.canvas.setBackgroundImage(img, this.canvas.renderAll.bind(this.canvas));
+
+          this.canvas.renderAll();
+        });
+
+        //this.canvas.setBackgroundImage(this.componentData.context.photoPath, this.canvas.renderAll.bind(this.canvas));              
+      }              
+
+    });
+
+    MicroModal.init({
+      onShow: modal => console.info(`${modal.id} is shown`), // [1]
+      onClose: modal => console.info(`${modal.id} is hidden`), // [2]
+      openClass: 'is-open', // [5]
+      disableScroll: true, // [6]
+      disableFocus: false, // [7]
+      awaitOpenAnimation: false, // [8]
+      awaitCloseAnimation: false, // [9]
+      debugMode: false // [10]
+    });
     
   }
 
@@ -105,6 +133,11 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     });
   }
 
+  handleClearCanvas() {
+    // remove all objects but leave background image alone
+    this.canvas.remove(...this.canvas.getObjects());
+  }
+
   handleCanvas() {
     // fade in canvas
     this.document.getElementById('canvas-qr-div').style.opacity = '1';     
@@ -113,6 +146,24 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
   handleImage() {
     // fade in image
     this.document.getElementById('overlay-outer').style.opacity = '1';    
+  }
+
+  handleOpenEmojiModal() {
+    MicroModal.show('modal-1');  
+  }
+
+  handleCloseEmojiModal() {
+    MicroModal.close('modal-1');  
+  }
+
+  handleEmojiEvent(emojiCode: string) {
+    //this.canvas.add(new fabric.Text(String.fromCodePoint(0x1F354), { top: 200, left: 200 }))
+    let emoji = new fabric.Text(emojiCode, { fontSize: 80, originY: "center", originX: "center"});
+    this.canvas.add(emoji);
+    emoji.center();
+    emoji.setCoords();
+    this.document.getElementById('emoji-placeholder').innerHTML = emojiCode;
+    MicroModal.close('modal-1');
   }
 
 }
