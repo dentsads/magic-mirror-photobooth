@@ -31,6 +31,11 @@ interface CompositorOptions {
   overlayTextOffset: string;
 }
 
+interface IndividualCompositorOptions {  
+  imgSrc: string;
+  imageDataURL: string;
+}
+
 const templateImageOffsets: Record<string,string[]> = {
   'THREE_UNIFORM': [ '+50+245', '+627+245', '+1218+245' ],
   'THREE_NON_UNIFORM': [ '+98+199', '+617+144', '+1248+199' ]
@@ -53,6 +58,19 @@ class ImageCompositor {
   private readonly DRAWING_FILE:string = this.PHOTOS_DIR + '/drawing.png'
 
   public constructor() {}
+
+  public compositeIndividual(options: IndividualCompositorOptions, cb: (stdout?: object, e?: Error) => void): void {
+    if (options.imgSrc == undefined || options.imgSrc === '')
+      return cb(null, ErrorHandler.createError("1","No source image to composite has been specified."));
+    if (options.imageDataURL === '')
+      return cb(null, ErrorHandler.createError("1","No image data URL to composite has been specified."));
+
+    let imageBase64 = options.imageDataURL.replace(/^data:image\/\w+;base64,/, "");
+    let bufferedImage = Buffer.from(imageBase64, 'base64');
+    fs.writeFileSync(this.EVENT_PHOTOS_DIR + '/' + options.imgSrc, bufferedImage);
+
+    return cb({ "result" : this.EVENT_PHOTOS_DIR + '/' + options.imgSrc });
+  }
 
   public composite(options: CompositorOptions, cb: (stdout?: object, e?: Error) => void): void {
     if (options.imgSrcList.length == undefined)

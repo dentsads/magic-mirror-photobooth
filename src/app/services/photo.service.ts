@@ -14,8 +14,14 @@ export class PhotoService {
     return axios.post('/api/dslr/capture', options);
   }
 
+  // Composite end result photo
   async compositePhoto(options?: any): Promise<AxiosResponse<any>> {
     return axios.post('/api/compositor/composite', options);
+  }
+
+  // Composite individual photo
+  async compositeIndividualPhoto(options?: any): Promise<AxiosResponse<any>> {
+    return axios.post('/api/compositor/composite_individual', options);
   }
 
 }

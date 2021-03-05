@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Anim1 } from '../models/anim1.model';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Machine, interpret, AnyEventObject } from 'xstate';
@@ -135,10 +134,11 @@ export class RoutingService {
           },                
           setCapturedPhoto: (context, event) => {
             // handle success
-            const capturedPhotoPath = event.data.data.result.imagePath;
-            context.photoPath = 'api/photos/' + config.event_id + '/' + capturedPhotoPath;
+            const capturedPhotoFile = event.data.data.result.imagePath;
+            context.capturedPhotoFile = capturedPhotoFile;
+            context.photoPath = 'api/photos/' + config.event_id + '/' + capturedPhotoFile;
             context.exifOrientation = event.data.data.result.exifOrientation;
-            context.capturedPhotoPaths.push(capturedPhotoPath);         
+            context.capturedPhotoPaths.push(capturedPhotoFile);         
           },
           popCapturedPhotos: (context, event) => {
             context.capturedPhotoPaths.pop();
@@ -149,7 +149,11 @@ export class RoutingService {
             context.photoPath = capturedPhotoPath;
             context.exifOrientation = 1;
             context.capturedPhotoPaths = [];     
-          }        
+          },
+          compositeIndividualPhoto: (context, event) => this.photoService.compositeIndividualPhoto({
+            imgSrc: context.capturedPhotoFile,
+            imageDataURL: event.imageDataURL            
+          })        
         },
         delays: {
           FINISH_ANIM: (context, event: AnyEventObject) => {

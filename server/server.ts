@@ -161,6 +161,20 @@ app.post('/api/compositor/composite', (req, res, next) => {
   })    
 })
 
+app.post('/api/compositor/composite_individual', (req, res, next) => {
+  var jsonObj = req.body
+
+  compositor.compositeIndividual(jsonObj, (out, err) => {
+    if (err) {
+      logger.log('error', err);
+      res.status(500).send(err).end()
+    } else {
+      logger.log('info', out);
+      res.status(200).send(out).end()
+    }          
+  })    
+})
+
 app.post('/api/dslr/capture', (req, res, next) => {
   var jsonObj = req.body
 

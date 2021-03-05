@@ -1,9 +1,10 @@
 {
   "id": "root",
-  "initial": "intro",
+  "initial": "capturePhoto",
   "context": {
     "capturedPhotoPaths": [],
     "exifOrientation": 1,
+    "capturedPhotoFile": "",
     "photoPath": "",
     "maxNumberOfPhotos": {{{maxNumberOfPhotos}}},
     "compositeConfig": {
@@ -155,15 +156,16 @@
       "entry": ["updateMetaAssetsWithContext", "transition"],
       "meta": { 
         "path": "/accept-photo", 
-        "assets": { 
+        "assets": {
+            "assetButtonClear": "{{{assets.acceptPhoto.assetButtonClear}}}", 
             "assetButtonOkPath": "{{{assets.acceptPhoto.assetButtonOkPath}}}", 
             "assetButtonNokPath": "{{{assets.acceptPhoto.assetButtonNokPath}}}"
         }
       },
       "on": {
         "event.accept-photo.01": [
-          { "target": "drawing", "cond": "targetNumberOfPhotosReached" },
-          { "target": "countdown"}
+          { "target": "drawing", "cond": "targetNumberOfPhotosReached", "actions": "compositeIndividualPhoto" },
+          { "target": "countdown", "actions": "compositeIndividualPhoto" }
         ],
         "event.accept-photo.02": {
           "target": "countdown",
