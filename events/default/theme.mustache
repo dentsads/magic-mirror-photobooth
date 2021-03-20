@@ -5,6 +5,7 @@
     "capturedPhotoPaths": [],
     "exifOrientation": 1,
     "photoPath": "",
+    "maxNumberOfPrints": {{{maxNumberOfPrints}}},
     "maxNumberOfPhotos": {{{maxNumberOfPhotos}}},
     "compositeConfig": {
         "templateLayout": "{{{assets.compositePhoto.compositeConfig.templateLayout}}}",                                
@@ -216,7 +217,10 @@
         }
       },
       "on": {
-        "event.accept-photo.01": "selectPrintPhotos",
+        "event.accept-photo.01": [
+          { "target": "selectPrintPhotos", "cond": "dontSkipSelectPrintPhotos" },
+          { "target": "printPhoto" }
+        ],
         "event.accept-photo.02": "countdown"
       }
     },

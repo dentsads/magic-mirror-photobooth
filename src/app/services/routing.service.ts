@@ -160,6 +160,9 @@ export class RoutingService {
         guards: {
           targetNumberOfPhotosReached: (context, event) => {
             return context.capturedPhotoPaths.length >= context.maxNumberOfPhotos;
+          },
+          dontSkipSelectPrintPhotos: (context, event) => {
+            return context.maxNumberOfPrints > 1;
           }
         },
         services: {
@@ -179,7 +182,7 @@ export class RoutingService {
           }),
           printPhoto: (context, event) => this.printService.printPhoto({
             img: 'printable_result.png',
-            numberOfCopies: event.numberOfCopies
+            numberOfCopies: event.numberOfCopies == undefined ? 1 : event.numberOfCopies
           })
         }
       });
