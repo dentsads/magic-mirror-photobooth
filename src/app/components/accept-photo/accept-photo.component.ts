@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../services/routing.service';
 import { fabric } from 'fabric';
 import { of, Subject, Subscription } from 'rxjs';
-import { map, switchMap, takeUntil, repeat, delay } from 'rxjs/operators';
+import { map, switchMap, takeUntil, takeWhile, repeat, delay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import QRCode from 'qrcode';
 import MicroModal from 'micromodal';
@@ -70,9 +70,28 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
-      this.componentData = await this.routingService.getComponentData();  
+      this.componentData = await this.routingService.getComponentData();      
       
+      console.log(this.componentData.context.photoPath === undefined)
+      console.log(this.componentData.context.photoPath == undefined)
+      console.log(this.componentData.context.photoPath == null)
+
       if (this.componentData.context) {
+
+        await new Promise<void>(resolve => {
+          // declare some global variable to check in while loop
+          while(this.componentData.context.photoPath === undefined){
+              console.log("Waiting..")
+              setTimeout(()=> {
+                  // Just adding some delay 
+                  // (you can remove this setTimeout block if you want)                  
+              },50);
+          }
+
+          // when while-loop breaks, resolve the promise to continue
+          resolve();
+        }); 
+
         this.getPresignedUrl(this.componentData.context.photoPath)        
         
         this.canvas = new fabric.Canvas('canvas-image');
@@ -93,7 +112,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
         console.log(this.componentData.context.photoPath)
         //http://localhost:4200/api/photos/default/0uy71b_random.jpg
         //fabric.Image.fromURL(this.componentData.context.photoPath, (img) => {
-        fabric.Image.fromURL("http://localhost:4200/api/photos/default/0uy71b_random.jpg", (img) => {
+        fabric.Image.fromURL(this.componentData.context.photoPath, (img) => {
           // add background image
 
           this.canvas.setHeight(img.height);
