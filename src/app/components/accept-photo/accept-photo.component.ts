@@ -71,26 +71,8 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
       this.componentData = await this.routingService.getComponentData();      
-      
-      console.log(this.componentData.context.photoPath === undefined)
-      console.log(this.componentData.context.photoPath == undefined)
-      console.log(this.componentData.context.photoPath == null)
 
       if (this.componentData.context) {
-
-        await new Promise<void>(resolve => {
-          // declare some global variable to check in while loop
-          while(this.componentData.context.photoPath === undefined){
-              console.log("Waiting..")
-              setTimeout(()=> {
-                  // Just adding some delay 
-                  // (you can remove this setTimeout block if you want)                  
-              },50);
-          }
-
-          // when while-loop breaks, resolve the promise to continue
-          resolve();
-        }); 
 
         this.getPresignedUrl(this.componentData.context.photoPath)        
         
@@ -108,24 +90,23 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
         fabric.Object.prototype.hasBorders = false;
         fabric.Object.prototype.cornerSize = 40;
 
-        console.log("photoPath:")
-        console.log(this.componentData.context.photoPath)
         //http://localhost:4200/api/photos/default/0uy71b_random.jpg
         //fabric.Image.fromURL(this.componentData.context.photoPath, (img) => {
-        fabric.Image.fromURL(this.componentData.context.photoPath, (img) => {
-          // add background image
 
+       let img = new Image();
+       img.addEventListener( 'load', () => {
+        fabric.Image.fromURL(this.componentData.context.photoPath, (img, err) => {
           this.canvas.setHeight(img.height);
-          this.canvas.setWidth(img.width);          
+          this.canvas.setWidth(img.width);
+    
           this.canvas.setBackgroundImage(img, () => {
             this.canvas.requestRenderAll();
             this.handleImage();
           });
-
-          //this.canvas.requestRenderAll();
-          //this.handleImage();
-        });
-
+        }); 
+       }, false );
+       img.src = this.componentData.context.photoPath;
+        
       } else {
         console.log("context still not loaded")
       }         
