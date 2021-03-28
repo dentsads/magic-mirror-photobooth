@@ -157,7 +157,8 @@
       "entry": ["updateMetaAssetsWithContext", "transition"],
       "meta": { 
         "path": "/accept-photo", 
-        "assets": {
+        "isFinalAcceptComponent": false,
+        "assets": {            
             "assetButtonClear": "{{{assets.acceptPhoto.assetButtonClear}}}", 
             "assetButtonOkPath": "{{{assets.acceptPhoto.assetButtonOkPath}}}", 
             "assetButtonNokPath": "{{{assets.acceptPhoto.assetButtonNokPath}}}"
@@ -213,7 +214,8 @@
       "entry": ["transition", "updateMetaAssetsWithContext"],
       "meta": { 
         "path": "/accept-photo", 
-        "assets": { 
+        "isFinalAcceptComponent": true,
+        "assets": {            
             "assetButtonOkPath": "{{{assets.acceptCompositedPhoto.assetButtonOkPath}}}", 
             "assetButtonNokPath": "{{{assets.acceptCompositedPhoto.assetButtonNokPath}}}"                
         }

@@ -40,7 +40,7 @@ export class RoutingService {
     await this.sleep(ms)
   }
   
-  async getComponentData() {
+  async getComponentMetadata() {
     let counter:number = 0
     while (!this.currentTheme && counter < 50) {
       console.log("Loading theme profile. Please wait...");
@@ -49,7 +49,7 @@ export class RoutingService {
     }
 
     const metadata: any = Object.values(this.currentTheme.state.meta).shift();
-    return metadata.assets;
+    return metadata;
   }
   
   fetchProfile(): Observable<any> {
