@@ -97,11 +97,17 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
         //http://localhost:4200/api/photos/default/0uy71b_random.jpg
         //fabric.Image.fromURL(this.componentData.context.photoPath, (img) => {
 
+        await this.sleep(2000)
+
         let image = new Image();
         image.addEventListener( 'load', () => {
           fabric.Image.fromURL(this.componentData.context.photoPath, (img, err) => {
-            this.canvas.setHeight(img.height);
-            this.canvas.setWidth(img.width);
+            
+            if (img.width > 800)
+              img = img.scaleToWidth(800);
+            
+            this.canvas.setHeight(img.height*img.scaleY);
+            this.canvas.setWidth(img.width*img.scaleX);
       
             this.canvas.setBackgroundImage(img, () => {
               this.canvas.requestRenderAll();
