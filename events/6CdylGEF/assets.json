@@ -24,13 +24,7 @@
             "assetPath": "api/assets/wedding_01_loveinair_01.mp4",
             "compositeConfig": {
                 "templateLayout": "THREE_NON_UNIFORM",                                
-                "overlayImage": "05_Fotospiegel_Nici_Markus.png",
-                "logoImage": "fotospiegelwelt_logo2_scaled.png",
-                "logoImageOffset": "+160+885",
-                "logoImageSize": "80",
-                "overlayText": "www.fotospiegelwelt.de",
-                "overlayTextSize": "30",
-                "overlayTextOffset": "+240+940"
+                "overlayImage": "05_Fotospiegel_Nici_Markus.png"
             }
         },
         "acceptCompositedPhoto": { 
