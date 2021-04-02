@@ -66,7 +66,7 @@ class ImageCompositor {
     ]
 
     let uuidFileName = uuidv4() + '_collage.png'
-    let logoImage = options.logoImage == undefined ? undefined : this.ASSETS_DIR + '/' + options.logoImage;
+    let logoImage = options.logoImage == '' ? '' : this.ASSETS_DIR + '/' + options.logoImage;
     let logoImageSize: string = options.logoImageSize ? options.logoImageSize : '200';
     let overlayLogoImgOffset: string = options.logoImageOffset ? options.logoImageOffset : '+10+10';
     let overlayText: string = options.overlayText ? options.overlayText : '';
