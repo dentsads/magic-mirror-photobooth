@@ -17,7 +17,7 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
   componentData: any;
   canvas: any;
 
-  drawingLineWidth = 8;
+  drawingLineWidth = 10;
   drawingColor = '#ffffff';
   drawingShadowColor = '#004aff';
   drawingShadowWidth = 12;
@@ -48,7 +48,7 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
     // Color picker
     const pickr = Pickr.create({
       el: '.color-picker',
-      theme: 'nano', // or 'monolith', or 'nano'
+      theme: 'classic', // or 'monolith', or 'nano'
       comparison: false,
       default: this.drawingShadowColor,
       swatches: [
@@ -114,6 +114,7 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
 
   handleDrawingShadowColorElChange(color) {
     this.drawingShadowColor = color;
+    this.canvas.freeDrawingBrush.color = this.drawingShadowColor;
     this.canvas.freeDrawingBrush.shadow.color = this.drawingShadowColor;
   }
 
