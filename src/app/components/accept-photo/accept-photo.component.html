@@ -1,5 +1,5 @@
 <div [hidden]="!componentData" style="position: relative; padding: 60px;">
-  <div id="overlay-outer">
+  <div id="overlay-outer">    
     <canvas id="canvas-image"></canvas>
     <div *ngIf="componentData" (click)="handleEvent('event.accept-photo.01')" class="overlay-right"><img src="{{componentData.assetButtonOkPath}}"></div>
     <div *ngIf="componentData && !isFinalAcceptComponent" (click)="handleClearCanvas()" id="button-clear" class="overlay-clear"><img src="{{componentData.assetButtonClear}}"></div>
