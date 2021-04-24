@@ -59,6 +59,7 @@ Also create symlinks to `/usr/local/bin` otherwise you won't have `node` and `np
 ```
 sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
 sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
+sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npx" "/usr/local/bin/npx"
 ```
 
 ## Build and run application
@@ -78,7 +79,9 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Run `npm run e2e-gui` to execute the GUI based end-to-end tests via [Cypress](https://docs.cypress.io/).
+
+Run `npm run e2e` to execute the headless end-to-end tests via [Cypress](https://docs.cypress.io/).
 
 ## Updating all node dependencies to their latest version
 

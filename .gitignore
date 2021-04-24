@@ -49,8 +49,6 @@ Thumbs.db
 # Logs
 /logs
 
-
-
 # Logs
 logs
 *.log
@@ -140,3 +138,11 @@ typings/
 
 # Electron-Forge
 out/
+
+# Cypress videos and screenshots
+cypress/screenshots
+cypress/videos
+
+# Cypress.json envs
+cypress.json
+cypress.env.json

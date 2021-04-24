@@ -1,0 +1,334 @@
+{
+    "id": "root",
+    "initial": "drawing",
+    "context": {
+      "capturedPhotoPaths": [],
+      "exifOrientation": 1,
+      "photoPath": "",
+      "maxNumberOfPrints": 1,
+      "maxNumberOfPhotos": 3,
+      "compositeConfig": {
+        "templateLayout": "THREE_NON_UNIFORM",
+        "overlayImage": "wedding_01_overlay_base_01.png",
+        "logoImage": "fotospiegelwelt_logo2_scaled.png",
+        "logoImageOffset": "+160+885",
+        "logoImageSize": "80",
+        "overlayText": "www.fotospiegelwelt.de",
+        "overlayTextSize": "30",
+        "overlayTextOffset": "+240+940"
+      },
+      "triggerLedConfig": {
+        "animationType": "ball",
+        "direction": "RIGHT",
+        "color": "rgb(0, 0, 150)",
+        "loops": 1
+      }
+    },
+    "states": {
+      "intro": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/intro",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_touchtostart_02.mp4",
+            "website": "www.fotospiegelwelt.de"
+          }
+        },
+        "on": {
+          "event.intro.01": {
+            "target": "mirrotWillTakePhotos"
+          }
+        }
+      },
+      "mirrotWillTakePhotos": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/6",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_mirrorwilltakephotos_01.mp4"
+          }
+        },
+        "initial": "anim_loaded",
+        "states": {
+          "anim_loaded": {
+            "on": {
+              "event.anim1.01": {
+                "target": "anim_running"
+              }
+            }
+          },
+          "anim_running": {
+            "after": {
+              "FINISH_ANIM": "#root.countdown"
+            }
+          }
+        }
+      },
+      "countdown": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/3",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_countdown_01.mp4",
+            "website": "www.fotospiegelwelt.de"
+          }
+        },
+        "initial": "anim_loaded",
+        "states": {
+          "anim_loaded": {
+            "on": {
+              "event.anim1.01": {
+                "target": "anim_running"
+              }
+            }
+          },
+          "anim_running": {
+            "after": {
+              "FINISH_ANIM": "#root.lookAtCamera"
+            }
+          }
+        }
+      },
+      "lookAtCamera": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/8",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_lookatcamera_02.mp4"
+          }
+        },
+        "initial": "anim_loaded",
+        "states": {
+          "anim_loaded": {
+            "on": {
+              "event.anim1.01": {
+                "target": "anim_running",
+                "actions": "triggerLed"
+              }
+            }
+          },
+          "anim_running": {
+            "after": {
+              "FINISH_ANIM": "#root.clearLed"
+            }
+          }
+        }
+      },
+      "clearLed": {
+        "invoke": {
+          "id": "clear",
+          "src": "clearLed",
+          "onDone": {
+            "target": "capturePhoto",
+            "actions": "logClearLed"
+          },
+          "onError": {
+            "target": "capturePhoto",
+            "actions": "logError"
+          }
+        }
+      },
+      "capturePhoto": {
+        "invoke": {
+          "id": "capture",
+          "src": "capturePhoto",
+          "onDone": {
+            "target": "acceptPhoto",
+            "actions": "setCapturedPhoto"
+          },
+          "onError": {
+            "target": "errorPage",
+            "actions": "logError"
+          }
+        }
+      },
+      "acceptPhoto": {
+        "entry": [
+          "updateMetaAssetsWithContext",
+          "transition"
+        ],
+        "meta": {
+          "path": "/accept-photo",
+          "assets": {
+            "assetButtonOkPath": "api/assets/check-circle-solid-240.png",
+            "assetButtonNokPath": "api/assets/x-circle-solid-240.png"
+          }
+        },
+        "on": {
+          "event.accept-photo.01": [
+            {
+              "target": "drawing",
+              "cond": "targetNumberOfPhotosReached"
+            },
+            {
+              "target": "countdown"
+            }
+          ],
+          "event.accept-photo.02": {
+            "target": "countdown",
+            "actions": "popCapturedPhotos"
+          }
+        }
+      },
+      "drawing": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/drawing",
+          "assets": {
+            "assetButtonClear": "api/assets/undo-regular-240.png",
+            "assetButtonOk": "api/assets/check-circle-regular-240.png",
+            "assetButtonColor": "api/assets/color-fill-solid-240.png"
+          }
+        },
+        "on": {
+          "event.drawing-tool.01": "compositePhoto"
+        }
+      },
+      "compositePhoto": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/6",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_loveinair_01.mp4"
+          }
+        },
+        "invoke": {
+          "id": "composite",
+          "src": "compositePhoto",
+          "onDone": {
+            "target": "acceptCompositedPhoto",
+            "actions": "clearCapturedPhotos"
+          },
+          "onError": {
+            "target": "errorPage",
+            "actions": "logError"
+          }
+        }
+      },
+      "acceptCompositedPhoto": {
+        "entry": [
+          "transition",
+          "updateMetaAssetsWithContext"
+        ],
+        "meta": {
+          "path": "/accept-photo",
+          "assets": {
+            "assetButtonOkPath": "api/assets/check-circle-solid-240.png",
+            "assetButtonNokPath": "api/assets/x-circle-solid-240.png"
+          }
+        },
+        "on": {
+          "event.accept-photo.01": [
+            {
+              "target": "selectPrintPhotos",
+              "cond": "dontSkipSelectPrintPhotos"
+            },
+            {
+              "target": "printPhoto"
+            }
+          ],
+          "event.accept-photo.02": "countdown"
+        }
+      },
+      "selectPrintPhotos": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/select-print-photos",
+          "assets": {
+            "assetButtonPlus": "api/assets/plus-circle-regular-240.png",
+            "assetButtonMinus": "api/assets/minus-circle-regular-240.png",
+            "assetButtonPrinter": "api/assets/printer-regular-240.png",
+            "maxNumberOfPrints": "1"
+          }
+        },
+        "on": {
+          "event.select-print-photos.01": "printPhoto"
+        }
+      },
+      "printPhoto": {
+        "invoke": {
+          "id": "print",
+          "src": "printPhoto",
+          "onDone": {
+            "target": "mirrorWillPrintPhotos",
+            "actions": "logStatus"
+          },
+          "onError": {
+            "target": "errorPage",
+            "actions": "logError"
+          }
+        }
+      },
+      "mirrorWillPrintPhotos": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/7",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_mirrorwillprintphotos_01.mp4"
+          }
+        },
+        "initial": "anim_loaded",
+        "states": {
+          "anim_loaded": {
+            "on": {
+              "event.anim1.01": {
+                "target": "anim_running"
+              }
+            }
+          },
+          "anim_running": {
+            "after": {
+              "FINISH_ANIM": "#root.infoPage"
+            }
+          }
+        }
+      },
+      "infoPage": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/info",
+          "assets": {
+            "assetButtonOkPath": "api/assets/check-circle-solid-240.png",
+            "brochureImage": "api/assets/gallery_code_onepager.png",
+            "galleryCode": "default"
+          }
+        },
+        "on": {
+          "event.info-page.01": "intro"
+        }
+      },
+      "errorPage": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/error",
+          "assets": {
+            "assetButtonHome": "api/assets/home-solid-240.png",
+            "phoneNumber": "+49 176 62297047"
+          }
+        },
+        "on": {
+          "event.error-page.01": "intro"
+        }
+      }
+    }
+  }
