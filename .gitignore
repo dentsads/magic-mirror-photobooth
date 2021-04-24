@@ -144,5 +144,4 @@ cypress/screenshots
 cypress/videos
 
 # Cypress.json envs
-cypress.json
 cypress.env.json

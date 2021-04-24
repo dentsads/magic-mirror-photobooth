@@ -1,0 +1,126 @@
+{
+    "id": "root",
+    "initial": "intro",
+    "context": {
+      "capturedPhotoPaths": [],
+      "exifOrientation": 1,
+      "photoPath": "",
+      "maxNumberOfPrints": 1,
+      "maxNumberOfPhotos": 3,
+      "compositeConfig": {
+        "templateLayout": "THREE_NON_UNIFORM",
+        "overlayImage": "wedding_01_overlay_base_01.png",
+        "logoImage": "fotospiegelwelt_logo2_scaled.png",
+        "logoImageOffset": "+160+885",
+        "logoImageSize": "80",
+        "overlayText": "www.fotospiegelwelt.de",
+        "overlayTextSize": "30",
+        "overlayTextOffset": "+240+940"
+      },
+      "triggerLedConfig": {
+        "animationType": "ball",
+        "direction": "RIGHT",
+        "color": "rgb(0, 0, 150)",
+        "loops": 1
+      }
+    },
+    "states": {
+      "intro": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/intro",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_touchtostart_02.mp4",
+            "website": "www.fotospiegelwelt.de"
+          }
+        },
+        "on": {
+          "event.intro.01": {
+            "target": "mirrotWillTakePhotos"
+          }
+        }
+      },
+      "mirrotWillTakePhotos": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/6",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_mirrorwilltakephotos_01.mp4"
+          }
+        },
+        "initial": "anim_loaded",
+        "states": {
+          "anim_loaded": {
+            "on": {
+              "event.anim1.01": {
+                "target": "anim_running"
+              }
+            }
+          },
+          "anim_running": {
+            "after": {
+              "FINISH_ANIM": "#root.countdown"
+            }
+          }
+        }
+      },
+      "countdown": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/3",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_countdown_01.mp4",
+            "website": "www.fotospiegelwelt.de"
+          }
+        },
+        "initial": "anim_loaded",
+        "states": {
+          "anim_loaded": {
+            "on": {
+              "event.anim1.01": {
+                "target": "anim_running"
+              }
+            }
+          },
+          "anim_running": {
+            "after": {
+              "FINISH_ANIM": "#root.lookAtCamera"
+            }
+          }
+        }
+      },
+      "lookAtCamera": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/8",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_lookatcamera_02.mp4"
+          }
+        },
+        "initial": "anim_loaded",
+        "states": {
+          "anim_loaded": {
+            "on": {
+              "event.anim1.01": {
+                "target": "anim_running",
+                "actions": "triggerLed"
+              }
+            }
+          },
+          "anim_running": {
+            "after": {
+              "FINISH_ANIM": "#root.intro"
+            }
+          }
+        }
+      }
+    }
+  }

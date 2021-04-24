@@ -1,0 +1,108 @@
+{
+    "id": "root",
+    "initial": "drawing",
+    "context": {
+      "capturedPhotoPaths": [],
+      "exifOrientation": 1,
+      "photoPath": "",
+      "maxNumberOfPrints": 1,
+      "maxNumberOfPhotos": 3,
+      "compositeConfig": {
+        "templateLayout": "THREE_NON_UNIFORM",
+        "overlayImage": "wedding_01_overlay_base_01.png",
+        "logoImage": "fotospiegelwelt_logo2_scaled.png",
+        "logoImageOffset": "+160+885",
+        "logoImageSize": "80",
+        "overlayText": "www.fotospiegelwelt.de",
+        "overlayTextSize": "30",
+        "overlayTextOffset": "+240+940"
+      },
+      "triggerLedConfig": {
+        "animationType": "ball",
+        "direction": "RIGHT",
+        "color": "rgb(0, 0, 150)",
+        "loops": 1
+      }
+    },
+    "states": {
+      "drawing": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/drawing",
+          "assets": {
+            "assetButtonClear": "api/assets/undo-regular-240.png",
+            "assetButtonOk": "api/assets/check-circle-regular-240.png",
+            "assetButtonColor": "api/assets/color-fill-solid-240.png"
+          }
+        },
+        "on": {
+          "event.drawing-tool.01": "compositePhoto"
+        }
+      },
+      "compositePhoto": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/anim1/6",
+          "assets": {
+            "assetPath": "api/assets/wedding_01_loveinair_01.mp4"
+          }
+        },
+        "invoke": {
+          "id": "composite",
+          "src": "compositePhoto",
+          "onDone": {
+            "target": "acceptCompositedPhoto",
+            "actions": "clearCapturedPhotos"
+          },
+          "onError": {
+            "target": "errorPage",
+            "actions": "logError"
+          }
+        }
+      },
+      "acceptCompositedPhoto": {
+        "entry": [
+          "transition",
+          "updateMetaAssetsWithContext"
+        ],
+        "meta": {
+          "path": "/accept-photo",
+          "assets": {
+            "assetButtonOkPath": "api/assets/check-circle-solid-240.png",
+            "assetButtonNokPath": "api/assets/x-circle-solid-240.png"
+          }
+        },
+        "on": {
+          "event.accept-photo.01": [
+            {
+              "target": "drawing",
+              "cond": "dontSkipSelectPrintPhotos"
+            },
+            {
+              "target": "drawing"
+            }
+          ],
+          "event.accept-photo.02": "drawing"
+        }
+      },
+      "errorPage": {
+        "entry": [
+          "transition"
+        ],
+        "meta": {
+          "path": "/error",
+          "assets": {
+            "assetButtonHome": "api/assets/home-solid-240.png",
+            "phoneNumber": "+49 176 12345678"
+          }
+        },
+        "on": {
+          "event.error-page.01": "drawing"
+        }
+      }
+    }
+  }
