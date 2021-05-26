@@ -7,7 +7,7 @@ const fs = require('fs')
 const os = require('os')
 const { v4: uuidv4 } = require('uuid');
 
-var config_dir = os.homedir() + "/" + config.config_dir;
+var config_dir = process.env.PHOTOBOOTH_BASE_PATH || os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var assets_dir = config_dir + "/" + config.assets_sub_dir;
 var event_photos_dir = photos_dir + "/" + config.event_id;

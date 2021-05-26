@@ -7,7 +7,6 @@ import { LedService } from './led.service';
 import { PhotoService } from './photo.service';
 import { LoggerService } from './logger.service'
 import { PrinterService } from './printer.service';
-import config from '../../../config.json'
 import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({
@@ -136,7 +135,8 @@ export class RoutingService {
           setCapturedPhoto: (context, event) => {
             // handle success
             const capturedPhotoPath = event.data.data.result.imagePath;
-            context.photoPath = 'api/photos/' + config.event_id + '/' + capturedPhotoPath;
+            const eventId = event.data.data.result.eventId;
+            context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = event.data.data.result.exifOrientation;
             context.capturedPhotoPaths.push(capturedPhotoPath);         
           },

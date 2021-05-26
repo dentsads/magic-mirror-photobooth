@@ -105,6 +105,14 @@ export PHOTOBOOTH_PRINTER_MOCK=1
 
 Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to know exactly where they are put look for the `Out` config in `/etc/cups/cups-pdf.conf`
 
+# Changing the base config path
+
+You can decide to change the base config path from `~/.magic-mirror-photobooth` to another path by setting the `PHOTOBOOTH_BASE_PATH` env variable. For Cypress testing the base path should be
+
+```bash
+ export PHOTOBOOTH_BASE_PATH=$(pwd)/cypress/fixtures
+```
+
 # LED ring setup
 
 The microcontroller used for controlling the LED ring is

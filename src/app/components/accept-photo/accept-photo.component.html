@@ -1,5 +1,5 @@
 <div *ngIf="componentData" id="overlay-outer">    
-    <img (load)="handleImage()" class="image" src="{{componentData.context.photoPath}}" />
+    <img (load)="handleImage()" id="photo-image" class="image" src="{{componentData.context.photoPath}}" />
     <div (click)="handleEvent('event.accept-photo.01')" class="overlay-right"><img src="{{componentData.assetButtonOkPath}}"></div>
     <div (click)="handleEvent('event.accept-photo.02')" class="overlay-left"><img src="{{componentData.assetButtonNokPath}}"></div>    
 </div>

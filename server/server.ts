@@ -10,7 +10,7 @@ import config from '../config.json'
 const fs = require('fs') 
 const os = require('os')
 
-var config_dir = os.homedir() + "/" + config.config_dir;
+var config_dir = process.env.PHOTOBOOTH_BASE_PATH || os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var assets_dir = config_dir + "/" + config.assets_sub_dir;
 var events_dir = config_dir + "/" + config.events_sub_dir;

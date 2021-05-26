@@ -9,7 +9,7 @@
       "maxNumberOfPhotos": 3,
       "compositeConfig": {
         "templateLayout": "THREE_NON_UNIFORM",
-        "overlayImage": "wedding_01_overlay_base_01.png",
+        "overlayImage": "overlay.png",
         "logoImage": "fotospiegelwelt_logo2_scaled.png",
         "logoImageOffset": "+160+885",
         "logoImageSize": "80",
@@ -32,7 +32,7 @@
         "meta": {
           "path": "/intro",
           "assets": {
-            "assetPath": "api/assets/wedding_01_touchtostart_02.mp4",
+            "assetPath": "api/assets/01.mp4",
             "website": "www.fotospiegelwelt.de"
           }
         },
@@ -49,7 +49,7 @@
         "meta": {
           "path": "/anim1/6",
           "assets": {
-            "assetPath": "api/assets/wedding_01_mirrorwilltakephotos_01.mp4"
+            "assetPath": "api/assets/02.mp4"
           }
         },
         "initial": "anim_loaded",
@@ -75,7 +75,7 @@
         "meta": {
           "path": "/anim1/3",
           "assets": {
-            "assetPath": "api/assets/wedding_01_countdown_01.mp4",
+            "assetPath": "api/assets/03.mp4",
             "website": "www.fotospiegelwelt.de"
           }
         },
@@ -102,7 +102,7 @@
         "meta": {
           "path": "/anim1/8",
           "assets": {
-            "assetPath": "api/assets/wedding_01_lookatcamera_02.mp4"
+            "assetPath": "api/assets/04.mp4"
           }
         },
         "initial": "anim_loaded",
@@ -201,7 +201,7 @@
         "meta": {
           "path": "/anim1/6",
           "assets": {
-            "assetPath": "api/assets/wedding_01_loveinair_01.mp4"
+            "assetPath": "api/assets/05.mp4"
           }
         },
         "invoke": {
@@ -280,7 +280,7 @@
         "meta": {
           "path": "/anim1/7",
           "assets": {
-            "assetPath": "api/assets/wedding_01_mirrorwillprintphotos_01.mp4"
+            "assetPath": "api/assets/05.mp4"
           }
         },
         "initial": "anim_loaded",

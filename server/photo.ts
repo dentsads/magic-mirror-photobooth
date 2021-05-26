@@ -11,7 +11,7 @@ const Axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const os = require('os')
 
-var config_dir = os.homedir() + "/" + config.config_dir;
+var config_dir = process.env.PHOTOBOOTH_BASE_PATH || os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var event_photos_dir = photos_dir + "/" + config.event_id;
 
@@ -135,7 +135,7 @@ class Photo {
     response.data.pipe(writer)
   
     return new Promise((resolve, reject) => {
-      writer.on('finish', resolve({ imagePath: randomString + '_random.jpg', exifOrientation: 1 } ))
+      writer.on('finish', resolve({ imagePath: randomString + '_random.jpg', exifOrientation: 1, eventId: config.event_id } ))
       writer.on('error', reject)
     })
   }
@@ -162,7 +162,7 @@ class Photo {
         const path = event_photos_dir + '/' + uuidFileName
         fs.writeFileSync(path, data);
 
-        return resolve({ imagePath: uuidFileName, exifOrientation: jpegExifOrientation } )
+        return resolve({ imagePath: uuidFileName, exifOrientation: jpegExifOrientation, eventId: config.event_id } )
       });
     })
   }

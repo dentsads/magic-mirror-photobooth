@@ -1,6 +1,12 @@
 {
     "baseUrl": "http://localhost:4200",
     "env": {
-        "api_theme_url": "/api/theme"        
-    }
+        "api_theme_url": "/api/theme",
+        "api_composite_url": "/api/compositor/composite",
+        "api_capture_url": "/api/dslr/capture"
+    },
+    "ignoreTestFiles": [
+        "**/__snapshots__/*",
+        "**/__image_snapshots__/*"
+    ]
 }

@@ -9,7 +9,7 @@
       "maxNumberOfPhotos": 3,
       "compositeConfig": {
         "templateLayout": "THREE_NON_UNIFORM",
-        "overlayImage": "wedding_01_overlay_base_01.png",
+        "overlayImage": "overlay.png",
         "logoImage": "fotospiegelwelt_logo2_scaled.png",
         "logoImageOffset": "+160+885",
         "logoImageSize": "80",
@@ -48,7 +48,7 @@
         "meta": {
           "path": "/anim1/6",
           "assets": {
-            "assetPath": "api/assets/wedding_01_loveinair_01.mp4"
+            "assetPath": "api/assets/01.mp4"
           }
         },
         "invoke": {
