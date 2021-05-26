@@ -23,3 +23,15 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('fixCypressSpec', (filename) => {
+    const path = require('path')
+    const relative = filename.substr(1) // removes leading "/"
+    const projectRoot = Cypress.config('projectRoot')
+    const absolute = path.join(projectRoot, relative)
+    Cypress.spec = {
+        absolute,
+        name: path.basename(filename),
+        relative
+    }
+})

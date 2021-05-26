@@ -3,6 +3,7 @@ describe('Photos & Compositions', () => {
     })
 
     beforeEach(() => {
+        cy.fixCypressSpec('/cypress/integration/photo.spec.js')
         cy.intercept('GET', Cypress.env('api_theme_url'), { fixture: 'events/photos.theme.json' })
         cy.intercept('POST', Cypress.env('api_capture_url'), {
             result: { 
