@@ -90,33 +90,6 @@
           },
           "anim_running": {
             "after": {
-              "FINISH_ANIM": "#root.lookAtCamera"
-            }
-          }
-        }
-      },
-      "lookAtCamera": {
-        "entry": [
-          "transition"
-        ],
-        "meta": {
-          "path": "/anim1/8",
-          "assets": {
-            "assetPath": "api/assets/04.mp4"
-          }
-        },
-        "initial": "anim_loaded",
-        "states": {
-          "anim_loaded": {
-            "on": {
-              "event.anim1.01": {
-                "target": "anim_running",
-                "actions": "triggerLed"
-              }
-            }
-          },
-          "anim_running": {
-            "after": {
               "FINISH_ANIM": "#root.intro"
             }
           }
