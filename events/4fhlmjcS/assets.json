@@ -33,7 +33,8 @@
                 "overlayTextOffset": "+110+1120"
             }
         },
-        "acceptCompositedPhoto": { 
+        "acceptCompositedPhoto": {
+            "assetButtonOkDisallowedPath": "api/assets/check-circle-solid-grey-240.png", 
             "assetButtonOkPath": "api/assets/check-circle-solid-240.png", 
             "assetButtonNokPath": "api/assets/x-circle-solid-240.png"                
         },
