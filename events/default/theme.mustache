@@ -125,6 +125,7 @@
       }
     },
     "clearLed": {
+      "meta": {},
       "invoke": {
         "id": "clear",
         "src": "clearLed",
@@ -139,6 +140,7 @@
       }
     },        
     "capturePhoto": {
+      "meta": {},
       "invoke": {
         "id": "capture",
         "src": "capturePhoto",
@@ -156,7 +158,8 @@
       "entry": ["updateMetaAssetsWithContext", "transition"],
       "meta": { 
         "path": "/accept-photo", 
-        "assets": { 
+        "assets": {
+            "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
             "assetButtonOkPath": "{{{assets.acceptPhoto.assetButtonOkPath}}}", 
             "assetButtonNokPath": "{{{assets.acceptPhoto.assetButtonNokPath}}}"
         }
@@ -206,23 +209,50 @@
           "actions": "logError"
         }
       }
-    },
+    },    
     "acceptCompositedPhoto":  {
       "entry": ["transition", "updateMetaAssetsWithContext"],
       "meta": { 
         "path": "/accept-photo", 
-        "assets": { 
+        "assets": {
+            "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
             "assetButtonOkPath": "{{{assets.acceptCompositedPhoto.assetButtonOkPath}}}", 
             "assetButtonNokPath": "{{{assets.acceptCompositedPhoto.assetButtonNokPath}}}"                
         }
       },
-      "on": {
-        "event.accept-photo.01": [
-          { "target": "selectPrintPhotos", "cond": "dontSkipSelectPrintPhotos" },
-          { "target": "printPhoto" }
-        ],
-        "event.accept-photo.02": "countdown"
-      }
+      "initial": "initialState",
+      "states": {
+          "initialState": {
+              "on": {
+                  "event.loading-finished.01": {
+                      "target": "nextTransitionDisallowed",
+                      "actions": "setDisallowNextTransitionButton"
+                  }           
+              }
+          },
+          "nextTransitionDisallowed": {
+            "invoke": {
+              "id": "compositePrintableResultPhoto",
+              "src": "compositePrintableResultPhoto",
+              "onDone": {
+                "target": "nextTransitionAllowed",
+                "actions":  "setAllowNextTransitionButton"
+              },
+              "onError": {                
+                "actions": "logError"
+              }              
+            }
+          },
+          "nextTransitionAllowed": {
+              "on": {
+                "event.accept-photo.01": [
+                  { "target": "#root.selectPrintPhotos", "cond": "dontSkipSelectPrintPhotos" },
+                  { "target": "#root.printPhoto" }
+                ],
+                "event.accept-photo.02": "#root.countdown"
+              }
+          }
+      }      
     },
     "selectPrintPhotos":  {
       "entry": ["transition"],
@@ -240,6 +270,7 @@
       }
     },
     "printPhoto": {
+      "meta": {},
       "invoke": {
         "id": "print",
         "src": "printPhoto",

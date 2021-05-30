@@ -1,6 +1,14 @@
 <div *ngIf="componentData" id="overlay-outer">    
     <img (load)="handleImage()" id="photo-image" class="image" src="{{componentData.context.photoPath}}" />
-    <div (click)="handleEvent('event.accept-photo.01')" class="overlay-right"><img src="{{componentData.assetButtonOkPath}}"></div>
+    <div (click)="handleEvent('event.accept-photo.01')" class="overlay-right">
+        <img *ngIf="allowNextTransitionButton == true" src="{{componentData.assetButtonOkPath}}">
+        <img *ngIf="allowNextTransitionButton == false" src="{{componentData.assetButtonOkDisallowedPath}}">
+    </div>
+    <div *ngIf="allowNextTransitionButton == false" class="overlay-right d-flex justify-content-center">
+        <div class="spinner-border" role="status" >
+          <span class="sr-only" id="loading"></span>
+        </div>
+    </div>
     <div (click)="handleEvent('event.accept-photo.02')" class="overlay-left"><img src="{{componentData.assetButtonNokPath}}"></div>    
 </div>
 <div id="canvas-qr-div">

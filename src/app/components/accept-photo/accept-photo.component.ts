@@ -15,7 +15,9 @@ import QRCode from 'qrcode';
 export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
+  private allowNextTransitionButtonSubscription: Subscription;
   componentData: any;
+  allowNextTransitionButton: boolean = true;
   document;
 
   readonly MAX_RETRY:number=60;
@@ -33,19 +35,28 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
   }  
 
   async ngOnInit() {
-    this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
+    this.subscription = this.activatedRoute.paramMap.subscribe(async params => { 
       this.componentData = await this.routingService.getComponentData();  
       
-      if (this.componentData.context) {
-        this.getPresignedUrl(this.componentData.context.photoPath)
-      }        
-    });    
+      if (this.componentData.context) {          
+        this.getPresignedUrl(this.componentData.context.photoPath);
+      }            
+    });
     
+    this.allowNextTransitionButtonSubscription =  this.routingService.allowNextTransitionButton.subscribe((value: boolean) => { 
+      this.allowNextTransitionButton = value; 
+    });
+
+    this.handleEvent("event.loading-finished.01");
   }
 
   async ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+
+    if (this.allowNextTransitionButtonSubscription) {
+      this.allowNextTransitionButtonSubscription.unsubscribe();
     }
   }
 

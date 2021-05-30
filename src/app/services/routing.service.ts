@@ -8,6 +8,7 @@ import { PhotoService } from './photo.service';
 import { LoggerService } from './logger.service'
 import { PrinterService } from './printer.service';
 import { Observable } from 'rxjs/internal/Observable';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export class RoutingService {
 
   THEME_MAP: Record<string, any> = {};
+  allowNextTransitionButton: Subject<boolean> = new Subject<boolean>();
   currentTheme;
 
   constructor(
@@ -136,20 +138,29 @@ export class RoutingService {
             // handle success
             const capturedPhotoPath = event.data.data.result.imagePath;
             const eventId = event.data.data.result.eventId;
+            context.uuidFileName = capturedPhotoPath;
             context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = event.data.data.result.exifOrientation;
-            context.capturedPhotoPaths.push(capturedPhotoPath);         
+            context.capturedPhotoPaths.push(capturedPhotoPath);                 
           },
           popCapturedPhotos: (context, event) => {
             context.capturedPhotoPaths.pop();
           },
           clearCapturedPhotos: (context, event) => {
-            // handle success
-            const capturedPhotoPath = event.data.data.result;
-            context.photoPath = capturedPhotoPath;
+            // handle success            
+            const capturedPhotoPath = event.data.data.result.imagePath;
+            const eventId = event.data.data.result.eventId;
+            context.uuidFileName = capturedPhotoPath;
+            context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = 1;
-            context.capturedPhotoPaths = [];     
-          }        
+            context.capturedPhotoPaths = [];            
+          },
+          setAllowNextTransitionButton: (context, event) => {
+            this.allowNextTransitionButton.next(true);
+          },
+          setDisallowNextTransitionButton: (context, event) => {
+            this.allowNextTransitionButton.next(false);
+          }   
         },
         delays: {
           FINISH_ANIM: (context, event: AnyEventObject) => {
@@ -180,6 +191,9 @@ export class RoutingService {
               overlayTextSize: context.compositeConfig.overlayTextSize,
               overlayTextOffset: context.compositeConfig.overlayTextOffset
           }),
+          compositePrintableResultPhoto: (context, event) => this.photoService.compositePrintableResultPhoto({
+            uuidFileName: context.uuidFileName
+          }),       
           printPhoto: (context, event) => this.printService.printPhoto({
             img: 'printable_result.png',
             numberOfCopies: event.numberOfCopies == undefined ? 1 : event.numberOfCopies
