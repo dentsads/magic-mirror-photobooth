@@ -58,14 +58,14 @@ class Printer {
 
   public isHealthy(): boolean {
     /*
-    let gutenprintStatusSpawn = spawnSync('/usr/lib/cups/backend/gutenprint52+usb', ['-s'], {env: {BACKEND: 'dnpds40'}});
+    let gutenprintStatusSpawn = spawnSync('/usr/lib/cups/backend/gutenprint53+usb', ['-s'], {env: {BACKEND: 'dnpds40'}});
     let gutenprintStatusCodeGrepSpawn = spawnSync('grep', ['-oP', 'Printer Status:.*\\(\\K.*(?=\\))'], { input: gutenprintStatusSpawn.stderr }).stdout;
     let statusCode: string = gutenprintStatusCodeGrepSpawn.toString().trim();
     let isPrinterUp = statusCode === "0" || statusCode === "1";
     */
 
     let lpinfoSpawn = spawnSync('lpinfo', ['-v']);
-    let grepSpawnCode = spawnSync('grep', ['-i', 'direct gutenprint'], { input: lpinfoSpawn.stdout }).status;
+    let grepSpawnCode = spawnSync('grep', ['-i', 'direct gutenprint53'], { input: lpinfoSpawn.stdout }).status;
     let printerStatusSpawnCode = spawnSync('lpstat', ['-p', this.PRINTER]).status;
 
     if (!(process.env.PHOTOBOOTH_PRINTER_MOCK == '1') && (grepSpawnCode !== 0 || printerStatusSpawnCode !== 0) ) {
@@ -76,7 +76,7 @@ class Printer {
   }
 
   public getPrinterInfo(): object { 
-    let gutenprintStatusSpawn = spawnSync('/usr/lib/cups/backend/gutenprint52+usb', ['-s'], {env: {BACKEND: 'dnpds40'}});
+    let gutenprintStatusSpawn = spawnSync('/usr/lib/cups/backend/gutenprint53+usb', ['-s'], {env: {BACKEND: 'dnpds40'}});
     let gutenprintStatusMessageGrepSpawn = spawnSync('grep', ['-oP', 'Printer Status: \\K.*(?= \\(.*\\))'], { input: gutenprintStatusSpawn.stderr }).stdout;
     let gutenprintStatusCodeGrepSpawn = spawnSync('grep', ['-oP', 'Printer Status:.*\\(\\K.*(?=\\))'], { input: gutenprintStatusSpawn.stderr }).stdout;
     
