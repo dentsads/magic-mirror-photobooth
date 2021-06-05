@@ -86,6 +86,12 @@ export class RoutingService {
             // handle success
             this.loggerService.log('info', 'Clearing LED strip')     
           },
+          printPhoto: (context, event) => {
+            this.printService.printPhoto({
+              img: 'printable_result.png',
+              numberOfCopies: event.numberOfCopies == undefined ? 1 : event.numberOfCopies
+            })
+          },
           triggerLed: (context, event) => {
             if (context.triggerLedConfig && context.triggerLedConfig.animationType && context.triggerLedConfig.animationType == 'ball') {
               this.ledService.triggerLed("ball", {

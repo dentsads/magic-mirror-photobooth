@@ -195,12 +195,12 @@ app.post('/api/printer/print', (req, res, next) => {
   printer.print(jsonObj, (out, err) => {
     if (err) {
       logger.log('error', err);
-      res.status(500).send(err).end()
     } else {
       logger.log('info', out);
-      res.status(200).send(out).end()
     }          
-  })    
+  })
+
+  res.sendStatus(200);
 })
 
 app.post('/api/logger', (req, res, next) => {

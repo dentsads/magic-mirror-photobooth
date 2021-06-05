@@ -246,8 +246,14 @@
           "nextTransitionAllowed": {
               "on": {
                 "event.accept-photo.01": [
-                  { "target": "#root.selectPrintPhotos", "cond": "dontSkipSelectPrintPhotos" },
-                  { "target": "#root.printPhoto" }
+                  { 
+                    "target": "#root.selectPrintPhotos", 
+                    "cond": "dontSkipSelectPrintPhotos" 
+                  },
+                  { 
+                    "target": "#root.mirrorWillPrintPhotos",
+                    "actions":  "printPhoto"
+                  }
                 ],
                 "event.accept-photo.02": "#root.countdown"
               }
@@ -266,22 +272,10 @@
         }
       },
       "on": {
-        "event.select-print-photos.01": "printPhoto"
-      }
-    },
-    "printPhoto": {
-      "meta": {},
-      "invoke": {
-        "id": "print",
-        "src": "printPhoto",
-        "onDone": {
+        "event.select-print-photos.01": { 
           "target": "mirrorWillPrintPhotos",
-          "actions": "logStatus"
-        },
-        "onError": {
-          "target": "errorPage",
-          "actions": "logError"
-        }              
+          "actions":  "printPhoto"
+        }
       }
     },
     "mirrorWillPrintPhotos": {

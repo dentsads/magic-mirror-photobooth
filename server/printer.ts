@@ -8,6 +8,7 @@ var photos_dir = config_dir + "/" + config.photos_sub_dir;
 
 var exec = require('child_process').exec
 var spawnSync = require('child_process').spawnSync
+var spawn = require('child_process').spawn
 
 const printerStatusCodesḾessages: Record<number, string> = {
   "0": "", /*Idle*/
@@ -48,12 +49,21 @@ class Printer {
 
   public constructor() {
     // if no printer is available then mock the printer by using the CUPS PDF printer
-    if (process.env.PHOTOBOOTH_PRINTER_MOCK == '1')
+    if (process.env.PHOTOBOOTH_PRINTER_MOCK == '1') {
       this.initializeMockPrinter()
         .then(() => {
         })
         .catch((err) => {  
-        })
+        });
+    } else {
+      this.initializePrinter((out, err) => {
+        if (err) {
+          logger.log('error', err);          
+        } else {
+          logger.log('info', out);
+        }          
+      });
+    }      
   }
 
   public isHealthy(): boolean {
@@ -73,6 +83,25 @@ class Printer {
     } else {
       return true;
     }   
+  }
+
+  private isPrinterInitialized(cb: (status?: boolean) => void): void {
+    let lpinfoSpawn = spawn('lpinfo', ['-v']);
+    let grepSpawn = spawn('grep', ['-i', 'direct gutenprint53']);
+
+    lpinfoSpawn.stdout.pipe(grepSpawn.stdin);
+
+    let printerStatusSpawnCode = spawnSync('lpstat', ['-p', this.PRINTER]).status;
+    
+    grepSpawn.on('close', (grepSpawnCode) => {
+      if ( grepSpawnCode !== 0 || printerStatusSpawnCode !== 0 ) {
+        logger.log('info', 'Printer %s is not initialized', this.PRINTER);
+        cb(false);
+      } else {
+        logger.log('info', 'Printer %s is initialized', this.PRINTER);
+        cb(true);
+      }
+    });
   }
 
   public getPrinterInfo(): object { 
@@ -105,10 +134,10 @@ class Printer {
 
   }
 
-  private initializeMockPrinter() {
+  private initializeMockPrinter(): Promise<void> {
     let printerArgs = [
         '-p', 'PDF',
-        '-o', 'w288h432',
+        '-o', 'PageSize=w288h432',
         '-o', 'StpColorCorrection=Raw',
         '-o', 'StpColorPrecision=Best',
         '-o', 'StpImageType=Photo',
@@ -117,14 +146,78 @@ class Printer {
         '-v', 'cups-pdf:/'
     ]
 
-    return new Promise((resolve, reject) => {
-        exec('lpadmin' + printerArgs.join(' '), (err, stdout, stderr) => {
+    return new Promise<void>((resolve, reject) => {
+        exec('lpadmin ' + printerArgs.join(' '), (err, stdout, stderr) => {
             if (err) return reject(ErrorHandler.createError("1",err))
 
             logger.log('info', 'Initialized printer %s', this.PRINTER);
             return resolve()
         }); 
     })
+  }
+
+  private initializePrinter(cb: (stdout?: object, e?: Error) => void): void {
+    /*
+    lpadmin \
+    -p $PRINTER_NAME \
+    -o PageSize=w288h432 \
+    -o StpColorCorrection=Raw \
+    -o StpColorPrecision=Best \
+    -o StpImageType=Photo \
+    -o 'printer-is-shared=false' \
+    -E \
+    -m "$(lpinfo -m | grep -i $PRINTER_NAME | awk '{print $1}' | tail -1)" \
+    -v "$(lpinfo -v | grep -i "direct gutenprint53" | tail -1 | awk '{print $2}')"
+    */
+
+    let deviceLpinfoSpawn = spawn('lpinfo', ['-v']);
+    let deviceGrepSpawn = spawn('grep', ['-i', 'direct gutenprint53']);   
+    let deviceTailSpawn = spawn('tail', ['-1']);
+    let deviceAwkSpawn = spawn('awk', ['{print $2}']);
+
+    deviceLpinfoSpawn.stdout.pipe(deviceGrepSpawn.stdin);
+    deviceGrepSpawn.stdout.pipe(deviceTailSpawn.stdin);
+    deviceTailSpawn.stdout.pipe(deviceAwkSpawn.stdin);
+
+    let driverLpinfoSpawn = spawn('lpinfo', ['-m']);
+    let driverGrepSpawn = spawn('grep', ['-i', this.PRINTER]);
+    let driverAwkSpawn = spawn('awk', ['{print $1}']);
+    let driverTailSpawn = spawn('tail', ['-1']);
+    
+    driverLpinfoSpawn.stdout.pipe(driverGrepSpawn.stdin);
+    driverGrepSpawn.stdout.pipe(driverGrepSpawn.stdin);
+    driverGrepSpawn.stdout.pipe(driverAwkSpawn.stdin);
+    driverAwkSpawn.stdout.pipe(driverTailSpawn.stdin);
+
+
+    deviceAwkSpawn.stdout.on('data', (deviceAwkSpawnData) => {
+      let printDevice = deviceAwkSpawnData.toString().trim();
+
+      driverTailSpawn.stdout.on('data', (driverTailSpawnData) => {
+        let printDriver = driverTailSpawnData.toString().trim();
+  
+        let printerArgs = [
+          '-p', this.PRINTER,
+          '-o', 'PageSize=w288h432',
+          '-o', 'StpColorCorrection=Raw',
+          '-o', 'StpColorPrecision=Best',
+          '-o', 'StpImageType=Photo',
+          '-o', 'printer-is-shared=false',
+          '-E',
+          '-m', printDriver,
+          '-v', printDevice
+        ]
+
+        logger.log('info', 'Initializing printer: lpadmin %s',  printerArgs.join(' '));
+        exec('lpadmin ' + printerArgs.join(' '), (err, stdout, stderr) => {
+            if (err) return cb(null, ErrorHandler.createError("1",err))
+
+            logger.log('info', 'Initialized printer %s', this.PRINTER);
+            return cb({ "status" : "success" });
+        }); 
+
+      });
+    });
   }
 
   public print(options: PrinterOptions, cb: (stdout?: object, e?: Error) => void): void {
@@ -139,18 +232,46 @@ class Printer {
     logger.log('info', 'Printing image %s with printer', options.img, printer);      
     logger.log('info', 'lp ' + printArgs)
 
-    // TODO: stderr is logged but is always empty, even if the printer fails. Is err maybe the right one?
-    exec('lp ' + printArgs, (err, stdout, stderr) => {
-      logger.log('info', '%s', stdout);
-      logger.log('error', '%s', stderr);
-
-      if (err) {
-        return cb(null, ErrorHandler.createError("55",err))
+    this.isPrinterInitialized((status) => {
+      if (status == false) {
+        logger.log('info', 'Retry to initialize printer %s again', this.PRINTER);
+        this.initializePrinter((out, err) => {
+          if (err) {
+            logger.log('error', err);          
+          } else {
+            logger.log('info', out);
+            // TODO: stderr is logged but is always empty, even if the printer fails. Is err maybe the right one?
+            exec('lp ' + printArgs, (err, stdout, stderr) => {
+              logger.log('info', '%s', stdout);
+              logger.log('error', '%s', stderr);
+        
+              if (err) {
+                return cb(null, ErrorHandler.createError("55",err))
+              } else {
+                logger.log('info', 'Successfully printed image %s with printer %s', options.img, printer);  
+                return cb({ "status" : "success" });
+              }      
+            });
+          }          
+        });
       } else {
-        logger.log('info', 'Successfully printed image %s with printer %s', options.img, printer);  
-        return cb({ "status" : "success" });
-      }      
-    });
+        logger.log('info', 'No need to initialize printer %s again', this.PRINTER);
+
+        // TODO: stderr is logged but is always empty, even if the printer fails. Is err maybe the right one?
+        exec('lp ' + printArgs, (err, stdout, stderr) => {
+          logger.log('info', '%s', stdout);
+          logger.log('error', '%s', stderr);
+    
+          if (err) {
+            return cb(null, ErrorHandler.createError("55",err))
+          } else {
+            logger.log('info', 'Successfully printed image %s with printer %s', options.img, printer);  
+            return cb({ "status" : "success" });
+          }      
+        });
+      }  
+    })        
+
   }
 
 }

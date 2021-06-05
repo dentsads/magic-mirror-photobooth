@@ -74,4 +74,4 @@ ENV NODE_ENV production
 
 RUN chmod +x startup.sh
 
-CMD ./startup.sh $(jq -r .printer_name config.json)
+CMD ./startup.sh
