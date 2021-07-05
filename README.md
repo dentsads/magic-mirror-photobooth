@@ -480,6 +480,59 @@ GALLERY_CODE="code"; magick convert \( -pointsize 250 -fill black -strokewidth 1
 
 `code` represents the password for the gallery login
 
+# Remote operations
+
+## Restarting the `magic-mirror-photobooth` service
+
+When you are connected to the photobooth through `ssh` and `VPN` you can restart the `magic-mirror-photobooth` container like this
+
+```bash
+docker restart magic-mirror-photobooth
+```
+
+after doing this you have to also restart the `mkiosk` `systemctl` service
+
+```bash
+# first stop all running mkiosk instances and then restart mkiosk, otherwise it opens up a new session every time
+systemctl --user stop mkiosk && systemctl --user start mkiosk
+```
+
+## Health check
+
+You can check the overall health of the application by calling
+
+```bash
+curl -sS http://localhost:4200/api/health | jq
+```
+
+You can check the overall status of the `mkiosk` `systemctl` service by calling
+
+```bash
+sytemctl --user status mkiosk
+```
+
+In order to check whether the TV is connected properly execute
+
+```bash
+export DISPLAY=:0
+xrandr
+```
+
+In order to check whether the touch frame is connected properly execute
+
+```bash
+export DISPLAY=:0
+xinput
+```
+
+You can manually try to map the touch frame input to the TV execute
+
+```bash
+export DISPLAY=:0
+# map touch frame input to monitor output
+xinput --map-to-output \"Touchscreen small size\" HDMI-1 || true
+xinput --map-to-output \"Touchscreen small size\" VGA-1 || true
+```
 # Inventory List
 
 You can find a complete list inventory list of all items needed to create the magic-mirror-photobooth [here](https://docs.google.com/spreadsheets/d/11MaeAUPQGrgEVKsIesMfK1pldT3oxprGyHYFg9fhh0M/edit#gid=0)
