@@ -38,6 +38,7 @@ sudo apt-get install -y build-essential
 sudo apt-get install -y udev
 
 # install other global npm dependencies
+sudo npm install @asciidoctor/core asciidoctor-pdf -g
 sudo npm install license-checker -g
 sudo npm install @angular/cli -g
 sudo npm install typescript -g 
@@ -533,6 +534,40 @@ export DISPLAY=:0
 xinput --map-to-output \"Touchscreen small size\" HDMI-1 || true
 xinput --map-to-output \"Touchscreen small size\" VGA-1 || true
 ```
+
+# Opening the Alertmanager and Prometheus WebUIs
+
+By establishing a VPN tunnel from the client laptop you can also open the alertmanager and prometheus UIs. Just do this
+
+```bash
+# the admin1.ovpn can be found in the openvpn-terraform-install repo
+sudo openvpn --suppress-timestamps --connect-retry-max 1 --nobind --pull-filter ignore redirect-gateway --config generated/ovpn-config/admin1.ovpn
+```
+
+afterwards you can just go ahead and open the following in a browser
+
+```bash
+# alermanager
+open http://10.8.0.2:9093/
+
+# prometheus
+open http://10.8.0.2:9090/
+```
+
+The IP (e.g. 10.8.0.2) can be found on the aws ec2 instance in `/var/log/openvpn/status.log`
+
+Alert updates should be much faster and more real time than waiting for Discord messages
+
 # Inventory List
 
 You can find a complete list inventory list of all items needed to create the magic-mirror-photobooth [here](https://docs.google.com/spreadsheets/d/11MaeAUPQGrgEVKsIesMfK1pldT3oxprGyHYFg9fhh0M/edit#gid=0)
+
+# Generate Handbook
+
+You can generate the handbook like this
+
+```bash
+asciidoctor-web-pdf docs/handbook/handbuch.adoc
+```
+
+This will generate a `.pdf` file in the same directory
