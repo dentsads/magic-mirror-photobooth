@@ -202,7 +202,7 @@ EOT"
 exec_cmd 'chmod +x /opt/mkiosk.sh'
 
 print_status "Creating systemd service for magic mirror kiosk..."
-exec_cmd_no_sudo 'cat <<EOT > ~/.config/systemd/user/mkiosk.service
+exec_cmd_no_sudo "cat <<EOT > ~/.config/systemd/user/mkiosk.service
 [Unit]
 Description=Magic Mirror Kiosk (MKiosk)
 After=docker.service
@@ -211,11 +211,14 @@ After=docker.service
 Type=simple
 Restart=on-failure
 
+# wait for docker to open port 4200 before starting mkiosk
+ExecStartPre=/bin/bash -c '(while ! nc -z -v -w1 localhost 4200 2>/dev/null; do echo \"Waiting for docker to open port 4200 before starting mkiosk...\"; sleep 2; done); sleep 2'
+
 ExecStart=/bin/bash -e /opt/mkiosk.sh
 
 [Install]
-WantedBy=graphical.target
-EOT'
+WantedBy=graphical-session.target
+EOT"
 
 print_status "Creating xinput shell script for udev rules in order to map the touchframe to the right output screen when the USB is plugged in..."
 exec_cmd "cat <<EOT > /opt/xinput_touchframe.sh
