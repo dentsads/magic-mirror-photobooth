@@ -267,6 +267,18 @@ Configuration steps on the TV
 
   <img src="docs/img/tv_automatic_disablement.jpeg" width="450"/>
 
+# Thinkpad T430 setup
+
+It is important to allow powering on the laptop automatically when it is plugged into the AC in order to allow booting up the photobooth system without having to power on the laptop manually.
+
+For this in the Thinkpad T430 laptop BIOS settings (accessible by pressing F1 at bootup time) go to `Config -> Power`.
+
+<img src="docs/img/bios_power_on_ac_01.jpeg" width="450"/>
+
+Afterwards enable the `Power On with AC Attach` setting and then `Save and Exit` by pressing `F10`
+
+<img src="docs/img/bios_power_on_ac_02.jpeg" width="450"/>
+
 # Using the LED ring
 
 You can prepare the LED ring by using `PIN 6` of the Arduino Nano for data input on the ring, plugging it into USB and starting the server 
