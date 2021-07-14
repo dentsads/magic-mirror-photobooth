@@ -193,6 +193,7 @@ export class RoutingService {
               logoImage: context.compositeConfig.logoImage,
               logoImageSize: context.compositeConfig.logoImageSize,
               logoImageOffset: context.compositeConfig.logoImageOffset,
+              logoRotation: context.compositeConfig.logoRotation,
               overlayText: context.compositeConfig.overlayText,
               overlayTextSize: context.compositeConfig.overlayTextSize,
               overlayTextOffset: context.compositeConfig.overlayTextOffset

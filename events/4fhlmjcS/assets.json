@@ -26,11 +26,12 @@
                 "templateLayout": "THREE_UNIFORM",                                
                 "overlayImage": "wedding_03_overlay_base_03.png",
                 "logoImage": "fotospiegelwelt_logo2_scaled.png",
-                "logoImageOffset": "+30+1065",
-                "logoImageSize": "80",
+                "logoImageOffset": "+0+900",
+                "logoImageSize": "50",
+                "logoRotation": "-90",
                 "overlayText": "www.fotospiegelwelt.de",
-                "overlayTextSize": "30",
-                "overlayTextOffset": "+110+1120"
+                "overlayTextSize": "20",
+                "overlayTextOffset": "-90x-90+32+895"
             }
         },
         "acceptCompositedPhoto": {

@@ -26,6 +26,7 @@ interface CompositorOptions {
   logoImage: string;
   logoImageOffset: string;
   logoImageSize: string;
+  logoRotation: string;
   overlayText: string;
   overlayTextSize: string;
   overlayTextOffset: string;
@@ -67,6 +68,7 @@ class ImageCompositor {
     let uuidFileName = uuidv4() + '_collage.png'
     let logoImage = options.logoImage == '' ? '' : this.ASSETS_DIR + '/' + options.logoImage;
     let logoImageSize: string = options.logoImageSize ? options.logoImageSize : '200';
+    let logoRotation: string = options.logoRotation ? options.logoRotation : '0';
     let overlayLogoImgOffset: string = options.logoImageOffset ? options.logoImageOffset : '+10+10';
     let overlayText: string = options.overlayText ? options.overlayText : '';
     let overlayTextSize: string = options.overlayTextSize;
@@ -110,6 +112,7 @@ class ImageCompositor {
     if (logoImage !== ''&& fs.existsSync(logoImage)) {
       compositeArgs.push('\\(')
       compositeArgs.push(logoImage)
+      compositeArgs.push(`-rotate ${logoRotation}`)
       compositeArgs.push(`-resize ${logoImageSize}`)               
       compositeArgs.push(`-repage ${overlayLogoImgOffset}`)
       compositeArgs.push('\\)')      
