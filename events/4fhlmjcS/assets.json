@@ -31,7 +31,7 @@
                 "logoRotation": "-90",
                 "overlayText": "www.fotospiegelwelt.de",
                 "overlayTextSize": "20",
-                "overlayTextOffset": "-90x-90+32+895"
+                "overlayTextOffset": "270x270+32+895"
             }
         },
         "acceptCompositedPhoto": {
