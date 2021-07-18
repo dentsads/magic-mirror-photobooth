@@ -259,7 +259,7 @@ print_status "Creating shell script for hiding GNOME activities overview..."
 exec_cmd "cat <<EOT > /opt/hide_gnome_activities_overview.sh
 #!/bin/bash
 
-IS_ACTIVITY_OVERVIEW_ACTIVE=$(qdbus org.gnome.Shell /org/gnome/Shell org.gnome.Shell.OverviewActive)
+IS_ACTIVITY_OVERVIEW_ACTIVE=\$(qdbus org.gnome.Shell /org/gnome/Shell org.gnome.Shell.OverviewActive)
 
 if [ \"\$IS_ACTIVITY_OVERVIEW_ACTIVE\" = \"false\" ] ; then
     echo \"Activities overview not active. Not doing anything...\"
