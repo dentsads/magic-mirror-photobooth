@@ -473,6 +473,8 @@ This will do the following
   * automatically loads the magic-mirror frontend URL
   * disables the session crashed popups
   * disables the "Tranlate UI" feature
+* setup systemd service that checks every 5 seconds whether the Ubuntu activities overview is active and then disabling it. 
+  * This is a result of a AC power outage test that resulted in the activies overview being active after plugging power back in.
 * add current user to docker group
 * install electron frontend app .deb file
 * add udev rules in order to map the touchframe to the right output screen when the USB is plugged in
