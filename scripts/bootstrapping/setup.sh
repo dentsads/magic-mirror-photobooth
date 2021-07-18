@@ -238,10 +238,7 @@ exec_cmd "cat <<EOT > /etc/udev/rules.d/99-xinput-touchframe.rules
 ACTION==\"add\", ATTRS{idVendor}==\"1ff7\", ATTRS{idProduct}==\"0013\", ATTRS{manufacturer}==\"Touchscreen small size\", ENV{DEVNAME}==\"/dev/usb/hiddev0\", ENV{XAUTHORITY}=\"${XAUTHORITY}\", ENV{DISPLAY}=\"${DISPLAY}\", RUN+=\"/bin/su ${SUDO_USER} -c /opt/xinput_touchframe.sh\"
 EOT"
 
-print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
-exec_cmd 'systemctl restart systemd-logind'
-
-print_status "Creating systemd service for hiding GNOME activities overview. This quickly hides the GNOME activities overview when recovering from a power cut..."
+print_status "Creating systemd service and timer for hiding GNOME activities overview. This quickly hides the GNOME activities overview when recovering from a power cut..."
 exec_cmd_no_sudo "cat <<EOT > ~/.config/systemd/user/hide_gnome_activities_overview.service
 [Unit]
 Description=Hide GNOME activities overview
@@ -255,19 +252,26 @@ ExecStart=/bin/bash -e /opt/hide_gnome_activities_overview.sh
 WantedBy=timers.target
 EOT"
 
+exec_cmd_no_sudo "cat <<EOT > ~/.config/systemd/user/hide_gnome_activities_overview.timer
+[Unit]
+Description=Hide GNOME activities overview
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=5
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target
+EOT"
+
 print_status "Creating shell script for hiding GNOME activities overview..."
-exec_cmd "cat <<EOT > /opt/hide_gnome_activities_overview.sh
+exec_cmd 'cat <<EOT > /opt/hide_gnome_activities_overview.sh
 #!/bin/bash
 
-IS_ACTIVITY_OVERVIEW_ACTIVE=\$(qdbus org.gnome.Shell /org/gnome/Shell org.gnome.Shell.OverviewActive)
+/usr/bin/dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:"Main.overview.hide();"
 
-if [ \"\$IS_ACTIVITY_OVERVIEW_ACTIVE\" = \"false\" ] ; then
-    echo \"Activities overview not active. Not doing anything...\"
-else
-    echo \"Activities overview active. Hiding again...\"
-    /usr/bin/dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:'Main.overview.hide();'
-fi
-EOT"
+EOT'
 exec_cmd 'chmod +x /opt/hide_gnome_activities_overview.sh'
 
 
@@ -276,6 +280,10 @@ exec_cmd 'systemctl daemon-reload'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable mkiosk'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable hide_gnome_activities_overview.service'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable hide_gnome_activities_overview.timer'
+exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start hide_gnome_activities_overview.timer'
 
 print_status "Restart gnome shell..."
 exec_cmd 'killall -3 gnome-shell'
+
+print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
+exec_cmd 'systemctl restart systemd-logind'
