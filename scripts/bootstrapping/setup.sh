@@ -224,7 +224,7 @@ print_status "Creating xinput shell script for udev rules in order to map the to
 exec_cmd "cat <<EOT > /opt/xinput_touchframe.sh
 #!/bin/bash
 
-# wait a little for the device to appear in th device list
+# wait a little for the device to appear in the device list
 sleep 6
 
 # map touch frame input to monitor output
@@ -241,9 +241,41 @@ EOT"
 print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
 exec_cmd 'systemctl restart systemd-logind'
 
+print_status "Creating systemd service for hiding GNOME activities overview. This quickly hides the GNOME activities overview when recovering from a power cut..."
+exec_cmd_no_sudo "cat <<EOT > ~/.config/systemd/user/hide_gnome_activities_overview.service
+[Unit]
+Description=Hide GNOME activities overview
+
+[Service]
+Restart=no
+
+ExecStart=/bin/bash -e /opt/hide_gnome_activities_overview.sh
+
+[Install]
+WantedBy=timers.target
+EOT"
+
+print_status "Creating shell script for hiding GNOME activities overview..."
+exec_cmd "cat <<EOT > /opt/hide_gnome_activities_overview.sh
+#!/bin/bash
+
+IS_ACTIVITY_OVERVIEW_ACTIVE=$(qdbus org.gnome.Shell /org/gnome/Shell org.gnome.Shell.OverviewActive)
+
+if [ \"\$IS_ACTIVITY_OVERVIEW_ACTIVE\" = \"false\" ] ; then
+    echo \"Activities overview not active. Not doing anything...\"
+else
+    echo \"Activities overview active. Hiding again...\"
+    /usr/bin/dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:'Main.overview.hide();'
+fi
+EOT"
+exec_cmd 'chmod +x /opt/hide_gnome_activities_overview.sh'
+
+
 print_status "Start mkiosk systemd service..."
 exec_cmd 'systemctl daemon-reload'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable mkiosk'
+exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable hide_gnome_activities_overview.service'
+exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable hide_gnome_activities_overview.timer'
 
 print_status "Restart gnome shell..."
 exec_cmd 'killall -3 gnome-shell'
