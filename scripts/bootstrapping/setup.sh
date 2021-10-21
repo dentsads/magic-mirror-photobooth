@@ -197,7 +197,7 @@ rm -rf ~/.{config,cache}/google-chrome/
 --disable-features=TranslateUI \
 --disable-session-crashed-bubble \
 --noerrdialogs \
---app=http://localhost:4200
+http://localhost:4200
 EOT"
 exec_cmd 'chmod +x /opt/mkiosk.sh'
 
