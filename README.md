@@ -523,7 +523,7 @@ curl -sS http://localhost:4200/api/health | jq
 You can check the overall status of the `mkiosk` `systemctl` service by calling
 
 ```bash
-sytemctl --user status mkiosk
+systemctl --user status mkiosk
 ```
 
 In order to check whether the TV is connected properly execute
