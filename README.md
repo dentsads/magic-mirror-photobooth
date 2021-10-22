@@ -578,10 +578,18 @@ You can find a complete list inventory list of all items needed to create the ma
 
 # Generate Handbook
 
-You can generate the handbook like this
+We are using [asciidoctor-web-pdf](https://github.com/Mogztter/asciidoctor-web-pdf) for generating the user handbook.
+
+You can install the CLI like this
 
 ```bash
-asciidoctor-web-pdf docs/handbook/handbuch.adoc
+sudo npm install @asciidoctor/core asciidoctor-pdf -g
+```
+
+Afterwards you can generate the handbook like this from the source directory
+
+```bash
+asciidoctor-web-pdf docs/handbook/handbuch.adoc --destination-dir=built/handbook
 ```
 
 This will generate a `.pdf` file in the same directory
