@@ -114,7 +114,6 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
 
   handleDrawingShadowColorElChange(color) {
     this.drawingShadowColor = color;
-    this.canvas.freeDrawingBrush.color = this.drawingShadowColor;
     this.canvas.freeDrawingBrush.shadow.color = this.drawingShadowColor;
   }
 
