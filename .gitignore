@@ -150,3 +150,6 @@ cypress/videos
 
 # Cypress.json envs
 cypress.env.json
+
+# event folder
+/events
