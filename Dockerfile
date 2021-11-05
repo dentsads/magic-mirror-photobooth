@@ -7,7 +7,8 @@ ENV HOME /root
 WORKDIR $HOME/magic-mirror-photobooth
 
 # install cups and dependencies for printing
-RUN apt-get update \
+RUN echo "deb http://ftp.de.debian.org/debian buster main" | tee -a /etc/apt/sources.list \
+&& apt-get update \
 && apt-get -y install \
 cups \
 printer-driver-cups-pdf \
@@ -73,4 +74,4 @@ ENV NODE_ENV production
 
 RUN chmod +x startup.sh
 
-CMD ./startup.sh $(jq -r .printer_name config.json)
+CMD ./startup.sh

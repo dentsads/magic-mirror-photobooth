@@ -7,7 +7,7 @@ const fs = require('fs')
 const os = require('os')
 const { v4: uuidv4 } = require('uuid');
 
-var config_dir = os.homedir() + "/" + config.config_dir;
+var config_dir = process.env.PHOTOBOOTH_BASE_PATH || os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
 var assets_dir = config_dir + "/" + config.assets_sub_dir;
 var event_photos_dir = photos_dir + "/" + config.event_id;
@@ -26,6 +26,7 @@ interface CompositorOptions {
   logoImage: string;
   logoImageOffset: string;
   logoImageSize: string;
+  logoRotation: string;
   overlayText: string;
   overlayTextSize: string;
   overlayTextOffset: string;
@@ -51,7 +52,6 @@ class ImageCompositor {
   private readonly IMAGE_HEIGHT:number = 1205
   private readonly DRAWING_WIDTH:number = 200
   private readonly DRAWING_HEIGHT:number = 200
-  private readonly PHOTOS_PATH:string = 'api/photos/' + config.event_id + '/'
   private readonly PHOTOS_DIR:string = photos_dir
   private readonly EVENT_PHOTOS_DIR:string = event_photos_dir
   private readonly ASSETS_DIR:string = assets_dir
@@ -84,8 +84,9 @@ class ImageCompositor {
     ]
 
     let uuidFileName = uuidv4() + '_collage.png'
-    let logoImage = options.logoImage == undefined ? undefined : this.ASSETS_DIR + '/' + options.logoImage;
+    let logoImage = options.logoImage == '' ? '' : this.ASSETS_DIR + '/' + options.logoImage;
     let logoImageSize: string = options.logoImageSize ? options.logoImageSize : '200';
+    let logoRotation: string = options.logoRotation ? options.logoRotation : '0';
     let overlayLogoImgOffset: string = options.logoImageOffset ? options.logoImageOffset : '+10+10';
     let overlayText: string = options.overlayText ? options.overlayText : '';
     let overlayTextSize: string = options.overlayTextSize;
@@ -100,8 +101,9 @@ class ImageCompositor {
       compositeArgs.push('\\)')
     });
 
+
     // Overlay drawing result (if available) on lower left corner of last image to be rendered
-    if (options.drawingImageDataURL !== '') {
+    if (options.drawingImageDataURL !== undefined) {
       let drawingImageBase64 = options.drawingImageDataURL.replace(/^data:image\/\w+;base64,/, "");
       let bufferedImage = new Buffer(drawingImageBase64, 'base64');
       fs.writeFileSync(this.DRAWING_FILE, bufferedImage);
@@ -128,6 +130,7 @@ class ImageCompositor {
     if (logoImage !== ''&& fs.existsSync(logoImage)) {
       compositeArgs.push('\\(')
       compositeArgs.push(logoImage)
+      compositeArgs.push(`-rotate ${logoRotation}`)
       compositeArgs.push(`-resize ${logoImageSize}`)               
       compositeArgs.push(`-repage ${overlayLogoImgOffset}`)
       compositeArgs.push('\\)')      
@@ -151,16 +154,21 @@ class ImageCompositor {
       if (err) {
         return cb(null, ErrorHandler.createError("1",err))
       } else {
-        exec('convert ' + this.EVENT_PHOTOS_DIR + '/' + uuidFileName + ' -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 ' + this.PHOTOS_DIR + '/printable_result.png', (err, stdout, stderr) => { 
-          if (err) {
-            logger.log('error', ErrorHandler.createError("1",err))
-          }      
-        }); 
-        return cb({ "result" : this.PHOTOS_PATH + uuidFileName });
+        return cb({ "result" : { imagePath: uuidFileName, eventId: config.event_id }});        
       }  
     });
 
   }
+
+  public compositePrintableResult(options: any, cb: (stdout?: object, e?: Error) => void): void {
+    exec('convert ' + this.EVENT_PHOTOS_DIR + '/' + options.uuidFileName + ' -resize 1783x1193 -gravity center -background white -extent 1821x1240+6+0 ' + this.PHOTOS_DIR + '/printable_result.png', (err, stdout, stderr) => { 
+      if (err) {
+        logger.log('error', ErrorHandler.createError("1",err))
+      } else {
+        return cb({ "result": "success" });
+      }
+    }); 
+  }  
 
 }
 

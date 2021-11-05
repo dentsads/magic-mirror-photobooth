@@ -8,3 +8,4 @@ dist
 e2e
 qr-code-preparer
 electron-frontend-app
+cypress

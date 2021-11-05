@@ -41,6 +41,9 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+drawing.png
+printable_result.png
+*_collage.png
 
 # System Files
 .DS_Store
@@ -48,8 +51,6 @@ Thumbs.db
 
 # Logs
 /logs
-
-
 
 # Logs
 logs
@@ -140,3 +141,15 @@ typings/
 
 # Electron-Forge
 out/
+
+# Cypress videos and screenshots
+cypress/screenshots
+cypress/videos
+**/__snapshots__/*
+**/__image_snapshots__/*
+
+# Cypress.json envs
+cypress.env.json
+
+# event folder
+/events

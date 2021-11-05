@@ -197,12 +197,12 @@ rm -rf ~/.{config,cache}/google-chrome/
 --disable-features=TranslateUI \
 --disable-session-crashed-bubble \
 --noerrdialogs \
---app=http://localhost:4200
+http://localhost:4200
 EOT"
 exec_cmd 'chmod +x /opt/mkiosk.sh'
 
 print_status "Creating systemd service for magic mirror kiosk..."
-exec_cmd_no_sudo 'cat <<EOT > ~/.config/systemd/user/mkiosk.service
+exec_cmd_no_sudo "cat <<EOT > ~/.config/systemd/user/mkiosk.service
 [Unit]
 Description=Magic Mirror Kiosk (MKiosk)
 After=docker.service
@@ -211,17 +211,20 @@ After=docker.service
 Type=simple
 Restart=on-failure
 
+# wait for docker to open port 4200 before starting mkiosk
+ExecStartPre=/bin/bash -c '(while ! nc -z -v -w1 localhost 4200 2>/dev/null; do echo \"Waiting for docker to open port 4200 before starting mkiosk...\"; sleep 2; done); sleep 2'
+
 ExecStart=/bin/bash -e /opt/mkiosk.sh
 
 [Install]
-WantedBy=graphical.target
-EOT'
+WantedBy=graphical-session.target
+EOT"
 
 print_status "Creating xinput shell script for udev rules in order to map the touchframe to the right output screen when the USB is plugged in..."
 exec_cmd "cat <<EOT > /opt/xinput_touchframe.sh
 #!/bin/bash
 
-# wait a little for the device to appear in th device list
+# wait a little for the device to appear in the device list
 sleep 6
 
 # map touch frame input to monitor output
@@ -235,12 +238,52 @@ exec_cmd "cat <<EOT > /etc/udev/rules.d/99-xinput-touchframe.rules
 ACTION==\"add\", ATTRS{idVendor}==\"1ff7\", ATTRS{idProduct}==\"0013\", ATTRS{manufacturer}==\"Touchscreen small size\", ENV{DEVNAME}==\"/dev/usb/hiddev0\", ENV{XAUTHORITY}=\"${XAUTHORITY}\", ENV{DISPLAY}=\"${DISPLAY}\", RUN+=\"/bin/su ${SUDO_USER} -c /opt/xinput_touchframe.sh\"
 EOT"
 
-print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
-exec_cmd 'systemctl restart systemd-logind'
+print_status "Creating systemd service and timer for hiding GNOME activities overview. This quickly hides the GNOME activities overview when recovering from a power cut..."
+exec_cmd_no_sudo "cat <<EOT > ~/.config/systemd/user/hide_gnome_activities_overview.service
+[Unit]
+Description=Hide GNOME activities overview
+
+[Service]
+Restart=no
+
+ExecStart=/bin/bash -e /opt/hide_gnome_activities_overview.sh
+
+[Install]
+WantedBy=timers.target
+EOT"
+
+exec_cmd_no_sudo "cat <<EOT > ~/.config/systemd/user/hide_gnome_activities_overview.timer
+[Unit]
+Description=Hide GNOME activities overview
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=5
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target
+EOT"
+
+print_status "Creating shell script for hiding GNOME activities overview..."
+exec_cmd 'cat <<EOT > /opt/hide_gnome_activities_overview.sh
+#!/bin/bash
+
+/usr/bin/dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:"Main.overview.hide();"
+
+EOT'
+exec_cmd 'chmod +x /opt/hide_gnome_activities_overview.sh'
+
 
 print_status "Start mkiosk systemd service..."
 exec_cmd 'systemctl daemon-reload'
 exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable mkiosk'
+exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable hide_gnome_activities_overview.service'
+exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user enable hide_gnome_activities_overview.timer'
+exec_cmd_no_sudo 'XDG_RUNTIME_DIR="/run/user/$UID" DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start hide_gnome_activities_overview.timer'
 
 print_status "Restart gnome shell..."
 exec_cmd 'killall -3 gnome-shell'
+
+print_status "Restart systemd-logind - Ignore the laptop lid state, so the any network connection may remain active (e.g. for ssh) when closing the laptop lid..."
+exec_cmd 'systemctl restart systemd-logind'

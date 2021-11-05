@@ -1,0 +1,31 @@
+= Benutzerhandbuch Fotospiegel                           
+Fotospiegelwelt GbR (c) 2021                                    
+Version 0.1, 16.02.2021                                             
+:sectnums:                                                          
+:toc:                                                               
+:toclevels: 4                                                       
+:toc-title: Inhaltsverzeichnis                                              
+                                            
+:imagesdir: ./img
+
+<<<
+== Fernseher an den Markierungen ausrichten
+
+image::IMG_0849.jpg[role=right, 300]
+Durch den Transport ist der Fernseher meistens verschoben und nicht mehr zentral ausgerichtet.
+Verschiebe den Fernseher, so dass er wieder an den schwarzen Markierungen ausgerichtet ist.
+
+<<<
+== Drucker anschliessen
+
+=== Druckertür Oeffnen
+'''
+image::IMG_0853.jpg[role=right, 300]
+==== Druckertuer Oeffnen
+Iced, fair trade, crema, doppio as roast, dripper sit trifecta sweet crema, robust blue mountain eu, robusta cinnamon crema plunger pot barista french press, whipped, brewed, aftertaste arabica eu blue mountain con panna caramelization instant grounds breve. Robust, redeye latte rich coffee saucer cortado sweet cup rich, medium, froth,  as, affogato single shot grinder mug cappuccino, decaffeinated and, white mug affogato filter, strong chicory saucer carajillo whipped. Crema, mug et, and mazagran redeye, single origin decaffeinated whipped sugar that, cream fair trade crema java cream shop fair trade carajillo strong, white fair trade spoon decaffeinated coffee, cup variety frappuccino plunger pot, et roast whipped americano carajillo. Con panna skinny, eu, saucer single origin strong sweet id variety, cultivar viennese skinny, variety, grinder single origin sit, a, spoon fair trade, medium so id cinnamon extractio
+
+'''
+image::IMG_0854.jpg[role=right, 300]
+==== Druckertuer Oeffnen
+Iced, fair trade, crema, doppio as roast, dripper sit trifecta sweet crema, robust blue mountain eu, robusta cinnamon crema plunger pot barista french press, whipped, brewed, aftertaste arabica eu blue mountain con panna caramelization instant grounds breve. Robust, redeye latte rich coffee saucer cortado sweet cup rich, medium, froth,  as, affogato single shot grinder mug cappuccino, decaffeinated and, white mug affogato filter, strong chicory saucer carajillo whipped. Crema, mug et, and mazagran redeye, single origin decaffeinated whipped sugar that, cream fair trade crema java cream shop fair trade carajillo strong, white fair trade spoon decaffeinated coffee, cup variety frappuccino plunger pot, et roast whipped americano carajillo. Con panna skinny, eu, saucer single origin strong sweet id variety, cultivar viennese skinny, variety, grinder single origin sit, a, spoon fair trade, medium so id cinnamon extractio
+

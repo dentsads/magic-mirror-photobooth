@@ -42,7 +42,7 @@ myExit() {
 set +e
 
 # Check if printer is connected and recognized via USB
-gutenprint_device=$(lpinfo -v | grep -i "direct gutenprint")
+gutenprint_device=$(lpinfo -v | grep -i "direct gutenprint53")
 if [ -z "$gutenprint_device" ]; then
   myExit 1  
 fi

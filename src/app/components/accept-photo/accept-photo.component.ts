@@ -135,11 +135,20 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
       debugMode: false // [10]
     });
     
+    this.allowNextTransitionButtonSubscription =  this.routingService.allowNextTransitionButton.subscribe((value: boolean) => { 
+      this.allowNextTransitionButton = value; 
+    });
+
+    this.handleEvent("event.loading-finished.01");
   }
 
   async ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+
+    if (this.allowNextTransitionButtonSubscription) {
+      this.allowNextTransitionButtonSubscription.unsubscribe();
     }
   }
 

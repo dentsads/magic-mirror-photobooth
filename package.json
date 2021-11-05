@@ -12,9 +12,12 @@
     "build:client": "ng build",
     "build": "npm run build:client && npm run build:server",
     "clean": "rm -rf ./built && rm -rf ./dist",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "sudo -E concurrently \"npm run start:client\" \"npm run start:server\" \"$(npm bin)/wait-on http-get://localhost:4200 && sudo -E -u $USER npm run cy:run\" --kill-others --success first",
+    "e2e-gui": "sudo -E concurrently \"npm run start:client\" \"npm run start:server\" \"$(npm bin)/wait-on http-get://localhost:4200 && sudo -E -u $USER npm run cy:open\" --kill-others --success first"
   },
   "repository": {
     "type": "git",
@@ -70,6 +73,8 @@
     "@types/jasminewd2": "2.0.8",
     "@types/node": "14.14.16",
     "codelyzer": "6.0.1",
+    "cypress": "^7.1.0",
+    "cypress-plugin-snapshots": "1.4.4",
     "jasmine-core": "3.6.0",
     "jasmine-spec-reporter": "6.0.0",
     "karma": "5.2.3",
@@ -80,6 +85,7 @@
     "protractor": "7.0.0",
     "ts-node": "9.1.1",
     "tslint": "5.20.1",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "wait-on": "^5.3.0"
   }
 }

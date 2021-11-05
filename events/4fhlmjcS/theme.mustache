@@ -1,0 +1,334 @@
+{
+  "id": "root",
+  "initial": "intro",
+  "context": {
+    "capturedPhotoPaths": [],
+    "exifOrientation": 1,
+    "photoPath": "",
+    "maxNumberOfPrints": {{{maxNumberOfPrints}}},
+    "maxNumberOfPhotos": {{{maxNumberOfPhotos}}},
+    "compositeConfig": {
+        "templateLayout": "{{{assets.compositePhoto.compositeConfig.templateLayout}}}",                                
+        "overlayImage": "{{{assets.compositePhoto.compositeConfig.overlayImage}}}",
+        "logoImage": "{{{assets.compositePhoto.compositeConfig.logoImage}}}",
+        "logoImageOffset": "{{{assets.compositePhoto.compositeConfig.logoImageOffset}}}",
+        "logoImageSize": "{{{assets.compositePhoto.compositeConfig.logoImageSize}}}",
+        "logoRotation": "{{{assets.compositePhoto.compositeConfig.logoRotation}}}",
+        "overlayText": "{{{assets.compositePhoto.compositeConfig.overlayText}}}",
+        "overlayTextSize": "{{{assets.compositePhoto.compositeConfig.overlayTextSize}}}",
+        "overlayTextOffset": "{{{assets.compositePhoto.compositeConfig.overlayTextOffset}}}"
+    }
+    {{#assets.triggerLed.ball}},
+    "triggerLedConfig": {
+        "animationType": "ball",
+        "direction": "{{{assets.triggerLed.ball.direction}}}",
+        "color": "{{{assets.triggerLed.ball.color}}}",
+        "loops": {{{assets.triggerLed.ball.loops}}}
+    }
+    {{/assets.triggerLed.ball}}
+    {{#assets.triggerLed.barrel}},
+    "triggerLedConfig": {
+        "animationType": "barrel",
+        "direction": "{{{assets.triggerLed.barrel.direction}}}",
+        "color": "{{{assets.triggerLed.barrel.color}}}",
+        "shiftDelay": {{{assets.triggerLed.barrel.shiftDelay}}}
+    }
+    {{/assets.triggerLed.barrel}}
+  },
+  "states": {
+    "intro": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/intro", 
+        "assets": {
+            "assetPath": "{{{assets.intro}}}",
+            "website": "{{{website}}}"
+        }
+      },
+      "on": {
+        "event.intro.01": {
+          "target": "mirrotWillTakePhotos"
+        }
+      }
+    },
+    "mirrotWillTakePhotos": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/6", 
+        "assets": {
+            "assetPath": "{{{assets.mirrotWillTakePhotos}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.countdown"
+              }
+          }
+      }
+    },
+    "countdown": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/3", 
+        "assets": {
+            "assetPath": "{{{assets.countdown}}}",
+            "website": "{{{website}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.lookAtCamera"
+              }
+          }
+      }
+    },
+    "lookAtCamera": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/8", 
+        "assets": {
+            "assetPath": "{{{assets.lookAtCamera}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running",
+                      "actions": "triggerLed"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.clearLed"
+              }
+          }
+      }
+    },
+    "clearLed": {
+      "meta": {},
+      "invoke": {
+        "id": "clear",
+        "src": "clearLed",
+        "onDone": {
+          "target": "capturePhoto",
+          "actions": "logClearLed"
+        },
+        "onError": {
+          "target": "capturePhoto",
+          "actions": "logError"
+        }              
+      }
+    },        
+    "capturePhoto": {
+      "meta": {},
+      "invoke": {
+        "id": "capture",
+        "src": "capturePhoto",
+        "onDone": {
+          "target": "acceptPhoto",
+          "actions": "setCapturedPhoto"
+        },
+        "onError": {
+          "target": "errorPage",
+          "actions": "logError"
+        }              
+      }
+    },
+    "acceptPhoto":  {
+      "entry": ["updateMetaAssetsWithContext", "transition"],
+      "meta": { 
+        "path": "/accept-photo", 
+        "assets": {
+            "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
+            "assetButtonOkPath": "{{{assets.acceptPhoto.assetButtonOkPath}}}", 
+            "assetButtonNokPath": "{{{assets.acceptPhoto.assetButtonNokPath}}}"
+        }
+      },
+      "on": {
+        "event.accept-photo.01": [
+          { "target": "drawing", "cond": "targetNumberOfPhotosReached" },
+          { "target": "countdown"}
+        ],
+        "event.accept-photo.02": {
+          "target": "countdown",
+          "actions": "popCapturedPhotos"
+        }
+      }
+    },
+    "drawing":  {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/drawing", 
+        "assets": { 
+            "assetButtonClear": "{{{assets.drawing.assetButtonClear}}}", 
+            "assetButtonOk": "{{{assets.drawing.assetButtonOk}}}",
+            "assetButtonColor": "{{{assets.drawing.assetButtonColor}}}"
+        }
+      },
+      "on": {
+        "event.drawing-tool.01": "compositePhoto"
+      }
+    },
+    "compositePhoto": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/6", 
+        "assets": {
+          "assetPath": "{{{assets.compositePhoto.assetPath}}}"
+        }      
+      },
+      "invoke": {
+        "id": "composite",
+        "src": "compositePhoto",
+        "onDone": {
+          "target": "acceptCompositedPhoto",
+          "actions": "clearCapturedPhotos"
+        },
+        "onError": {
+          "target": "errorPage",
+          "actions": "logError"
+        }
+      }
+    },
+    "acceptCompositedPhoto":  {
+      "entry": ["transition", "updateMetaAssetsWithContext"],
+      "meta": { 
+        "path": "/accept-photo", 
+        "assets": {
+            "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
+            "assetButtonOkPath": "{{{assets.acceptCompositedPhoto.assetButtonOkPath}}}", 
+            "assetButtonNokPath": "{{{assets.acceptCompositedPhoto.assetButtonNokPath}}}"                
+        }
+      },
+      "initial": "initialState",
+      "states": {
+          "initialState": {
+              "on": {
+                  "event.loading-finished.01": {
+                      "target": "nextTransitionDisallowed",
+                      "actions": "setDisallowNextTransitionButton"
+                  }           
+              }
+          },
+          "nextTransitionDisallowed": {
+            "invoke": {
+              "id": "compositePrintableResultPhoto",
+              "src": "compositePrintableResultPhoto",
+              "onDone": {
+                "target": "nextTransitionAllowed",
+                "actions":  "setAllowNextTransitionButton"
+              },
+              "onError": {                
+                "actions": "logError"
+              }              
+            }
+          },
+          "nextTransitionAllowed": {
+              "on": {
+                "event.accept-photo.01": [
+                  { 
+                    "target": "#root.selectPrintPhotos", 
+                    "cond": "dontSkipSelectPrintPhotos" 
+                  },
+                  { 
+                    "target": "#root.mirrorWillPrintPhotos",
+                    "actions":  "printPhoto"
+                  }
+                ],
+                "event.accept-photo.02": "#root.countdown"
+              }
+          }
+      }      
+    },
+    "selectPrintPhotos":  {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/select-print-photos", 
+        "assets": { 
+            "assetButtonPlus": "{{{assets.selectPrintPhotos.assetButtonPlus}}}", 
+            "assetButtonMinus": "{{{assets.selectPrintPhotos.assetButtonMinus}}}",
+            "assetButtonPrinter": "{{{assets.selectPrintPhotos.assetButtonPrinter}}}",
+            "maxNumberOfPrints": "{{{maxNumberOfPrints}}}"
+        }
+      },
+      "on": {
+        "event.select-print-photos.01": { 
+          "target": "mirrorWillPrintPhotos",
+          "actions":  "printPhoto"
+        }
+      }
+    },
+    "mirrorWillPrintPhotos": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/anim1/7", 
+        "assets": {
+            "assetPath": "{{{assets.mirrorWillPrintPhotos}}}"
+        } 
+      },
+      "initial": "anim_loaded",
+      "states": {
+          "anim_loaded": {
+              "on": {
+                  "event.anim1.01": {
+                      "target": "anim_running"
+                  }           
+              }
+          },
+          "anim_running": {
+              "after": {
+                  "FINISH_ANIM": "#root.infoPage"
+              }
+          }
+      }
+    },
+    "infoPage": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/info",
+        "assets": { 
+            "assetButtonOkPath": "{{{assets.infoPage.assetButtonOkPath}}}",
+            "brochureImage": "{{{assets.infoPage.brochureImage}}}",
+            "galleryCode": "{{{event_id}}}"           
+        } 
+      },
+      "on": {
+        "event.info-page.01": "intro"
+      }
+    },
+    "errorPage": {
+      "entry": ["transition"],
+      "meta": { 
+        "path": "/error",
+        "assets": { 
+            "assetButtonHome": "{{{assets.errorPage.assetButtonHome}}}",
+            "phoneNumber": "{{{phone_number}}}"           
+        } 
+      },
+      "on": {
+        "event.error-page.01": "intro"
+      }
+    }     
+  }
+}

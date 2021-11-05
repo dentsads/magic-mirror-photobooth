@@ -38,6 +38,7 @@ sudo apt-get install -y build-essential
 sudo apt-get install -y udev
 
 # install other global npm dependencies
+sudo npm install @asciidoctor/core asciidoctor-pdf -g
 sudo npm install license-checker -g
 sudo npm install @angular/cli -g
 sudo npm install typescript -g 
@@ -59,6 +60,7 @@ Also create symlinks to `/usr/local/bin` otherwise you won't have `node` and `np
 ```
 sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
 sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
+sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npx" "/usr/local/bin/npx"
 ```
 
 ## Build and run application
@@ -78,7 +80,9 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Run `npm run e2e-gui` to execute the GUI based end-to-end tests via [Cypress](https://docs.cypress.io/).
+
+Run `npm run e2e` to execute the headless end-to-end tests via [Cypress](https://docs.cypress.io/).
 
 ## Updating all node dependencies to their latest version
 
@@ -101,6 +105,14 @@ export PHOTOBOOTH_PRINTER_MOCK=1
 ```
 
 Result PDFs are located at `${HOME}/PDF` or `/var/spool/cups`. If you want to know exactly where they are put look for the `Out` config in `/etc/cups/cups-pdf.conf`
+
+# Changing the base config path
+
+You can decide to change the base config path from `~/.magic-mirror-photobooth` to another path by setting the `PHOTOBOOTH_BASE_PATH` env variable. For Cypress testing the base path should be
+
+```bash
+ export PHOTOBOOTH_BASE_PATH=$(pwd)/cypress/fixtures
+```
 
 # LED ring setup
 
@@ -254,6 +266,18 @@ Configuration steps on the TV
  * Disable automatic standby mode when idle. In the settings go to `Öko-Lösung` and set `Autom. Aussch.` to `Aus`
 
   <img src="docs/img/tv_automatic_disablement.jpeg" width="450"/>
+
+# Thinkpad T430 setup
+
+It is important to allow powering on the laptop automatically when it is plugged into the AC in order to allow booting up the photobooth system without having to power on the laptop manually.
+
+For this in the Thinkpad T430 laptop BIOS settings (accessible by pressing F1 at bootup time) go to `Config -> Power`.
+
+<img src="docs/img/bios_power_on_ac_01.jpeg" width="450"/>
+
+Afterwards enable the `Power On with AC Attach` setting and then `Save and Exit` by pressing `F10`
+
+<img src="docs/img/bios_power_on_ac_02.jpeg" width="450"/>
 
 # Using the LED ring
 
@@ -449,6 +473,8 @@ This will do the following
   * automatically loads the magic-mirror frontend URL
   * disables the session crashed popups
   * disables the "Tranlate UI" feature
+* setup systemd service that checks every 5 seconds whether the Ubuntu activities overview is active and then disabling it. 
+  * This is a result of a AC power outage test that resulted in the activies overview being active after plugging power back in.
 * add current user to docker group
 * install electron frontend app .deb file
 * add udev rules in order to map the touchframe to the right output screen when the USB is plugged in
@@ -469,6 +495,101 @@ GALLERY_CODE="code"; magick convert \( -pointsize 250 -fill black -strokewidth 1
 
 `code` represents the password for the gallery login
 
+# Remote operations
+
+## Restarting the `magic-mirror-photobooth` service
+
+When you are connected to the photobooth through `ssh` and `VPN` you can restart the `magic-mirror-photobooth` container like this
+
+```bash
+docker restart magic-mirror-photobooth
+```
+
+after doing this you have to also restart the `mkiosk` `systemctl` service
+
+```bash
+# first stop all running mkiosk instances and then restart mkiosk, otherwise it opens up a new session every time
+systemctl --user stop mkiosk && systemctl --user start mkiosk
+```
+
+## Health check
+
+You can check the overall health of the application by calling
+
+```bash
+curl -sS http://localhost:4200/api/health | jq
+```
+
+You can check the overall status of the `mkiosk` `systemctl` service by calling
+
+```bash
+systemctl --user status mkiosk
+```
+
+In order to check whether the TV is connected properly execute
+
+```bash
+export DISPLAY=:0
+xrandr
+```
+
+In order to check whether the touch frame is connected properly execute
+
+```bash
+export DISPLAY=:0
+xinput
+```
+
+You can manually try to map the touch frame input to the TV execute
+
+```bash
+export DISPLAY=:0
+# map touch frame input to monitor output
+xinput --map-to-output \"Touchscreen small size\" HDMI-1 || true
+xinput --map-to-output \"Touchscreen small size\" VGA-1 || true
+```
+
+# Opening the Alertmanager and Prometheus WebUIs
+
+By establishing a VPN tunnel from the client laptop you can also open the alertmanager and prometheus UIs. Just do this
+
+```bash
+# the admin1.ovpn can be found in the openvpn-terraform-install repo
+sudo openvpn --suppress-timestamps --connect-retry-max 1 --nobind --pull-filter ignore redirect-gateway --config generated/ovpn-config/admin1.ovpn
+```
+
+afterwards you can just go ahead and open the following in a browser
+
+```bash
+# alermanager
+open http://10.8.0.2:9093/
+
+# prometheus
+open http://10.8.0.2:9090/
+```
+
+The IP (e.g. 10.8.0.2) can be found on the aws ec2 instance in `/var/log/openvpn/status.log`
+
+Alert updates should be much faster and more real time than waiting for Discord messages
+
 # Inventory List
 
 You can find a complete list inventory list of all items needed to create the magic-mirror-photobooth [here](https://docs.google.com/spreadsheets/d/11MaeAUPQGrgEVKsIesMfK1pldT3oxprGyHYFg9fhh0M/edit#gid=0)
+
+# Generate Handbook
+
+We are using [asciidoctor-web-pdf](https://github.com/Mogztter/asciidoctor-web-pdf) for generating the user handbook.
+
+You can install the CLI like this
+
+```bash
+sudo npm install @asciidoctor/core asciidoctor-pdf -g
+```
+
+Afterwards you can generate the handbook like this from the source directory
+
+```bash
+asciidoctor-web-pdf docs/handbook/handbuch.adoc --destination-dir=built/handbook
+```
+
+This will generate a `.pdf` file in the same directory

@@ -6,8 +6,8 @@ import { LedService } from './led.service';
 import { PhotoService } from './photo.service';
 import { LoggerService } from './logger.service'
 import { PrinterService } from './printer.service';
-import config from '../../../config.json'
 import { Observable } from 'rxjs/internal/Observable';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export class RoutingService {
 
   THEME_MAP: Record<string, any> = {};
+  allowNextTransitionButton: Subject<boolean> = new Subject<boolean>();
   currentTheme;
 
   constructor(
@@ -84,6 +85,12 @@ export class RoutingService {
             // handle success
             this.loggerService.log('info', 'Clearing LED strip')     
           },
+          printPhoto: (context, event) => {
+            this.printService.printPhoto({
+              img: 'printable_result.png',
+              numberOfCopies: event.numberOfCopies == undefined ? 1 : event.numberOfCopies
+            })
+          },
           triggerLed: (context, event) => {
             if (context.triggerLedConfig && context.triggerLedConfig.animationType && context.triggerLedConfig.animationType == 'ball') {
               this.ledService.triggerLed("ball", {
@@ -144,9 +151,11 @@ export class RoutingService {
             context.capturedPhotoPaths.pop();
           },
           clearCapturedPhotos: (context, event) => {
-            // handle success
-            const capturedPhotoPath = event.data.data.result;
-            context.photoPath = capturedPhotoPath;
+            // handle success            
+            const capturedPhotoPath = event.data.data.result.imagePath;
+            const eventId = event.data.data.result.eventId;
+            context.uuidFileName = capturedPhotoPath;
+            context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = 1;
             context.capturedPhotoPaths = [];     
           },
@@ -180,10 +189,14 @@ export class RoutingService {
               logoImage: context.compositeConfig.logoImage,
               logoImageSize: context.compositeConfig.logoImageSize,
               logoImageOffset: context.compositeConfig.logoImageOffset,
+              logoRotation: context.compositeConfig.logoRotation,
               overlayText: context.compositeConfig.overlayText,
               overlayTextSize: context.compositeConfig.overlayTextSize,
               overlayTextOffset: context.compositeConfig.overlayTextOffset
           }),
+          compositePrintableResultPhoto: (context, event) => this.photoService.compositePrintableResultPhoto({
+            uuidFileName: context.uuidFileName
+          }),       
           printPhoto: (context, event) => this.printService.printPhoto({
             img: 'printable_result.png',
             numberOfCopies: event.numberOfCopies == undefined ? 1 : event.numberOfCopies

@@ -1,8 +1,27 @@
-@import "~@simonwep/pickr/dist/themes/nano.min.css";
+@import "~@simonwep/pickr/dist/themes/classic.min.css";
+
+/* Make the color swatches bigger for better usability. This is highly dangerous as it fiddles around in implementation details of the classic.min.js */
+.pcr-app .pcr-swatches {
+    display: flex;
+}
+
+/* Make the color swatches bigger for better usability. This is highly dangerous as it fiddles around in implementation details of the classic.min.js */
+.pcr-app .pcr-swatches>button {
+    font-size: 3em;
+}
 
 #canvas-drawing {
-    border: 1px solid rgb(170, 170, 170);
+    border: 2px dashed black;
+    animation-name: canvas-drawing ;
+    animation-duration: .5s ;
+    animation-timing-function: step-end ;
+    animation-iteration-count: infinite ;
+    animation-direction: alternate ;
 }
+
+@keyframes canvas-drawing { 
+    50% { border: 2px dashed rgb(170, 170, 170); } 
+ }
 
 .inner {
     display: flex;
