@@ -17,8 +17,10 @@ import MicroModal from 'micromodal';
 export class AcceptPhotoComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
+  private allowNextTransitionButtonSubscription: Subscription;
   componentMetadata: any;
   componentData: any;
+  allowNextTransitionButton: boolean = true;
   isFinalAcceptComponent: boolean;
   canvas: fabric.Canvas;
   document;

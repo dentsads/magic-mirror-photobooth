@@ -141,11 +141,12 @@ export class RoutingService {
           },                
           setCapturedPhoto: (context, event) => {
             // handle success
-            const capturedPhotoFile = event.data.data.result.imagePath;
-            context.capturedPhotoFile = capturedPhotoFile;
-            context.photoPath = 'api/photos/' + config.event_id + '/' + capturedPhotoFile;
+            const capturedPhotoPath = event.data.data.result.imagePath;
+            const eventId = event.data.data.result.eventId;
+            context.uuidFileName = capturedPhotoPath;
+            context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = event.data.data.result.exifOrientation;
-            context.capturedPhotoPaths.push(capturedPhotoFile);         
+            context.capturedPhotoPaths.push(capturedPhotoPath);       
           },
           popCapturedPhotos: (context, event) => {
             context.capturedPhotoPaths.pop();
@@ -158,6 +159,12 @@ export class RoutingService {
             context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = 1;
             context.capturedPhotoPaths = [];     
+          },
+          setAllowNextTransitionButton: (context, event) => {
+            this.allowNextTransitionButton.next(true);
+          },
+          setDisallowNextTransitionButton: (context, event) => {
+            this.allowNextTransitionButton.next(false);
           },
           compositeIndividualPhoto: (context, event) => this.photoService.compositeIndividualPhoto({
             imgSrc: context.capturedPhotoFile,

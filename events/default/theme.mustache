@@ -159,14 +159,10 @@
       "entry": ["updateMetaAssetsWithContext", "transition"],
       "meta": { 
         "path": "/accept-photo", 
-<<<<<<< HEAD
         "isFinalAcceptComponent": false,
-        "assets": {            
-            "assetButtonClear": "{{{assets.acceptPhoto.assetButtonClear}}}", 
-=======
         "assets": {
             "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
->>>>>>> origin/master
+            "assetButtonClear": "{{{assets.acceptPhoto.assetButtonClear}}}", 
             "assetButtonOkPath": "{{{assets.acceptPhoto.assetButtonOkPath}}}", 
             "assetButtonNokPath": "{{{assets.acceptPhoto.assetButtonNokPath}}}"
         }
@@ -221,26 +217,13 @@
       "entry": ["transition", "updateMetaAssetsWithContext"],
       "meta": { 
         "path": "/accept-photo", 
-<<<<<<< HEAD
         "isFinalAcceptComponent": true,
-        "assets": {            
-=======
         "assets": {
             "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
->>>>>>> origin/master
-            "assetButtonOkPath": "{{{assets.acceptCompositedPhoto.assetButtonOkPath}}}", 
-            "assetButtonNokPath": "{{{assets.acceptCompositedPhoto.assetButtonNokPath}}}"                
+            "assetButtonOkPath": "{{{assets.acceptCompositedPhoto.assetButtonOkPath}}}",
+            "assetButtonNokPath": "{{{assets.acceptCompositedPhoto.assetButtonNokPath}}}"
         }
       },
-<<<<<<< HEAD
-      "on": {
-        "event.accept-photo.01": [
-          { "target": "selectPrintPhotos", "cond": "dontSkipSelectPrintPhotos" },
-          { "target": "printPhoto" }
-        ],
-        "event.accept-photo.02": "countdown"
-      }
-=======
       "initial": "initialState",
       "states": {
           "initialState": {
@@ -280,7 +263,6 @@
               }
           }
       }      
->>>>>>> origin/master
     },
     "selectPrintPhotos":  {
       "entry": ["transition"],
