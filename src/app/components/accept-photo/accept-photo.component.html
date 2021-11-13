@@ -1,7 +1,15 @@
 <div [hidden]="!componentData" style="position: relative; padding: 60px;">
   <div id="overlay-outer">    
     <canvas id="canvas-image"></canvas>
-    <div *ngIf="componentData" (click)="handleEvent('event.accept-photo.01')" class="overlay-right"><img src="{{componentData.assetButtonOkPath}}"></div>
+    <div *ngIf="componentData" (click)="handleEvent('event.accept-photo.01')" class="overlay-right">
+      <img *ngIf="allowNextTransitionButton == true" src="{{componentData.assetButtonOkPath}}">
+      <img *ngIf="allowNextTransitionButton == false" src="{{componentData.assetButtonOkDisallowedPath}}">
+    </div>
+    <div *ngIf="componentData && allowNextTransitionButton == false" class="overlay-right d-flex justify-content-center">
+      <div class="spinner-border" role="status" >
+        <span class="sr-only" id="loading"></span>
+      </div>
+    </div>
     <div *ngIf="componentData && !isFinalAcceptComponent" (click)="handleClearCanvas()" id="button-clear" class="overlay-clear"><img src="{{componentData.assetButtonClear}}"></div>
     <div *ngIf="componentData && !isFinalAcceptComponent" (click)="handleOpenEmojiModal()" id="button-emojis" class="overlay-emoji" data-micromodal-trigger="modal-1"><p id="emoji-placeholder">😁</p></div>
     <div *ngIf="componentData" (click)="handleEvent('event.accept-photo.02')" class="overlay-left"><img src="{{componentData.assetButtonNokPath}}"></div>

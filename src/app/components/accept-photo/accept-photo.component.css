@@ -77,6 +77,11 @@
     font-size: 40px;    
 }
 
+.image {
+  max-width: 800px;
+  position: relative;
+}
+
 #button-clear {
     display: inline-block;
     margin-left: 5%;
@@ -87,6 +92,28 @@
     hue-rotate(270deg); /* Hue is a degree on the color wheel from 0 to 360. 0 is red, 120 is green, 240 is blue. */
 }
 
+#loading{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 80px;
+  height: 80px;
+  margin: 10px 0 0 -110px;
+  border: 10px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 10px solid #3498db;
+  animation: spin 2s linear infinite;
+}
+  
+@keyframes spin {
+  0% { 
+      transform: rotate(0deg);
+  }
+  100% { 
+      transform: rotate(360deg);
+  }
+}
 
 /**************************\
   Basic Modal Styles

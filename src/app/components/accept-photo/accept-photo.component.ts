@@ -77,8 +77,8 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
       this.componentMetadata = await this.routingService.getComponentMetadata();
       this.componentData = this.componentMetadata.assets;      
-      this.isFinalAcceptComponent = this.componentMetadata.isFinalAcceptComponent
-      
+      this.isFinalAcceptComponent = this.componentMetadata.isFinalAcceptComponent;
+     
       if (this.componentData.context) {
 
         this.getPresignedUrl(this.componentData.context.photoPath)        
@@ -122,7 +122,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
         
       } else {
         console.log("context still not loaded")
-      }         
+      }            
 
     });
 
@@ -142,6 +142,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     });
 
     this.handleEvent("event.loading-finished.01");
+    
   }
 
   async ngOnDestroy() {
@@ -155,8 +156,12 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
   }
 
   async handleEvent(eventId: string) {
-    var dataURL = this.canvas.toDataURL( { format: "jpeg", quality: 1 } );
-    this.routingService.handleEvent(eventId, { imageDataURL: this.canvas.isEmpty() ? "": dataURL });
+    if (this.isFinalAcceptComponent != undefined &&  !this.isFinalAcceptComponent) {
+      var dataURL = this.canvas.toDataURL( { format: "jpeg", quality: 1 } );
+      this.routingService.handleEvent(eventId, { imageDataURL: this.canvas.isEmpty() ? "": dataURL });
+    } else {
+      this.routingService.handleEvent(eventId);
+    }    
   }
 
   sleep(ms): Promise<any> {

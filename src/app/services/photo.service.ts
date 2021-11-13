@@ -27,5 +27,4 @@ export class PhotoService {
   async compositePrintableResultPhoto(options?: any): Promise<AxiosResponse<any>> {
     return axios.post('/api/compositor/composite-printable-result', options);
   }
-
 }

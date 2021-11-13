@@ -167,7 +167,7 @@ export class RoutingService {
             this.allowNextTransitionButton.next(false);
           },
           compositeIndividualPhoto: (context, event) => this.photoService.compositeIndividualPhoto({
-            imgSrc: context.capturedPhotoFile,
+            imgSrc: context.uuidFileName,
             imageDataURL: event.imageDataURL            
           })        
         },
@@ -203,7 +203,7 @@ export class RoutingService {
           }),
           compositePrintableResultPhoto: (context, event) => this.photoService.compositePrintableResultPhoto({
             uuidFileName: context.uuidFileName
-          }),       
+          }),
           printPhoto: (context, event) => this.printService.printPhoto({
             img: 'printable_result.png',
             numberOfCopies: event.numberOfCopies == undefined ? 1 : event.numberOfCopies
