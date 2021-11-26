@@ -100,8 +100,6 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
         //http://localhost:4200/api/photos/default/0uy71b_random.jpg
         //fabric.Image.fromURL(this.componentData.context.photoPath, (img) => {
 
-        await this.sleep(200)
-        
         this.image = new Image();
         this.image.addEventListener( 'load', () => {
           fabric.Image.fromURL(this.componentData.context.photoPath, (img, err) => {
