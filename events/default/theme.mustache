@@ -158,16 +158,18 @@
       "entry": ["updateMetaAssetsWithContext", "transition"],
       "meta": { 
         "path": "/accept-photo", 
+        "isFinalAcceptComponent": false,
         "assets": {
             "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
+            "assetButtonClear": "{{{assets.acceptPhoto.assetButtonClear}}}", 
             "assetButtonOkPath": "{{{assets.acceptPhoto.assetButtonOkPath}}}", 
             "assetButtonNokPath": "{{{assets.acceptPhoto.assetButtonNokPath}}}"
         }
       },
       "on": {
         "event.accept-photo.01": [
-          { "target": "drawing", "cond": "targetNumberOfPhotosReached" },
-          { "target": "countdown"}
+          { "target": "drawing", "cond": "targetNumberOfPhotosReached", "actions": "compositeIndividualPhoto" },
+          { "target": "countdown", "actions": "compositeIndividualPhoto" }
         ],
         "event.accept-photo.02": {
           "target": "countdown",
@@ -214,10 +216,11 @@
       "entry": ["transition", "updateMetaAssetsWithContext"],
       "meta": { 
         "path": "/accept-photo", 
+        "isFinalAcceptComponent": true,
         "assets": {
             "assetButtonOkDisallowedPath": "{{{assets.acceptCompositedPhoto.assetButtonOkDisallowedPath}}}",
-            "assetButtonOkPath": "{{{assets.acceptCompositedPhoto.assetButtonOkPath}}}", 
-            "assetButtonNokPath": "{{{assets.acceptCompositedPhoto.assetButtonNokPath}}}"                
+            "assetButtonOkPath": "{{{assets.acceptCompositedPhoto.assetButtonOkPath}}}",
+            "assetButtonNokPath": "{{{assets.acceptCompositedPhoto.assetButtonNokPath}}}"
         }
       },
       "initial": "initialState",

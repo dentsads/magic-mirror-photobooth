@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Anim1 } from '../models/anim1.model';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Machine, interpret, AnyEventObject } from 'xstate';
@@ -42,7 +41,7 @@ export class RoutingService {
     await this.sleep(ms)
   }
   
-  async getComponentData() {
+  async getComponentMetadata() {
     let counter:number = 0
     while (!this.currentTheme && counter < 50) {
       console.log("Loading theme profile. Please wait...");
@@ -51,7 +50,7 @@ export class RoutingService {
     }
 
     const metadata: any = Object.values(this.currentTheme.state.meta).shift();
-    return metadata.assets;
+    return metadata;
   }
   
   fetchProfile(): Observable<any> {
@@ -147,7 +146,7 @@ export class RoutingService {
             context.uuidFileName = capturedPhotoPath;
             context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = event.data.data.result.exifOrientation;
-            context.capturedPhotoPaths.push(capturedPhotoPath);                 
+            context.capturedPhotoPaths.push(capturedPhotoPath);       
           },
           popCapturedPhotos: (context, event) => {
             context.capturedPhotoPaths.pop();
@@ -159,14 +158,18 @@ export class RoutingService {
             context.uuidFileName = capturedPhotoPath;
             context.photoPath = 'api/photos/' + eventId + '/' + capturedPhotoPath;
             context.exifOrientation = 1;
-            context.capturedPhotoPaths = [];            
+            context.capturedPhotoPaths = [];     
           },
           setAllowNextTransitionButton: (context, event) => {
             this.allowNextTransitionButton.next(true);
           },
           setDisallowNextTransitionButton: (context, event) => {
             this.allowNextTransitionButton.next(false);
-          }   
+          },
+          compositeIndividualPhoto: (context, event) => this.photoService.compositeIndividualPhoto({
+            imgSrc: context.uuidFileName,
+            imageDataURL: event.imageDataURL            
+          })        
         },
         delays: {
           FINISH_ANIM: (context, event: AnyEventObject) => {
@@ -200,7 +203,7 @@ export class RoutingService {
           }),
           compositePrintableResultPhoto: (context, event) => this.photoService.compositePrintableResultPhoto({
             uuidFileName: context.uuidFileName
-          }),       
+          }),
           printPhoto: (context, event) => this.printService.printPhoto({
             img: 'printable_result.png',
             numberOfCopies: event.numberOfCopies == undefined ? 1 : event.numberOfCopies

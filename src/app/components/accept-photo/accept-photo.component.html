@@ -1,17 +1,131 @@
-<div *ngIf="componentData" id="overlay-outer">    
-    <img (load)="handleImage()" id="photo-image" class="image" src="{{componentData.context.photoPath}}" />
-    <div (click)="handleEvent('event.accept-photo.01')" class="overlay-right">
-        <img *ngIf="allowNextTransitionButton == true" src="{{componentData.assetButtonOkPath}}">
-        <img *ngIf="allowNextTransitionButton == false" src="{{componentData.assetButtonOkDisallowedPath}}">
+<div [hidden]="!componentData" style="position: relative; padding: 60px;">
+  <div id="overlay-outer">    
+    <canvas id="canvas-image"></canvas>
+    <div *ngIf="componentData" (click)="handleEvent('event.accept-photo.01')" class="overlay-right">
+      <img *ngIf="allowNextTransitionButton == true" src="{{componentData.assetButtonOkPath}}">
+      <img *ngIf="allowNextTransitionButton == false" src="{{componentData.assetButtonOkDisallowedPath}}">
     </div>
-    <div *ngIf="allowNextTransitionButton == false" class="overlay-right d-flex justify-content-center">
-        <div class="spinner-border" role="status" >
-          <span class="sr-only" id="loading"></span>
-        </div>
+    <div *ngIf="componentData && allowNextTransitionButton == false" class="overlay-right d-flex justify-content-center">
+      <div class="spinner-border" role="status" >
+        <span class="sr-only" id="loading"></span>
+      </div>
     </div>
-    <div (click)="handleEvent('event.accept-photo.02')" class="overlay-left"><img src="{{componentData.assetButtonNokPath}}"></div>    
+    <div *ngIf="componentData && !isFinalAcceptComponent" (click)="handleClearCanvas()" id="button-clear" class="overlay-clear"><img src="{{componentData.assetButtonClear}}"></div>
+    <div *ngIf="componentData && !isFinalAcceptComponent" (click)="handleOpenEmojiModal()" id="button-emojis" class="overlay-emoji" data-micromodal-trigger="modal-1"><p id="emoji-placeholder">😁</p></div>
+    <div *ngIf="componentData" (click)="handleEvent('event.accept-photo.02')" class="overlay-left"><img src="{{componentData.assetButtonNokPath}}"></div>
+  </div>
 </div>
+
 <div id="canvas-qr-div">
     <div><p class="text-subsubheader">Lade dein Bild herunter.</p></div>
     <div style="text-align: center;"><div><canvas id="canvas-qr"></canvas></div></div>
+</div>
+
+<div *ngIf="!isFinalAcceptComponent" class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+        <main class="modal__content" id="modal-1-content">
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👀')" data-micromodal-close><p>👀</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🕶️')" data-micromodal-close><p>🕶️</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👓')" data-micromodal-close><p>👓</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥽')" data-micromodal-close><p>🥽</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🎩')" data-micromodal-close><p>🎩</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👒')" data-micromodal-close><p>👒</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🔫')" data-micromodal-close><p>🔫</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🧢')" data-micromodal-close><p>🧢</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('⛑️')" data-micromodal-close><p>⛑️</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🎓')" data-micromodal-close><p>🎓</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👑')" data-micromodal-close><p>👑</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🦰')" data-micromodal-close><p>🦰</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🦱')" data-micromodal-close><p>🦱</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🦳')" data-micromodal-close><p>🦳</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👙')" data-micromodal-close><p>👙</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👗')" data-micromodal-close><p>👗</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👚')" data-micromodal-close><p>👚</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👕')" data-micromodal-close><p>👕</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👖')" data-micromodal-close><p>👖</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👄')" data-micromodal-close><p>👄</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💋')" data-micromodal-close><p>💋</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👅')" data-micromodal-close><p>👅</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👃')" data-micromodal-close><p>👃</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👂')" data-micromodal-close><p>👂</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🎈')" data-micromodal-close><p>🎈</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥛')" data-micromodal-close><p>🥛</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍼')" data-micromodal-close><p>🍼</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍵')" data-micromodal-close><p>🍵</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥤')" data-micromodal-close><p>🥤</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍶')" data-micromodal-close><p>🍶</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍺')" data-micromodal-close><p>🍺</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍻')" data-micromodal-close><p>🍻</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥂')" data-micromodal-close><p>🥂</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍷')" data-micromodal-close><p>🍷</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥃')" data-micromodal-close><p>🥃</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍸')" data-micromodal-close><p>🍸</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍹')" data-micromodal-close><p>🍹</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🍾')" data-micromodal-close><p>🍾</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🔥')" data-micromodal-close><p>🔥</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😎')" data-micromodal-close><p>😎</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😀')" data-micromodal-close><p>😀</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😄')" data-micromodal-close><p>😄</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😁')" data-micromodal-close><p>😁</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😆')" data-micromodal-close><p>😆</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😅')" data-micromodal-close><p>😅</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😂')" data-micromodal-close><p>😂</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🤣')" data-micromodal-close><p>🤣</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😍')" data-micromodal-close><p>😍</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥰')" data-micromodal-close><p>🥰</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😘')" data-micromodal-close><p>😘</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😙')" data-micromodal-close><p>😙</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😝')" data-micromodal-close><p>😝</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('😈')" data-micromodal-close><p>😈</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💩')" data-micromodal-close><p>💩</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👨‍⚖️')" data-micromodal-close><p>👨‍⚖️</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👰')" data-micromodal-close><p>👰</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🧡')" data-micromodal-close><p>🧡</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💛')" data-micromodal-close><p>💛</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💚')" data-micromodal-close><p>💚</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💙')" data-micromodal-close><p>💙</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💜')" data-micromodal-close><p>💜</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🖤')" data-micromodal-close><p>🖤</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💔')" data-micromodal-close><p>💔</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💕')" data-micromodal-close><p>💕</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💞')" data-micromodal-close><p>💞</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💓')" data-micromodal-close><p>💓</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💗')" data-micromodal-close><p>💗</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💖')" data-micromodal-close><p>💖</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💘')" data-micromodal-close><p>💘</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💝')" data-micromodal-close><p>💝</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💊')" data-micromodal-close><p>💊</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💉')" data-micromodal-close><p>💉</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🧬')" data-micromodal-close><p>🧬</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🦠')" data-micromodal-close><p>🦠</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🧫')" data-micromodal-close><p>🧫</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🧪')" data-micromodal-close><p>🧪</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👌')" data-micromodal-close><p>👌</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🤞')" data-micromodal-close><p>🤞</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🤟')" data-micromodal-close><p>🤟</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🤘')" data-micromodal-close><p>🤘</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🤙')" data-micromodal-close><p>🤙</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👈')" data-micromodal-close><p>👈</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👉')" data-micromodal-close><p>👉</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👆')" data-micromodal-close><p>👆</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🖕')" data-micromodal-close><p>🖕</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👇')" data-micromodal-close><p>👇</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👍')" data-micromodal-close><p>👍</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💪')" data-micromodal-close><p>💪</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('💯')" data-micromodal-close><p>💯</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('❗️')" data-micromodal-close><p>❗️</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('❕')" data-micromodal-close><p>❕</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('❓')" data-micromodal-close><p>❓</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('❔')" data-micromodal-close><p>❔</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🌡')" data-micromodal-close><p>🌡</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥇')" data-micromodal-close><p>🥇</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥈')" data-micromodal-close><p>🥈</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🥉')" data-micromodal-close><p>🥉</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🎖️')" data-micromodal-close><p>🎖️</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('🎀')" data-micromodal-close><p>🎀</p></div>
+          <div class="modal__close modal__emoji" (click)="handleEmoji('👻')" data-micromodal-close><p>👻</p></div>
+        </main>
+      </div>
+    </div>
 </div>

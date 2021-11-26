@@ -160,15 +160,15 @@ sudo echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
 
 # Composite images over each other
 
-With imagemagick's `composite` or `convert` (still using Imagemagick 6.x) cli tools you can composite images one over another for rendering the print templates
+With imagemagick's `magick composite` or `magick convert` cli tools you can composite images one over another for rendering the print templates
 
 ```bash
-convert -size 1795x1205 xc:none \
-\( built/01.jpg -resize 500x300 -repage +30+300 \) \
-\( built/02.jpg -resize 500x300 -repage +600+300 \) \
-\( built/03.jpg -resize 500x300 -repage +900+300 \) \
+magick convert -size 1795x1205 xc:none \
+\( built/01.jpg -auto-orient -resize 500x300 -repage +30+300 \) \
+\( built/02.jpg -auto-orient -resize 500x300 -repage +600+300 \) \
+\( built/03.jpg -auto-orient -resize 500x300 -repage +900+300 \) \
 -layers flatten built/photos.png
-convert built/photos.png built/christmas_01_overlay_base_03.png -compose over -composite ./built/result.png
+magick convert built/photos.png built/christmas_01_overlay_base_03.png -compose over -composite ./built/result.png
 
 
 # check image dimensions

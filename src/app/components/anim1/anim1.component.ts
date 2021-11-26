@@ -33,7 +33,7 @@ export class Anim1Component implements OnInit, OnDestroy {
     };
 
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
-      this.componentData = await this.routingService.getComponentData();
+      this.componentData = (await this.routingService.getComponentMetadata()).assets;
     });
   }
   

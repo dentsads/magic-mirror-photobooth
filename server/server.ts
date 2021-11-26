@@ -175,6 +175,20 @@ app.post('/api/compositor/composite-printable-result', (req, res, next) => {
   })    
 })
 
+app.post('/api/compositor/composite_individual', (req, res, next) => {
+  var jsonObj = req.body
+
+  compositor.compositeIndividual(jsonObj, (out, err) => {
+    if (err) {
+      logger.log('error', err);
+      res.status(500).send(err).end()
+    } else {
+      logger.log('info', out);
+      res.status(200).send(out).end()
+    }          
+  })    
+})
+
 app.post('/api/dslr/capture', (req, res, next) => {
   var jsonObj = req.body
 
@@ -211,5 +225,5 @@ app.post('/api/logger', (req, res, next) => {
 })
 
 app.listen(4201, '127.0.0.1', function() {
-    console.log('Server now listenting on 4201');
+    console.log('Server now listening on port 4201');
 })

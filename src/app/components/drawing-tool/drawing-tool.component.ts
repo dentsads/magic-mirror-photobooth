@@ -31,7 +31,7 @@ export class DrawingToolComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
-      this.componentData = await this.routingService.getComponentData();
+      this.componentData = (await this.routingService.getComponentMetadata()).assets;
     });
 
     this.canvas = new fabric.Canvas('canvas-drawing', { isDrawingMode: true });

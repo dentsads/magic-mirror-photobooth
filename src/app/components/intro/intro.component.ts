@@ -21,7 +21,7 @@ export class IntroComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.subscribe(async params => {
-      this.componentData = await this.routingService.getComponentData();    
+      this.componentData = (await this.routingService.getComponentMetadata()).assets;    
     });
   }
 
