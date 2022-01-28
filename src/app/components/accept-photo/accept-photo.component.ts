@@ -57,7 +57,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
       cursorStyle: 'pointer',
       actionHandler: fabric.controlsUtils.scalingEqually,
       render: this.renderIcon(this.scaleImg),
-      cornerSize: 40
+      cornerSize: 80
     });
   
     fabric.Object.prototype.controls.rotateControl = new fabric.Control({
@@ -69,7 +69,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
       render: this.renderIcon(this.rotateImg),
       withConnection: true,
-      cornerSize: 40
+      cornerSize: 80
     });
   }  
 
