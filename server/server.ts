@@ -9,6 +9,7 @@ import config from '../config.json'
 
 const fs = require('fs') 
 const os = require('os')
+const actuator = require('express-actuator');
 
 var config_dir = process.env.PHOTOBOOTH_BASE_PATH || os.homedir() + "/" + config.config_dir;
 var photos_dir = config_dir + "/" + config.photos_sub_dir;
@@ -41,6 +42,13 @@ if (!fs.existsSync(events_dir)){
   fs.mkdirSync(events_dir);
 }
 
+const options = {
+  basePath: '/api', // It will set /management/info instead of /info
+  infoGitMode: 'full', // the amount of git information you want to expose, 'simple' or 'full',
+  infoBuildOptions: null, // extra information you want to expose in the build object. Requires an object.
+  infoDateFormat: null, // by default, git.commit.time will show as is defined in git.properties. If infoDateFormat is defined, moment will format git.commit.time. See https://momentjs.com/docs/#/displaying/format/.
+  customEndpoints: [] // array of custom endpoints
+};
 const app = express();
 const led = new Led();
 const compositor = new ImageCompositor();
@@ -51,6 +59,7 @@ app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
 app.use('/api/photos', express.static(photos_dir));
 app.use('/api/assets', express.static(assets_dir));
+app.use(actuator(options));
 
 app.get('/api/health', (req, res) => {    
   let isHealthyOverall:boolean = 
