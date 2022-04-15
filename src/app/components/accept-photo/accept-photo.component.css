@@ -44,14 +44,16 @@
 .overlay-clear{
     display: inline;
     position:absolute;
-    right:200px;
+    transform: translate(+50%, 0);
+    right:38%;
     top:0;
 }
 
 .overlay-emoji{
     display: inline;
     position:absolute;
-    right:350px;
+    transform: translate(-50%, 0);
+    left:38%;
     top:0;
 }
 
