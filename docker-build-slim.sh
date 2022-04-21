@@ -17,6 +17,7 @@ sudo -E docker-slim build \
 --expose 4200 \
 --expose 631 \
 --http-probe-retry-wait 30 \
+--preserve-path /usr/local/bin \
 --show-clogs=true \
 --show-blogs=true \
 --target magic-mirror-photobooth \

@@ -1,6 +1,6 @@
 {
   "name": "magic-mirror-photobooth",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Software for an interactive magic mirror photobooth",
   "scripts": {
     "ng": "ng",
