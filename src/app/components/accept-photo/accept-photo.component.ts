@@ -274,7 +274,7 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
           lockScalingY = true;
         }
 
-        if (scaleDirection == ScaleDirection.UP && (dim.x >= 150 || dim.y >= 150)) {
+        if (scaleDirection == ScaleDirection.UP && (dim.x >= 200 || dim.y >= 200)) {
           lockScalingX = true;
           lockScalingY = true;
         }
@@ -306,55 +306,55 @@ export class AcceptPhotoComponent implements OnInit, OnDestroy {
     fabric.Object.prototype.controls.scaleControlPlus = new fabric.Control({
       x: -0.5,
       y: 0.5,
-      offsetX: -40,
-      offsetY: 40,      
+      offsetX: -80,
+      offsetY: 80,      
       cursorStyle: 'pointer',
       mouseUpHandler: scaleObject(ScaleDirection.UP),
       render: this.renderIcon(this.scalePlusImg),
-      cornerSize: 80,
-      sizeX: 70,
-      sizeY: 70
+      cornerSize: 160,
+      sizeX: 140,
+      sizeY: 140
     });
 
     fabric.Object.prototype.controls.scaleControlMinus = new fabric.Control({
       x: 0.5,
       y: 0.5,
-      offsetX: 40,
-      offsetY: 40,      
+      offsetX: 80,
+      offsetY: 80,      
       cursorStyle: 'pointer',
       mouseUpHandler: scaleObject(ScaleDirection.DOWN),
       render: this.renderIcon(this.scaleMinusImg),
-      cornerSize: 80,
-      sizeX: 70,
-      sizeY: 70
+      cornerSize: 160,
+      sizeX: 140,
+      sizeY: 140
     });
   
     fabric.Object.prototype.controls.rotateCounterClockwise = new fabric.Control({
       x: -0.5,
       y: -0.5,
-      offsetX: -40,
-      offsetY: -40,      
+      offsetX: -80,
+      offsetY: -80,      
       cursorStyle: 'pointer',
       mouseUpHandler: rotateObject(RotateDirection.COUNTERCLOCKWISE),
       render: this.renderIcon(this.rotateCounterClockwiseImg),
       withConnection: true,
-      cornerSize: 80,
-      sizeX: 70,
-      sizeY: 70
+      cornerSize: 160,
+      sizeX: 140,
+      sizeY: 140
     });
 
     fabric.Object.prototype.controls.rotateClockwiseControl = new fabric.Control({
       x: 0.5,
       y: -0.5,
-      offsetX: 40,
-      offsetY: -40,      
+      offsetX: 80,
+      offsetY: -80,      
       cursorStyle: 'pointer',
       mouseUpHandler: rotateObject(RotateDirection.CLOCKWISE),
       render: this.renderIcon(this.rotateClockwiseImg),
       withConnection: true,
-      cornerSize: 80,
-      sizeX: 70,
-      sizeY: 70
+      cornerSize: 160,
+      sizeX: 140,
+      sizeY: 140
     });
 
   }  
