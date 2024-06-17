@@ -149,7 +149,10 @@ export class RoutingService {
             context.capturedPhotoPaths.push(capturedPhotoPath);       
           },
           popCapturedPhotos: (context, event) => {
-            context.capturedPhotoPaths.pop();
+            const capturedPhotoPathToBeDeleted = context.capturedPhotoPaths.pop();
+            this.photoService.deletePhoto({
+              imagePath: capturedPhotoPathToBeDeleted       
+            });
           },
           clearCapturedPhotos: (context, event) => {
             // handle success            

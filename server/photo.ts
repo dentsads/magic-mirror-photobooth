@@ -24,7 +24,8 @@ async function wait(ms): Promise<any> {
 }
 
 interface PhotoOptions {
-  test: string
+  test: string;
+  imagePath: string;
 }
 
 class Photo {
@@ -200,6 +201,23 @@ class Photo {
 
       }
     })
+  }
+
+  public deletePhoto(options: PhotoOptions, cb: (stdout?: object, e?: object) => void): void {  
+    if (options.imagePath == undefined || options.imagePath === '')
+      return cb(null, ErrorHandler.createError("13","No source image to delete has been specified."));
+
+    const path = event_photos_dir + '/' + options.imagePath;
+
+    logger.log('info', 'Attempting to delete picture %s', path);
+
+    fs.rm(path, (err) => { 
+      if(err){
+        return cb(null, ErrorHandler.createError("14", err))  
+      } 
+      logger.log('info', 'Deleted picture %s successfully', path);        
+      return cb({ "result" : "success" })
+    });
   }
 
 }

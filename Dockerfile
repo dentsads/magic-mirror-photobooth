@@ -7,7 +7,7 @@ ENV HOME /root
 WORKDIR $HOME/magic-mirror-photobooth
 
 # install cups and dependencies for printing
-RUN echo "deb http://ftp.de.debian.org/debian buster main" | tee -a /etc/apt/sources.list \
+RUN sed -i 's/stretch/buster/g' /etc/apt/sources.list \
 && apt-get update \
 && apt-get -y install \
 cups \
@@ -45,7 +45,6 @@ RUN echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
 # see here: https://www.cairographics.org/download/
 RUN apt-get update \
 && apt-get -y install \
-s3cmd \
 build-essential \
 usbutils \
 udev \
