@@ -9,7 +9,7 @@
 
 # Photobooth
 
-Magic Mirror Photobooth software of the company "Fotospiegelwelt" for various events like weddings, birthdays and christmas parties.
+Magic Mirror Photobooth software of the former company "Fotospiegelwelt" for various events like weddings, birthdays and christmas parties.
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
 
 # Installation instructions
